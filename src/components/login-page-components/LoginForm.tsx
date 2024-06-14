@@ -73,7 +73,7 @@ const LoginForm = () => {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="shadcn" {...field} />
+                <Input type="password" placeholder="******" {...field} />
               </FormControl>
               {/* <FormDescription>
                   This is your public display name.
