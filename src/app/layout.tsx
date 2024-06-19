@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "@/components/shadcn-ui/sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,7 +20,10 @@ export default function RootLayout({
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </head>
-      <body className={`bg-gray-100 ${inter.className}`}>{children}</body>
+      <body className={`bg-gray-100 ${inter.className}`}>
+        <main>{children}</main>
+        <Toaster />
+      </body>
     </html>
   );
 }

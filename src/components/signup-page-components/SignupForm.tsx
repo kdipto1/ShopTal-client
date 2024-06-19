@@ -13,6 +13,7 @@ import {
 } from "../shadcn-ui/form";
 import { Input } from "../shadcn-ui/input";
 import { Button } from "../shadcn-ui/button";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   phone: z.string().min(10, {
@@ -72,7 +73,8 @@ const SignupForm = () => {
       }),
     });
     const data = await response.json();
-    console.log(data);
+
+    toast(data.message);
   };
   return (
     <Form {...form}>
