@@ -14,7 +14,7 @@ import {
 import { Button } from "../shadcn-ui/button";
 import { Ellipsis, LogOut } from "lucide-react";
 import Link from "next/link";
-import { CollapseMenuButton } from "./collapse-menu-button";
+import { CollapseMenuButton } from "./CollapseMenuButton";
 
 interface MenuProps {
   isOpen: boolean | undefined;

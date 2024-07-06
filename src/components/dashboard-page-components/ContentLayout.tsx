@@ -1,4 +1,4 @@
-import DashboardNavbar from "./navbar";
+import DashboardNavbar from "./DashboardNavbar";
 
 interface ContentLayoutProps {
   title: string;

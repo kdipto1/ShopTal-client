@@ -1,4 +1,4 @@
-import ContentLayout from "@/components/dashboard-page-components/content-layout";
+import ContentLayout from "@/components/dashboard-page-components/ContentLayout";
 import {
   Breadcrumb,
   BreadcrumbItem,

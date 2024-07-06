@@ -1,12 +1,11 @@
-import React from "react";
 import { Button } from "../shadcn-ui/button";
-import SidebarToggle from "./sidebar-toggle";
+import SidebarToggle from "./SidebarToggle";
 import { cn } from "@/lib/utils";
 import { PanelsTopLeft } from "lucide-react";
 import { useStore } from "@/hooks/use-store";
 import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 import Link from "next/link";
-import Menu from "./menu";
+import Menu from "./Menu";
 
 const Sidebar = () => {
   const sidebar = useStore(useSidebarToggle, (state) => state);
