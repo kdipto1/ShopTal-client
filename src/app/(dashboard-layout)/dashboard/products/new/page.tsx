@@ -1,4 +1,5 @@
 import ContentLayout from "@/components/dashboard-page-components/ContentLayout";
+import CreateProductForm from "@/components/dashboard-page-components/products-page-components/new-page-components/CreateProductForm";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -7,12 +8,11 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/shadcn-ui/breadcrumb";
-import { Button } from "@/components/shadcn-ui/button";
 import Link from "next/link";
 
-const SubcategoriesPage = () => {
+const CreateProductPage = () => {
   return (
-    <ContentLayout title="Subcategories">
+    <ContentLayout title="New">
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -28,16 +28,20 @@ const SubcategoriesPage = () => {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage>Subcategories</BreadcrumbPage>
+            <BreadcrumbLink asChild>
+              <Link href="/dashboard/products">Products</Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>New</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
       {/* <PlaceholderContent /> */}
-      <Link href="/dashboard/subcategories/new">
-        <Button>Add New Subcategory</Button>
-      </Link>
+      <CreateProductForm />
     </ContentLayout>
   );
 };
 
-export default SubcategoriesPage;
+export default CreateProductPage;

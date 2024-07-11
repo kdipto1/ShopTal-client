@@ -7,6 +7,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/shadcn-ui/breadcrumb";
+import { Button } from "@/components/shadcn-ui/button";
 import Link from "next/link";
 
 const ProductsPage = () => {
@@ -32,6 +33,9 @@ const ProductsPage = () => {
         </BreadcrumbList>
       </Breadcrumb>
       {/* <PlaceholderContent /> */}
+      <Link href="/dashboard/products/new">
+        <Button>Add New Product</Button>
+      </Link>
     </ContentLayout>
   );
 };

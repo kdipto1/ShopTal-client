@@ -7,6 +7,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/shadcn-ui/breadcrumb";
+import { Button } from "@/components/shadcn-ui/button";
 import Link from "next/link";
 
 const CategoriesPage = () => {
@@ -32,6 +33,9 @@ const CategoriesPage = () => {
         </BreadcrumbList>
       </Breadcrumb>
       {/* <PlaceholderContent /> */}
+      <Link href="/dashboard/categories/new">
+        <Button>Add New Category</Button>
+      </Link>
     </ContentLayout>
   );
 };
