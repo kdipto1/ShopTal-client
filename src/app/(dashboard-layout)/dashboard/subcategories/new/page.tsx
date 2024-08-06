@@ -1,5 +1,5 @@
-import CreateCategoryForm from "@/components/dashboard-page-components/categories-page-components/new-page-components/CreateCategoryForm";
 import ContentLayout from "@/components/dashboard-page-components/ContentLayout";
+import CreateSubcategoryForm from "@/components/dashboard-page-components/subcategories-page-components/new-page-components/CreateSubcategoryForm";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -39,7 +39,7 @@ const CreateSubcategoryPage = () => {
         </BreadcrumbList>
       </Breadcrumb>
       {/* <PlaceholderContent /> */}
-      <CreateCategoryForm />
+      <CreateSubcategoryForm />
     </ContentLayout>
   );
 };

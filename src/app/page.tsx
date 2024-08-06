@@ -5,6 +5,8 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       Home Page
       <Link href={"/dashboard"}>dashboard</Link>
+      <Link href={"/login"}>login</Link>
+      <Link href={"/signup"}>Signup</Link>
     </main>
   );
 }

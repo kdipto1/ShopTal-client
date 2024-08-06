@@ -37,7 +37,7 @@ const LoginForm = () => {
     console.log(values);
     const phone = `${values.phone.slice(0, 3)}-${values.phone.slice(
       3,
-      6
+      6,
     )}-${values.phone.slice(6, 10)}`;
     const password = values.password;
     const response = await fetch("http://localhost:5000/api/v1/auth/login", {
@@ -46,6 +46,7 @@ const LoginForm = () => {
       body: JSON.stringify({ phone, password }),
     });
     const data = await response.json();
+    console.log(data);
     toast(data.message, { duration: 960 });
   };
   return (
