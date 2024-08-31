@@ -1,4 +1,7 @@
+"use client";
+
 import ContentLayout from "@/components/dashboard-page-components/ContentLayout";
+import { DataTable } from "@/components/dashboard-page-components/data-table";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -9,8 +12,42 @@ import {
 } from "@/components/shadcn-ui/breadcrumb";
 import { Button } from "@/components/shadcn-ui/button";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+
+const columnDefs = [
+  {
+    Header: "ID",
+    accessor: "id",
+  },
+  {
+    Header: "Name",
+    accessor: "name",
+  },
+  {
+    Header: "Created At",
+    accessor: "createdAt",
+  },
+  {
+    Header: "Updated At",
+    accessor: "updatedAt",
+  },
+  {
+    Header: "Category ID",
+    accessor: "categoryId",
+  },
+];
 
 const SubcategoriesPage = () => {
+  const [data, setData] = useState();
+  useEffect(() => {
+    const getSubcategories = async () => {
+      const data = await fetch("http://localhost:5000/api/v1/subcategories");
+      const subcategories = await data.json();
+      setData(subcategories);
+    };
+    getSubcategories();
+  }, []);
+
   return (
     <ContentLayout title="Subcategories">
       <Breadcrumb>
@@ -36,6 +73,8 @@ const SubcategoriesPage = () => {
       <Link href="/dashboard/subcategories/new">
         <Button>Add New Subcategory</Button>
       </Link>
+
+      {/* <DataTable columns={columnDefs} data={data} /> */}
     </ContentLayout>
   );
 };

@@ -50,7 +50,7 @@ const CreateSubcategoryForm = () => {
     const getCategories = async () => {
       const data = await fetch(
         // "https://shoptal-server.vercel.app/api/v1/categories",
-        `${process.env.BASE_API}/categories`,
+        `http://localhost:5000/api/v1/categories`,
         {
           method: "GET",
         }
@@ -61,8 +61,8 @@ const CreateSubcategoryForm = () => {
     getCategories();
     console.log("Subcategory form");
   }, []);
-  console.log(categories);
-
+  console.log(process.env.BASE_API);
+  console.log(process.env.BASE_API);
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
@@ -80,7 +80,7 @@ const CreateSubcategoryForm = () => {
                 </FormControl>
                 <SelectContent>
                   {categories.map((category: { name: string; id: string }) => (
-                    <SelectItem value={category?.id}>
+                    <SelectItem key={category?.id} value={category?.id}>
                       {category?.name}
                     </SelectItem>
                   ))}
