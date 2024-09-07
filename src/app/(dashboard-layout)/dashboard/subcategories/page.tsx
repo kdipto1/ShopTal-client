@@ -14,7 +14,7 @@ import { Button } from "@/components/shadcn-ui/button";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-const columnDefs = [
+const columns = [
   {
     Header: "ID",
     accessor: "id",
@@ -38,15 +38,50 @@ const columnDefs = [
 ];
 
 const SubcategoriesPage = () => {
-  const [data, setData] = useState();
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+
   useEffect(() => {
-    const getSubcategories = async () => {
-      const data = await fetch("http://localhost:5000/api/v1/subcategories");
-      const subcategories = await data.json();
-      setData(subcategories);
+    const fetchSubcategories = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:5000/api/v1/subcategories?page=${
+            pageIndex + 1
+          }&limit=${pageSize}`
+        );
+        if (!response.ok) {
+          throw new Error(`HTTP error status: ${response.status}`);
+        }
+        const result = await response.json();
+        setData(result.data.data);
+        setLoading(false);
+      } catch (error) {
+        setError(error.message);
+        setLoading(false);
+      }
     };
-    getSubcategories();
-  }, []);
+
+    fetchSubcategories();
+  }, [pageIndex, pageSize]);
+
+  const onPageChange = (pageIndex: number) => {
+    setPageIndex(pageIndex);
+  };
+
+  const onPageSizeChange = (pageSize: number) => {
+    setPageSize(pageSize);
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <ContentLayout title="Subcategories">
@@ -75,6 +110,12 @@ const SubcategoriesPage = () => {
       </Link>
 
       {/* <DataTable columns={columnDefs} data={data} /> */}
+      <DataTable
+        columns={columns}
+        data={data}
+        onPageChange={onPageChange}
+        onPageSizeChange={onPageSizeChange}
+      />
     </ContentLayout>
   );
 };
