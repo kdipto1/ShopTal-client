@@ -59,7 +59,7 @@ const SubcategoriesPage = () => {
         setData(result.data.data);
         setLoading(false);
       } catch (error) {
-        setError(error.message);
+        // setError(error.message);
         setLoading(false);
       }
     };
@@ -110,12 +110,12 @@ const SubcategoriesPage = () => {
       </Link>
 
       {/* <DataTable columns={columnDefs} data={data} /> */}
-      <DataTable
+      {/* <DataTable
         columns={columns}
         data={data}
         onPageChange={onPageChange}
         onPageSizeChange={onPageSizeChange}
-      />
+      /> */}
     </ContentLayout>
   );
 };
