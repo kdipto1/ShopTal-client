@@ -1,7 +1,6 @@
 "use client";
 
 import ContentLayout from "@/components/dashboard-page-components/ContentLayout";
-import { DataTable } from "@/components/dashboard-page-components/data-table";
 import {
   Breadcrumb,
   BreadcrumbItem,

@@ -190,6 +190,11 @@
 
 "use client";
 
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/shadcn-ui/avatar";
 import { Button } from "@/components/shadcn-ui/button";
 import {
   Form,
@@ -201,6 +206,7 @@ import {
 } from "@/components/shadcn-ui/form";
 import { Input } from "@/components/shadcn-ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ChangeEvent, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
 
@@ -221,7 +227,7 @@ const FormSchema = z.object({
   subcategoryId: z.string({
     message: "Subcategory for product must be selected.",
   }),
-  file: z.string({ message: "Image file must be selected" }),
+  file: z.any({ message: "Image file must be selected" }),
   features: z
     .array(
       z.object({
@@ -235,6 +241,7 @@ const FormSchema = z.object({
 });
 
 const CreateProductForm = () => {
+  const [preview, setPreview] = useState("");
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -253,6 +260,14 @@ const CreateProductForm = () => {
     control: form.control,
     name: "features",
   });
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setPreview(URL.createObjectURL(file));
+      form.setValue("file", file);
+    }
+  };
 
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
     console.log("Form submitted:", data);
@@ -318,10 +333,29 @@ const CreateProductForm = () => {
           )}
         />
 
+        <Avatar className="w-36 h-36">
+          <AvatarImage className="rounded-md" src={preview} />
+          <AvatarFallback>BU</AvatarFallback>
+        </Avatar>
+
+        <FormField
+          control={form.control}
+          name="file"
+          render={() => (
+            <FormItem>
+              <FormLabel>Product Image</FormLabel>
+              <FormControl>
+                <Input type="file" onChange={handleFileChange} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <div>
           <h2>Features:</h2>
           {fields.map((item, index) => (
-            <div key={item.id} className="flex space-x-4">
+            <div key={item.id} className="flex space-x-4  items-center">
               <FormField
                 control={form.control}
                 name={`features.${index}.name`}
