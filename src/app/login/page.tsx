@@ -1,5 +1,5 @@
 import LoginForm from "@/components/login-page-components/LoginForm";
-import second from "@/app/assets/undraw_access_account_re_8spm.svg";
+import second from "@/app/assets/undraw_login.svg";
 import Image from "next/image";
 import { Card } from "@/components/shadcn-ui/card";
 

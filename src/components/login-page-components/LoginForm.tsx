@@ -14,6 +14,8 @@ import {
 import { Input } from "../shadcn-ui/input";
 import { Button } from "../shadcn-ui/button";
 import { toast } from "sonner";
+import useToken from "@/hooks/useToken";
+import Router from "next/router";
 
 const formSchema = z.object({
   phone: z.string().min(10, {
@@ -25,6 +27,7 @@ const formSchema = z.object({
 });
 
 const LoginForm = () => {
+  // const [token, setToken, removeToken] = useToken("accessToken");
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -37,17 +40,20 @@ const LoginForm = () => {
     console.log(values);
     const phone = `${values.phone.slice(0, 3)}-${values.phone.slice(
       3,
-      6,
+      6
     )}-${values.phone.slice(6, 10)}`;
     const password = values.password;
-    const response = await fetch("http://localhost:5000/api/v1/auth/login", {
+    const response = await fetch(`http://localhost:5000/api/v1/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ phone, password }),
     });
     const data = await response.json();
     console.log(data);
+    // setToken?.(data.data.accessToken);
+    localStorage.setItem("accessToken", data.data.accessToken);
     toast(data.message, { duration: 960 });
+    Router.push("/dashboard");
   };
   return (
     <Form {...form}>

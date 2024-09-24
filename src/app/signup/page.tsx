@@ -1,6 +1,6 @@
 import SignupForm from "@/components/signup-page-components/SignupForm";
 import Image from "next/image";
-import signup from "@/app/assets/undraw_sign_up_n6im.svg";
+import signup from "@/app/assets/undraw_sign_up.svg";
 import { Card } from "@/components/shadcn-ui/card";
 
 const page = () => {

@@ -59,10 +59,7 @@ const CreateSubcategoryForm = () => {
       setCategories(categories.data.data);
     };
     getCategories();
-    console.log("Subcategory form");
   }, []);
-  console.log(process.env.BASE_API);
-  console.log(process.env.BASE_API);
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
