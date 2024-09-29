@@ -11,76 +11,163 @@ import {
 } from "@/components/shadcn-ui/breadcrumb";
 import { Button } from "@/components/shadcn-ui/button";
 import { ColumnDef } from "@tanstack/react-table";
+import { ChevronRightIcon } from "lucide-react";
 import Link from "next/link";
-import React, { useState } from "react";
+import { useCallback, useState } from "react";
 
 export type Product = {
+  id: string;
   name: string;
   price: number;
   quantity: number;
 };
 
 const ProductsPage = () => {
-  // const [data, setData] = useState<Payment[]>([]);
-  const [data, setData] = useState([]);
-  const [totalPages, setTotalPages] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState<Product[]>([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
 
   const columns: ColumnDef<Product>[] = [
     {
       accessorKey: "name",
       header: "Name",
-      cell: ({ row }) => <div>{row.getValue("name")}</div>,
-      sortingFn: "alphanumeric",
+      cell: ({ row }) => (
+        <div className="font-medium">{row.getValue("name")}</div>
+      ),
     },
     {
       accessorKey: "price",
       header: "Price",
       cell: ({ row }) => {
         const price = parseFloat(row.getValue("price"));
-        return <div>${price.toFixed(2)}</div>;
+        const formatted = new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "USD",
+        }).format(price);
+        return <div className="text-center font-medium">{formatted}</div>;
       },
-      sortingFn: "basic",
     },
     {
       accessorKey: "quantity",
       header: "Quantity",
-      cell: ({ row }) => <div>{row.getValue("quantity")}</div>,
-      sortingFn: "basic",
+      cell: ({ row }) => (
+        <div className="text-center">{row.getValue("quantity")}</div>
+      ),
+    },
+    {
+      header: "Actions",
+      id: "actions",
+      cell: ({ row }) => {
+        const product = row.original;
+        return (
+          <div className="text-center">
+            <Button variant="ghost" size="sm" asChild>
+              <Link href={`/dashboard/products/${product.id}`}>
+                Edit
+                <ChevronRightIcon className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+        );
+      },
     },
   ];
 
-  const fetchData = async ({
-    pageIndex,
-    pageSize,
-    searchTerm,
-    sorting,
-  }: {
-    pageIndex: number;
-    pageSize: number;
-    searchTerm: string;
-    sorting: any;
-  }) => {
-    console.log(pageIndex, pageSize, searchTerm);
-    setLoading(true);
+  // const fetchData = async ({
+  //   pageIndex,
+  //   pageSize,
+  //   searchTerm,
+  //   sorting,
+  // }: {
+  //   pageIndex: number;
+  //   pageSize: number;
+  //   searchTerm: string;
+  //   sorting: any;
+  // }) => {
+  //   setIsLoading(true);
 
-    // Simulate API call with pagination, sorting, and search
-    const response = await fetch(
-      `http://localhost:5000/api/v1/products?page=${pageIndex}&limit=${pageSize}&searchTerm=${searchTerm}`,
-      {
-        method: "GET",
+  //   try {
+  //     const response = await fetch(
+  //       `http://localhost:5000/api/v1/products?page=${
+  //         pageIndex + 1
+  //       }&limit=${pageSize}&searchTerm=${searchTerm}&sort=${JSON.stringify(
+  //         sorting
+  //       )}`,
+  //       {
+  //         method: "GET",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           // Add any authentication headers if required
+  //         },
+  //       }
+  //     );
+
+  //     if (!response.ok) {
+  //       throw new Error("Failed to fetch products");
+  //     }
+
+  //     const result = await response.json();
+  //     const totalItems = result.data.meta.total;
+  //     const itemsPerPage = result.data.meta.limit;
+  //     const calculatedTotalPages = Math.ceil(totalItems / itemsPerPage);
+
+  //     setData(result.data.data);
+  //     setTotalPages(calculatedTotalPages);
+  //   } catch (error) {
+  //     console.error("Error fetching products:", error);
+  //     // Handle error state here (e.g., show an error message to the user)
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+  const fetchData = useCallback(
+    async ({
+      pageIndex,
+      pageSize,
+      searchTerm,
+      sorting,
+    }: {
+      pageIndex: number;
+      pageSize: number;
+      searchTerm: string;
+      sorting: any;
+    }) => {
+      setIsLoading(true);
+      try {
+        const response = await fetch(
+          `http://localhost:5000/api/v1/products?page=${
+            pageIndex + 1
+          }&limit=${pageSize}&searchTerm=${searchTerm}&sort=${JSON.stringify(
+            sorting
+          )}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch products");
+        }
+
+        const result = await response.json();
+        const totalItems = result.data.meta.total;
+        const itemsPerPage = result.data.meta.limit;
+        const calculatedTotalPages = Math.ceil(totalItems / itemsPerPage);
+
+        setData(result.data.data);
+        setTotalPages(calculatedTotalPages);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      } finally {
+        setIsLoading(false);
       }
-    );
-    const result = await response.json();
-    console.log(result);
-    const totalItems = result.data.meta.total;
-    const itemsPerPage = result.data.meta.limit;
-    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    },
+    []
+  );
 
-    setData(result.data.data);
-    setTotalPages(totalPages);
-    setLoading(false);
-  };
   return (
     <ContentLayout title="Products">
       <Breadcrumb>
@@ -107,14 +194,14 @@ const ProductsPage = () => {
         <Button>Add New Product</Button>
       </Link>
 
-      <div>
+      <div className="rounded-md border">
         <DataTable
           columns={columns}
           data={data}
           fetchData={fetchData}
           totalPages={totalPages}
+          isLoading={isLoading}
         />
-        {loading && <p>Loading...</p>}
       </div>
     </ContentLayout>
   );

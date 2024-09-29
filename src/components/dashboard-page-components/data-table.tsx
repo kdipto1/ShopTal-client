@@ -1,6 +1,279 @@
+// "use client";
+
+// import {
+//   ColumnDef,
+//   ColumnFiltersState,
+//   flexRender,
+//   getCoreRowModel,
+//   getFilteredRowModel,
+//   getPaginationRowModel,
+//   getSortedRowModel,
+//   SortingState,
+//   useReactTable,
+//   VisibilityState,
+// } from "@tanstack/react-table";
+// import { useCallback, useEffect, useMemo, useState } from "react";
+// import { Input } from "../shadcn-ui/input";
+// import {
+//   DropdownMenu,
+//   DropdownMenuCheckboxItem,
+//   DropdownMenuContent,
+//   DropdownMenuTrigger,
+// } from "../shadcn-ui/dropdown-menu";
+// import { Button } from "../shadcn-ui/button";
+// import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
+// import {
+//   Select,
+//   SelectContent,
+//   SelectItem,
+//   SelectTrigger,
+//   SelectValue,
+// } from "../shadcn-ui/select";
+// import {
+//   Table,
+//   TableBody,
+//   TableCell,
+//   TableHead,
+//   TableHeader,
+//   TableRow,
+// } from "../shadcn-ui/table";
+// import useDebounce from "@/hooks/useDebounce";
+
+// interface DataTableProps<TData> {
+//   columns: ColumnDef<TData>[];
+//   data: TData[];
+//   fetchData: (params: {
+//     pageIndex: number;
+//     pageSize: number;
+//     searchTerm: string;
+//     sorting: SortingState;
+//   }) => Promise<void>;
+//   totalPages: number;
+//   isLoading: boolean;
+// }
+
+// export function DataTable<TData>({
+//   columns,
+//   data,
+//   fetchData,
+//   totalPages,
+//   isLoading,
+// }: DataTableProps<TData>) {
+//   const [sorting, setSorting] = useState<SortingState>([]);
+//   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+//   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+//   const [rowSelection, setRowSelection] = useState({});
+//   const [searchTerm, setSearchTerm] = useState<string>("");
+//   const [{ pageIndex, pageSize }, setPagination] = useState({
+//     pageIndex: 0,
+//     pageSize: 10,
+//   });
+//   console.log(data);
+//   const pagination = useMemo(
+//     () => ({
+//       pageIndex,
+//       pageSize,
+//     }),
+//     [pageIndex, pageSize]
+//   );
+
+//   const table = useReactTable({
+//     data,
+//     columns,
+//     state: {
+//       sorting,
+//       columnFilters,
+//       columnVisibility,
+//       rowSelection,
+//       pagination,
+//     },
+//     enableRowSelection: true,
+//     onSortingChange: setSorting,
+//     onColumnFiltersChange: setColumnFilters,
+//     getCoreRowModel: getCoreRowModel(),
+//     getPaginationRowModel: getPaginationRowModel(),
+//     getSortedRowModel: getSortedRowModel(),
+//     getFilteredRowModel: getFilteredRowModel(),
+//     onColumnVisibilityChange: setColumnVisibility,
+//     onRowSelectionChange: setRowSelection,
+//     onPaginationChange: setPagination,
+//     manualPagination: true,
+//     pageCount: totalPages,
+//   });
+
+//   const debouncedSearchTerm = useDebounce(searchTerm, 400);
+
+//   const fetchDataMemoized = useCallback(() => {
+//     fetchData({
+//       pageIndex,
+//       pageSize,
+//       searchTerm: debouncedSearchTerm,
+//       sorting,
+//     });
+//   }, [fetchData, pageIndex, pageSize, debouncedSearchTerm, sorting]);
+
+//   useEffect(() => {
+//     fetchDataMemoized();
+//   }, [fetchDataMemoized]);
+
+//   return (
+//     <div className="w-full space-y-4">
+//       <div className="flex items-center justify-between">
+//         <div className="flex items-center gap-2">
+//           <Input
+//             placeholder="Search..."
+//             value={searchTerm}
+//             onChange={(e) => setSearchTerm(e.target.value)}
+//             className="max-w-sm"
+//           />
+//           <DropdownMenu>
+//             <DropdownMenuTrigger asChild>
+//               <Button variant="outline" className="ml-auto">
+//                 Columns <ChevronDown className="ml-2 h-4 w-4" />
+//               </Button>
+//             </DropdownMenuTrigger>
+//             <DropdownMenuContent align="end">
+//               {table
+//                 .getAllColumns()
+//                 .filter((column) => column.getCanHide())
+//                 .map((column) => {
+//                   return (
+//                     <DropdownMenuCheckboxItem
+//                       key={column.id}
+//                       className="capitalize"
+//                       checked={column.getIsVisible()}
+//                       onCheckedChange={(value) =>
+//                         column.toggleVisibility(!!value)
+//                       }
+//                     >
+//                       {column.id}
+//                     </DropdownMenuCheckboxItem>
+//                   );
+//                 })}
+//             </DropdownMenuContent>
+//           </DropdownMenu>
+//         </div>
+//         <div className="flex items-center gap-2">
+//           <Select
+//             value={pageSize.toString()}
+//             onValueChange={(value) => {
+//               table.setPageSize(Number(value));
+//             }}
+//           >
+//             <SelectTrigger className="w-[180px]">
+//               <SelectValue placeholder="Select rows per page" />
+//             </SelectTrigger>
+//             <SelectContent>
+//               {[10, 20, 30, 40, 50].map((pageSize) => (
+//                 <SelectItem key={pageSize} value={`${pageSize}`}>
+//                   {pageSize} rows
+//                 </SelectItem>
+//               ))}
+//             </SelectContent>
+//           </Select>
+//         </div>
+//       </div>
+//       <div className="rounded-md border">
+//         <Table>
+//           <TableHeader>
+//             {table.getHeaderGroups().map((headerGroup) => (
+//               <TableRow key={headerGroup.id}>
+//                 {headerGroup.headers.map((header) => {
+//                   return (
+//                     <TableHead className="text-center" key={header.id}>
+//                       {header.isPlaceholder
+//                         ? null
+//                         : flexRender(
+//                             header.column.columnDef.header,
+//                             header.getContext()
+//                           )}
+//                     </TableHead>
+//                   );
+//                 })}
+//               </TableRow>
+//             ))}
+//           </TableHeader>
+//           <TableBody>
+//             {isLoading ? (
+//               <TableRow>
+//                 <TableCell
+//                   colSpan={columns.length}
+//                   className="h-24 text-center"
+//                 >
+//                   Loading...
+//                 </TableCell>
+//               </TableRow>
+//             ) : table.getRowModel().rows?.length ? (
+//               table.getRowModel().rows.map((row) => (
+//                 <TableRow
+//                   key={row.id}
+//                   data-state={row.getIsSelected() && "selected"}
+//                 >
+//                   {row.getVisibleCells().map((cell) => (
+//                     <TableCell className="text-center" key={cell.id}>
+//                       {flexRender(
+//                         cell.column.columnDef.cell,
+//                         cell.getContext()
+//                       )}
+//                     </TableCell>
+//                   ))}
+//                 </TableRow>
+//               ))
+//             ) : (
+//               <TableRow>
+//                 <TableCell
+//                   colSpan={columns.length}
+//                   className="h-24 text-center"
+//                 >
+//                   No results.
+//                 </TableCell>
+//               </TableRow>
+//             )}
+//           </TableBody>
+//         </Table>
+//       </div>
+//       <div className="flex items-center justify-between space-x-2 py-4">
+//         <div className="flex-1 text-sm text-muted-foreground">
+//           {table.getFilteredSelectedRowModel().rows.length} of{" "}
+//           {table.getFilteredRowModel().rows.length} row(s) selected.
+//         </div>
+//         <div className="flex items-center space-x-2">
+//           <Button
+//             variant="outline"
+//             size="sm"
+//             onClick={() => table.previousPage()}
+//             disabled={!table.getCanPreviousPage()}
+//           >
+//             <ChevronLeft className="h-4 w-4" />
+//             Previous
+//           </Button>
+//           <div className="flex items-center gap-1">
+//             <p className="text-sm font-medium">Page</p>
+//             <strong className="text-sm font-medium">
+//               {table.getState().pagination.pageIndex + 1} of{" "}
+//               {table.getPageCount()}
+//             </strong>
+//           </div>
+//           <Button
+//             variant="outline"
+//             size="sm"
+//             onClick={() => table.nextPage()}
+//             disabled={!table.getCanNextPage()}
+//           >
+//             Next
+//             <ChevronRight className="h-4 w-4" />
+//           </Button>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+// +++++++++++++++++++++++++++++++
+
 "use client";
 
-import React from "react";
+import useDebounce from "@/hooks/useDebounce";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -13,6 +286,7 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Input } from "../shadcn-ui/input";
 import {
   DropdownMenu,
@@ -20,8 +294,20 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "../shadcn-ui/dropdown-menu";
+import {
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  FilterIcon,
+} from "lucide-react";
 import { Button } from "../shadcn-ui/button";
-import { ChevronDown } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../shadcn-ui/select";
 import {
   Table,
   TableBody,
@@ -37,10 +323,11 @@ interface DataTableProps<TData> {
   fetchData: (params: {
     pageIndex: number;
     pageSize: number;
-    searchTerm: string;
+    filters: ColumnFiltersState;
     sorting: SortingState;
-  }) => void;
+  }) => Promise<void>;
   totalPages: number;
+  isLoading: boolean;
 }
 
 export function DataTable<TData>({
@@ -48,19 +335,38 @@ export function DataTable<TData>({
   data,
   fetchData,
   totalPages,
+  isLoading,
 }: DataTableProps<TData>) {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = useState({});
+  const [{ pageIndex, pageSize }, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
+  const [activeFilter, setActiveFilter] = useState<string | null>(null);
+  const [filterValue, setFilterValue] = useState("");
+
+  const pagination = useMemo(
+    () => ({
+      pageIndex,
+      pageSize,
+    }),
+    [pageIndex, pageSize]
   );
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = React.useState({});
-  const [searchTerm, setSearchTerm] = React.useState<string>("");
 
   const table = useReactTable({
     data,
     columns,
+    state: {
+      sorting,
+      columnFilters,
+      columnVisibility,
+      rowSelection,
+      pagination,
+    },
+    enableRowSelection: true,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -69,64 +375,114 @@ export function DataTable<TData>({
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection,
-    },
+    onPaginationChange: setPagination,
+    manualPagination: true,
+    pageCount: totalPages,
   });
 
-  // Fetch new data whenever sorting, pagination, or search term changes
-  React.useEffect(() => {
+  const debouncedColumnFilters = useDebounce(columnFilters, 300);
+
+  const fetchDataMemoized = useCallback(() => {
     fetchData({
-      pageIndex: 1 | table.getState().pagination.pageIndex,
-      pageSize: table.getState().pagination.pageSize,
-      searchTerm,
+      pageIndex,
+      pageSize,
+      filters: debouncedColumnFilters,
       sorting,
     });
-  }, [
-    table.getState().pagination.pageIndex,
-    table.getState().pagination.pageSize,
-    searchTerm,
-    sorting,
-  ]);
+  }, [fetchData, pageIndex, pageSize, debouncedColumnFilters, sorting]);
+
+  useEffect(() => {
+    fetchDataMemoized();
+  }, [fetchDataMemoized]);
+
+  const handleFilterChange = useCallback(() => {
+    if (activeFilter && filterValue) {
+      setColumnFilters((prev) => [
+        ...prev.filter((filter) => filter.id !== activeFilter),
+        { id: activeFilter, value: filterValue },
+      ]);
+    }
+  }, [activeFilter, filterValue]);
+
+  useEffect(() => {
+    handleFilterChange();
+  }, [handleFilterChange]);
 
   return (
-    <div className="w-full">
-      <div className="flex items-center py-4">
-        <Input
-          placeholder="Search..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="max-w-sm"
-        />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown className="ml-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+    <div className="w-full space-y-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Select
+            value={activeFilter || ""}
+            onValueChange={(value) => setActiveFilter(value)}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select column to filter" />
+            </SelectTrigger>
+            <SelectContent>
+              {columns.map((column) => (
+                <SelectItem key={column.id} value={column.id as string}>
+                  {column.id}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Input
+            placeholder="Filter value..."
+            value={filterValue}
+            onChange={(e) => setFilterValue(e.target.value)}
+            className="max-w-sm"
+          />
+          <Button onClick={handleFilterChange} variant="secondary">
+            <FilterIcon className="mr-2 h-4 w-4" />
+            Apply Filter
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="ml-auto">
+                Columns <ChevronDown className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
+                    >
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
+                  );
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+        <div className="flex items-center gap-2">
+          <Select
+            value={pageSize.toString()}
+            onValueChange={(value) => {
+              table.setPageSize(Number(value));
+            }}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select rows per page" />
+            </SelectTrigger>
+            <SelectContent>
+              {[10, 20, 30, 40, 50].map((pageSize) => (
+                <SelectItem key={pageSize} value={`${pageSize}`}>
+                  {pageSize} rows
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
       <div className="rounded-md border">
         <Table>
@@ -149,7 +505,16 @@ export function DataTable<TData>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {isLoading ? (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  Loading...
+                </TableCell>
+              </TableRow>
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
@@ -178,20 +543,28 @@ export function DataTable<TData>({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
+      <div className="flex items-center justify-between space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
           {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>
-        <div className="space-x-2">
+        <div className="flex items-center space-x-2">
           <Button
             variant="outline"
             size="sm"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
+            <ChevronLeft className="h-4 w-4" />
             Previous
           </Button>
+          <div className="flex items-center gap-1">
+            <p className="text-sm font-medium">Page</p>
+            <strong className="text-sm font-medium">
+              {table.getState().pagination.pageIndex + 1} of{" "}
+              {table.getPageCount()}
+            </strong>
+          </div>
           <Button
             variant="outline"
             size="sm"
@@ -199,6 +572,7 @@ export function DataTable<TData>({
             disabled={!table.getCanNextPage()}
           >
             Next
+            <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
       </div>
