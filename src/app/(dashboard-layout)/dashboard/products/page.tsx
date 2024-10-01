@@ -44,15 +44,13 @@ const ProductsPage = () => {
           style: "currency",
           currency: "USD",
         }).format(price);
-        return <div className="text-center font-medium">{formatted}</div>;
+        return <div className=" font-medium">{formatted}</div>;
       },
     },
     {
       accessorKey: "quantity",
       header: "Quantity",
-      cell: ({ row }) => (
-        <div className="text-center">{row.getValue("quantity")}</div>
-      ),
+      cell: ({ row }) => <div className="">{row.getValue("quantity")}</div>,
     },
     {
       header: "Actions",
@@ -60,7 +58,7 @@ const ProductsPage = () => {
       cell: ({ row }) => {
         const product = row.original;
         return (
-          <div className="text-center">
+          <div className="">
             <Button variant="ghost" size="sm" asChild>
               <Link href={`/dashboard/products/${product.id}`}>
                 Edit
@@ -194,7 +192,7 @@ const ProductsPage = () => {
         <Button>Add New Product</Button>
       </Link>
 
-      <div className="rounded-md border">
+      <div className="mt-2">
         <DataTable
           columns={columns}
           data={data}
