@@ -21,12 +21,7 @@ import {
   DropdownMenuTrigger,
 } from "../shadcn-ui/dropdown-menu";
 import { Button } from "../shadcn-ui/button";
-import {
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  ChevronsUpDown,
-} from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -73,8 +68,7 @@ export function DataTable<TData>({
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [value, setValue] = useState("");
-  const [inputValue, setInputValue] = useState("");
+
   const [{ pageIndex, pageSize }, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
@@ -93,9 +87,15 @@ export function DataTable<TData>({
     state: {
       sorting,
       columnFilters,
-      columnVisibility,
+      // columnVisibility,
       rowSelection,
       pagination,
+    },
+    initialState: {
+      columnVisibility: {
+        createdAt: false,
+        updatedAt: false,
+      },
     },
     enableRowSelection: true,
     onSortingChange: setSorting,
@@ -125,7 +125,7 @@ export function DataTable<TData>({
   useEffect(() => {
     fetchDataMemoized();
   }, [fetchDataMemoized]);
-  console.log(columns);
+
   return (
     <div className="w-full space-y-4">
       <div className="flex items-center justify-between">
@@ -136,9 +136,7 @@ export function DataTable<TData>({
             onChange={(e) => setSearchTerm(e.target.value)}
             className="max-w-sm"
           />
-          {/*  */}
 
-          {/*  */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="ml-auto">

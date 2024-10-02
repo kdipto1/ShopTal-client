@@ -1,6 +1,8 @@
 "use client";
 
 import ContentLayout from "@/components/dashboard-page-components/ContentLayout";
+import { DataTable } from "@/components/dashboard-page-components/data-table";
+import { DataTableColumnHeader } from "@/components/dashboard-page-components/DataTableColumnHeader";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,78 +12,143 @@ import {
   BreadcrumbSeparator,
 } from "@/components/shadcn-ui/breadcrumb";
 import { Button } from "@/components/shadcn-ui/button";
+import { ColumnDef } from "@tanstack/react-table";
+import { ArrowUpDown, ChevronRightIcon } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
-const columns = [
-  {
-    Header: "ID",
-    accessor: "id",
-  },
-  {
-    Header: "Name",
-    accessor: "name",
-  },
-  {
-    Header: "Created At",
-    accessor: "createdAt",
-  },
-  {
-    Header: "Updated At",
-    accessor: "updatedAt",
-  },
-  {
-    Header: "Category ID",
-    accessor: "categoryId",
-  },
-];
+export type Subcategory = {
+  id: string;
+  name: string;
+  categoryId: string;
+  createdAt: Date;
+  updateAt: Date;
+};
 
 const SubcategoriesPage = () => {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [pageIndex, setPageIndex] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
+  const [data, setData] = useState<Subcategory[]>([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchSubcategories = async () => {
+  const columns: ColumnDef<Subcategory>[] = [
+    {
+      accessorKey: "id",
+      // header: "ID",
+      header: ({ column }) => (
+        <DataTableColumnHeader className="ml-2" column={column} title="ID" />
+      ),
+      cell: ({ row }) => (
+        <div className="font-medium">{row.getValue("id")}</div>
+      ),
+    },
+    {
+      accessorKey: "name",
+      // header: "Name",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Name" />
+      ),
+      cell: ({ row }) => (
+        <div className="font-medium">{row.getValue("name")}</div>
+      ),
+    },
+    {
+      accessorKey: "categoryId",
+      // header: "Category ID",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Category ID" />
+      ),
+      cell: ({ row }) => (
+        <div className="font-medium">{row.getValue("categoryId")}</div>
+      ),
+    },
+    {
+      accessorKey: "createdAt",
+      // header: "CreatedAt",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="CreatedAt" />
+      ),
+      cell: ({ row }) => {
+        const date: Date = row.getValue("createdAt");
+        return <div>{new Date(date).toLocaleString()}</div>;
+      },
+    },
+    {
+      accessorKey: "updatedAt",
+      // header: "UpdatedAt",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="UpdatedAt" />
+      ),
+      cell: ({ row }) => {
+        const date: Date = row.getValue("updatedAt");
+        return <div>{new Date(date).toLocaleString()}</div>;
+      },
+    },
+    {
+      header: "Actions",
+      id: "actions",
+      cell: ({ row }) => {
+        const product = row.original;
+        return (
+          <div className="">
+            <Button variant="ghost" size="sm" asChild>
+              <Link href={`/dashboard/subcategories/${product.id}`}>
+                Edit
+                <ChevronRightIcon className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+        );
+      },
+    },
+  ];
+
+  const fetchData = useCallback(
+    async ({
+      pageIndex,
+      pageSize,
+      searchTerm,
+      sorting,
+    }: {
+      pageIndex: number;
+      pageSize: number;
+      searchTerm: string;
+      sorting: any;
+    }) => {
+      setIsLoading(true);
       try {
         const response = await fetch(
           `http://localhost:5000/api/v1/subcategories?page=${
             pageIndex + 1
-          }&limit=${pageSize}`
+          }&limit=${pageSize}&searchTerm=${searchTerm}&sort=${JSON.stringify(
+            sorting
+          )}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
         );
+
         if (!response.ok) {
-          throw new Error(`HTTP error status: ${response.status}`);
+          throw new Error("Failed to fetch categories");
         }
+
         const result = await response.json();
+        const totalItems = result.data.meta.total;
+        const itemsPerPage = result.data.meta.limit;
+        const calculatedTotalPages = Math.ceil(totalItems / itemsPerPage);
+
         setData(result.data.data);
-        setLoading(false);
+        setTotalPages(calculatedTotalPages);
       } catch (error) {
-        // setError(error.message);
-        setLoading(false);
+        console.error("Error fetching categories:", error);
+      } finally {
+        setIsLoading(false);
       }
-    };
-
-    fetchSubcategories();
-  }, [pageIndex, pageSize]);
-
-  const onPageChange = (pageIndex: number) => {
-    setPageIndex(pageIndex);
-  };
-
-  const onPageSizeChange = (pageSize: number) => {
-    setPageSize(pageSize);
-  };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
+    },
+    []
+  );
   return (
     <ContentLayout title="Subcategories">
       <Breadcrumb>
@@ -108,13 +175,15 @@ const SubcategoriesPage = () => {
         <Button>Add New Subcategory</Button>
       </Link>
 
-      {/* <DataTable columns={columnDefs} data={data} /> */}
-      {/* <DataTable
-        columns={columns}
-        data={data}
-        onPageChange={onPageChange}
-        onPageSizeChange={onPageSizeChange}
-      /> */}
+      <div className="mt-2">
+        <DataTable
+          columns={columns}
+          data={data}
+          fetchData={fetchData}
+          totalPages={totalPages}
+          isLoading={isLoading}
+        />
+      </div>
     </ContentLayout>
   );
 };
