@@ -47,8 +47,7 @@ const LoginForm = () => {
       body: JSON.stringify({ phone, password }),
     });
     const data = await response.json();
-    console.log(data);
-    // setToken?.(data.data.accessToken);
+
     if (data) {
       localStorage.setItem("accessToken", data?.data?.accessToken);
     }

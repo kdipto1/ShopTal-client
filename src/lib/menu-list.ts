@@ -5,6 +5,7 @@ import {
   LucideTag,
   LucideTags,
   ShoppingBag,
+  Award,
 } from "lucide-react";
 
 type Submenu = {
@@ -55,6 +56,13 @@ export function getMenuList(pathname: string): Group[] {
             //   active: pathname === "/dashboard/products/new",
             // },
           ],
+        },
+        {
+          href: "/dashboard/brands",
+          label: "Brands",
+          active: pathname.includes("/dashboard/brands"),
+          icon: Award,
+          submenus: [],
         },
         {
           href: "/dashboard/categories",
