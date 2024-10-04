@@ -38,9 +38,7 @@ const FormSchema = z.object({
   quantity: z.coerce
     .number()
     .min(1, { message: "Product quantity must be provided." }),
-  brandName: z
-    .string()
-    .min(2, { message: "Product brand name must be at least 2 characters." }),
+  brandId: z.string({ message: "Brand for product must be selected" }),
   categoryId: z.string({ message: "Category for product must be selected" }),
   subcategoryId: z.string({
     message: "Subcategory for product must be selected.",
@@ -61,6 +59,7 @@ const FormSchema = z.object({
 const CreateProductForm = () => {
   const [preview, setPreview] = useState("");
   const [categories, setCategories] = useState([]);
+  const [brands, setBrands] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -68,7 +67,8 @@ const CreateProductForm = () => {
       name: "",
       price: 0,
       quantity: 0,
-      brandName: "",
+
+      brandId: "",
       categoryId: "",
       subcategoryId: "",
       file: "",
@@ -103,6 +103,16 @@ const CreateProductForm = () => {
     setSubcategories(data.data.data);
   }, []);
 
+  const fetchBrands = async () => {
+    const res = await fetch(`http://localhost:5000/api/v1/brands`);
+    const data = await res.json();
+    setBrands(data.data.data);
+  };
+
+  useEffect(() => {
+    fetchBrands();
+  }, []);
+  console.log(brands);
   useEffect(() => {
     fetchCategories();
   }, [fetchCategories]);
@@ -118,7 +128,8 @@ const CreateProductForm = () => {
     formData.append("name", data.name);
     formData.append("price", data.price.toString()); // Keep as a number
     formData.append("quantity", data.quantity.toString()); // Keep as a number
-    formData.append("brandName", data.brandName);
+
+    formData.append("brandId", data.brandId);
     formData.append("categoryId", data.categoryId);
     formData.append("subcategoryId", data.subcategoryId);
 
@@ -186,20 +197,32 @@ const CreateProductForm = () => {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
-          name="brandName"
+          name="brandId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Product Brand Name</FormLabel>
-              <FormControl>
-                <Input placeholder="Brand name" type="text" {...field} />
-              </FormControl>
+              <FormLabel>Brand</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a brand" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {brands.map((brand: { name: string; id: string }) => (
+                    <SelectItem key={brand?.id} value={brand?.id}>
+                      {brand?.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
               <FormMessage />
             </FormItem>
           )}
         />
-
         <FormField
           control={form.control}
           name="categoryId"

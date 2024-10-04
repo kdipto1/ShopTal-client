@@ -14,8 +14,6 @@ import {
 import { Input } from "../shadcn-ui/input";
 import { Button } from "../shadcn-ui/button";
 import { toast } from "sonner";
-import useToken from "@/hooks/useToken";
-import Router from "next/router";
 
 const formSchema = z.object({
   phone: z.string().min(10, {
@@ -51,9 +49,10 @@ const LoginForm = () => {
     const data = await response.json();
     console.log(data);
     // setToken?.(data.data.accessToken);
-    localStorage.setItem("accessToken", data.data.accessToken);
+    if (data) {
+      localStorage.setItem("accessToken", data?.data?.accessToken);
+    }
     toast(data.message, { duration: 960 });
-    Router.push("/dashboard");
   };
   return (
     <Form {...form}>
