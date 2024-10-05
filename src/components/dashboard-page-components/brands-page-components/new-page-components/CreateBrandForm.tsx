@@ -32,8 +32,28 @@ const CreateBrandForm = () => {
     },
   });
 
-  const onSubmit = (data: z.infer<typeof FormSchema>) => {
-    toast.success("");
+  const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+    try {
+      const response = await fetch("http://localhost:5000/api/v1/brands", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        throw new Error(errorResponse.message || "Failed to create brand");
+      }
+
+      const responseData = await response.json();
+      toast(responseData.message, { duration: 960 });
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast("An error occurred. Please try again.", { duration: 960 });
+    }
   };
   return (
     <Form {...form}>
