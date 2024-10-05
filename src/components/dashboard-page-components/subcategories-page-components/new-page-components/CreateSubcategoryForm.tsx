@@ -41,25 +41,26 @@ const CreateSubcategoryForm = () => {
     },
   });
 
+  const fetchCategories = async () => {
+    const data = await fetch(
+      // "https://shoptal-server.vercel.app/api/v1/categories",
+      `http://localhost:5000/api/v1/categories`,
+      {
+        method: "GET",
+      }
+    );
+    const categories = await data.json();
+    setCategories(categories?.data?.data);
+  };
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
     console.log(data);
     toast.success("");
   };
 
-  useEffect(() => {
-    const getCategories = async () => {
-      const data = await fetch(
-        // "https://shoptal-server.vercel.app/api/v1/categories",
-        `http://localhost:5000/api/v1/categories`,
-        {
-          method: "GET",
-        }
-      );
-      const categories = await data.json();
-      setCategories(categories.data.data);
-    };
-    getCategories();
-  }, []);
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">

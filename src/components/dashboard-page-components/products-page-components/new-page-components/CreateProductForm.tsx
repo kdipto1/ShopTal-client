@@ -126,18 +126,16 @@ const CreateProductForm = () => {
     const formData = new FormData();
 
     formData.append("name", data.name);
-    formData.append("price", data.price.toString()); // Keep as a number
-    formData.append("quantity", data.quantity.toString()); // Keep as a number
-
+    formData.append("price", data.price.toString());
+    formData.append("quantity", data.quantity.toString());
     formData.append("brandId", data.brandId);
     formData.append("categoryId", data.categoryId);
     formData.append("subcategoryId", data.subcategoryId);
+    formData.append("features", JSON.stringify(data.features));
 
     if (data.file) {
       formData.append("file", data.file);
     }
-
-    formData.append("features", JSON.stringify(data.features));
 
     const response = await fetch("http://localhost:5000/api/v1/products", {
       method: "POST",
