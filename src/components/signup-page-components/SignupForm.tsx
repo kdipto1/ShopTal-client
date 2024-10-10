@@ -50,7 +50,6 @@ const SignupForm = () => {
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
     const phone = `${values.phone.slice(0, 3)}-${values.phone.slice(
       3,
       6

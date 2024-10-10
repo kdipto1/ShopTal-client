@@ -67,7 +67,6 @@ const CreateProductForm = () => {
       name: "",
       price: 0,
       quantity: 0,
-
       brandId: "",
       categoryId: "",
       subcategoryId: "",
@@ -112,7 +111,6 @@ const CreateProductForm = () => {
   useEffect(() => {
     fetchBrands();
   }, []);
-  console.log(brands);
   useEffect(() => {
     fetchCategories();
   }, [fetchCategories]);
