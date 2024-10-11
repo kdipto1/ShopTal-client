@@ -27,9 +27,11 @@ const FormSchema = z.object({
   name: z.string().min(2, {
     message: "Brand name must be at least 2 characters.",
   }),
-  categoryId: z.string().min(2, {
-    message: "Brand name must be at least 2 characters.",
-  }),
+
+  categoryId: z
+    .string()
+    .uuid({ message: "Select UUID of a category" })
+    .optional(),
 });
 
 const CreateBrandForm = () => {
