@@ -65,6 +65,12 @@ const ProductsPage = () => {
                 <ChevronRightIcon className="ml-2 h-4 w-4" />
               </Link>
             </Button>
+            <Button variant="ghost" size="sm" asChild>
+              <Link href={`/product/${product.id}`}>
+                View
+                <ChevronRightIcon className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
           </div>
         );
       },
