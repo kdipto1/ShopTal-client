@@ -74,7 +74,7 @@ const BrandsPage = () => {
       setIsLoading(true);
       try {
         const response = await fetch(
-          `http://localhost:5000/api/v1/brands?page=${
+          `https://shoptal-server.vercel.app/api/v1/brands?page=${
             pageIndex + 1
           }&limit=${pageSize}&searchTerm=${searchTerm}&sort=${JSON.stringify(
             sorting

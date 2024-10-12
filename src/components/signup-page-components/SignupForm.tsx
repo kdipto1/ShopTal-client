@@ -59,18 +59,21 @@ const SignupForm = () => {
     const lastName = values.lastName;
     const email = values.email;
     const address = values.address;
-    const response = await fetch("http://localhost:5000/api/v1/auth/signup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        firstName,
-        lastName,
-        email,
-        phone,
-        address,
-        password,
-      }),
-    });
+    const response = await fetch(
+      "https://shoptal-server.vercel.app/api/v1/auth/signup",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          email,
+          phone,
+          address,
+          password,
+        }),
+      }
+    );
     const data = await response.json();
 
     toast(data.message);

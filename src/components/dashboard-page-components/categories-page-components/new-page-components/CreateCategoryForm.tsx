@@ -33,14 +33,19 @@ const CreateCategoryForm = () => {
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     try {
-      const response = await fetch("http://localhost:5000/api/v1/categories", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,
-        },
-        body: JSON.stringify(data),
-      });
+      const response = await fetch(
+        "https://shoptal-server.vercel.app/api/v1/categories",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              localStorage.getItem("accessToken") || ""
+            }`,
+          },
+          body: JSON.stringify(data),
+        }
+      );
 
       if (!response.ok) {
         const errorResponse = await response.json();

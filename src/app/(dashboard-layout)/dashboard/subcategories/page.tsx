@@ -117,7 +117,7 @@ const SubcategoriesPage = () => {
       setIsLoading(true);
       try {
         const response = await fetch(
-          `http://localhost:5000/api/v1/subcategories?page=${
+          `https://shoptal-server.vercel.app/api/v1/subcategories?page=${
             pageIndex + 1
           }&limit=${pageSize}&searchTerm=${searchTerm}&sort=${JSON.stringify(
             sorting
