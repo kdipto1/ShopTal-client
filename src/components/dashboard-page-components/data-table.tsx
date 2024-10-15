@@ -87,7 +87,7 @@ export function DataTable<TData>({
     state: {
       sorting,
       columnFilters,
-      // columnVisibility,
+      columnVisibility,
       rowSelection,
       pagination,
     },
