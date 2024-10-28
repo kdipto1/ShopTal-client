@@ -54,7 +54,7 @@ export function NavigationMenuDemo() {
   const [data, setData] = React.useState([]);
   const fetchNavbarCategory = async () => {
     const response = await fetch(
-      "https://shoptal-server.vercel.app/api/v1/categories/navbar-category"
+      "http://localhost:5000/api/v1/categories/navbar-category"
     );
     const data = await response.json();
     setData(data.data);

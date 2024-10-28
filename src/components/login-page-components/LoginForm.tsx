@@ -40,14 +40,11 @@ const LoginForm = () => {
       6
     )}-${values.phone.slice(6, 10)}`;
     const password = values.password;
-    const response = await fetch(
-      `https://shoptal-server.vercel.app/api/v1/auth/login`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, password }),
-      }
-    );
+    const response = await fetch(`http://localhost:5000/api/v1/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone, password }),
+    });
     const data = await response.json();
 
     if (data) {

@@ -15,7 +15,7 @@
 
 // async function getProduct(id: string) {
 //   const res = await fetch(
-//     `https://shoptal-server.vercel.app/api/v1/products/${id}`,
+//     `http://localhost:5000/api/v1/products/${id}`,
 //     {
 //       method: "GET",
 //       headers: {
@@ -163,7 +163,7 @@ interface Product {
 }
 
 // API
-const API_URL = "https://shoptal-server.vercel.app/api/v1/products";
+const API_URL = "http://localhost:5000/api/v1/products";
 
 async function getProduct(id: string): Promise<{ data: Product }> {
   const res = await fetch(`${API_URL}/${id}`, {

@@ -20,7 +20,7 @@
 //   image: string;
 // }
 
-// const API_URL = "https://shoptal-server.vercel.app/api/v1/products";
+// const API_URL = "http://localhost:5000/api/v1/products";
 
 // const Header = () => {
 //   const [searchTerm, setSearchTerm] = useState("");
@@ -160,7 +160,7 @@ interface SearchResultsListProps {
 }
 
 // Constants
-const API_URL = "https://shoptal-server.vercel.app/api/v1/products";
+const API_URL = "http://localhost:5000/api/v1/products";
 const SEARCH_DELAY = 300;
 const MIN_SEARCH_LENGTH = 2;
 
@@ -305,12 +305,13 @@ const Header = () => {
             <SearchProducts />
           </div>
           <nav className="flex items-center space-x-2">
-            <button
+            <Link
+              href={"/cart"}
               className="p-2 rounded-md hover:bg-gray-100 transition-colors"
               aria-label="Shopping Cart"
             >
               <ShoppingCart className="h-5 w-5" />
-            </button>
+            </Link>
             <button
               className="p-2 rounded-md hover:bg-gray-100 transition-colors"
               aria-label="User Account"

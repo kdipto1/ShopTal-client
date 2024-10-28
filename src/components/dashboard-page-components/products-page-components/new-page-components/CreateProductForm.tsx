@@ -89,23 +89,21 @@ const CreateProductForm = () => {
   };
 
   const fetchCategories = useCallback(async () => {
-    const res = await fetch(
-      `https://shoptal-server.vercel.app/api/v1/categories`
-    );
+    const res = await fetch(`http://localhost:5000/api/v1/categories`);
     const data = await res.json();
     setCategories(data.data.data);
   }, []);
 
   const fetchSubcategories = useCallback(async (categoryId: string) => {
     const res = await fetch(
-      `https://shoptal-server.vercel.app/api/v1/subcategories?categoryId=${categoryId}`
+      `http://localhost:5000/api/v1/subcategories?categoryId=${categoryId}`
     );
     const data = await res.json();
     setSubcategories(data.data.data);
   }, []);
 
   const fetchBrands = async () => {
-    const res = await fetch(`https://shoptal-server.vercel.app/api/v1/brands`);
+    const res = await fetch(`http://localhost:5000/api/v1/brands`);
     const data = await res.json();
     setBrands(data.data.data);
   };
@@ -137,16 +135,13 @@ const CreateProductForm = () => {
       formData.append("file", data.file);
     }
 
-    const response = await fetch(
-      "https://shoptal-server.vercel.app/api/v1/products",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        },
-        body: formData,
-      }
-    );
+    const response = await fetch("http://localhost:5000/api/v1/products", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+      },
+      body: formData,
+    });
 
     const responseData = await response.json();
     toast(responseData.message, { duration: 960 });

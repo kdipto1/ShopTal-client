@@ -44,7 +44,7 @@ const CreateSubcategoryForm = () => {
   const fetchCategories = async () => {
     const data = await fetch(
       // "https://shoptal - server.vercel.app/api/v1/categories",
-      `https://shoptal-server.vercel.app/api/v1/categories`,
+      `http://localhost:5000/api/v1/categories`,
       {
         method: "GET",
       }
@@ -59,7 +59,7 @@ const CreateSubcategoryForm = () => {
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     try {
       const response = await fetch(
-        "https://shoptal-server.vercel.app/api/v1/subcategories",
+        "http://localhost:5000/api/v1/subcategories",
         {
           method: "POST",
           headers: {

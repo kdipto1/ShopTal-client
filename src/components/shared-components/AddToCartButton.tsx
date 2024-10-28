@@ -8,7 +8,7 @@ interface AddToCartButtonProps {
   productId: string;
   initialQuantity?: number;
 }
-const API_URL = "https://shoptal-server.vercel.app/api/v1/cart-items";
+const API_URL = "http://localhost:5000/api/v1/cart-items";
 export const AddToCartButton = ({
   productId,
   initialQuantity = 1,

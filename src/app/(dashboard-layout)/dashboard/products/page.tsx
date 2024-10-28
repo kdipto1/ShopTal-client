@@ -92,7 +92,7 @@ const ProductsPage = () => {
 
   //   try {
   //     const response = await fetch(
-  //       `https://shoptal-server.vercel.app/api/v1/products?page=${
+  //       `http://localhost:5000/api/v1/products?page=${
   //         pageIndex + 1
   //       }&limit=${pageSize}&searchTerm=${searchTerm}&sort=${JSON.stringify(
   //         sorting
@@ -139,7 +139,7 @@ const ProductsPage = () => {
       setIsLoading(true);
       try {
         const response = await fetch(
-          `https://shoptal-server.vercel.app/api/v1/products?page=${
+          `http://localhost:5000/api/v1/products?page=${
             pageIndex + 1
           }&limit=${pageSize}&searchTerm=${searchTerm}&sort=${JSON.stringify(
             sorting
