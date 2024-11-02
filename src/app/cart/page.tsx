@@ -232,8 +232,8 @@ const CartPage = () => {
                     {/* Product Image */}
                     <div className="relative w-24 h-24">
                       <Image
-                        src={item.product.image}
-                        alt={item.product.name}
+                        src={item?.product.image}
+                        alt={item?.product.name}
                         fill
                         className="rounded-md object-cover"
                         sizes="(max-width: 96px) 100vw, 96px"
