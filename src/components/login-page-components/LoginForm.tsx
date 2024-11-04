@@ -33,6 +33,8 @@ const LoginForm = () => {
       password: "",
     },
   });
+  const API_BASE_URL =
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const phone = `${values.phone.slice(0, 3)}-${values.phone.slice(
@@ -40,7 +42,7 @@ const LoginForm = () => {
       6
     )}-${values.phone.slice(6, 10)}`;
     const password = values.password;
-    const response = await fetch(`http://localhost:5000/api/v1/auth/login`, {
+    const response = await fetch(`${API_BASE_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ phone, password }),

@@ -162,11 +162,11 @@ interface Product {
   createdAt: string;
 }
 
-// API
-const API_URL = "http://localhost:5000/api/v1/products";
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
 
 async function getProduct(id: string): Promise<{ data: Product }> {
-  const res = await fetch(`${API_URL}/${id}`, {
+  const res = await fetch(`${API_BASE_URL}/products/${id}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

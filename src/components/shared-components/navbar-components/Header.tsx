@@ -209,6 +209,7 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { ShoppingCart, User, Search } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 // Types
 interface Product {
@@ -229,7 +230,8 @@ interface SearchResultsListProps {
 }
 
 // Constants
-const API_URL = "http://localhost:5000/api/v1/products";
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
 const SEARCH_DELAY = 400;
 const MIN_SEARCH_LENGTH = 2;
 
@@ -312,6 +314,7 @@ const SearchProducts = () => {
   const [searchResults, setSearchResults] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const router = useRouter();
 
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -330,7 +333,9 @@ const SearchProducts = () => {
 
     setIsLoading(true);
     try {
-      const response = await fetch(`${API_URL}?searchTerm=${term}`);
+      const response = await fetch(
+        `${API_BASE_URL}/products?searchTerm=${term}`
+      );
       const data = await response.json();
       setSearchResults(data?.data?.data || []);
       setShowDropdown(true);
@@ -354,6 +359,9 @@ const SearchProducts = () => {
       setShowDropdown(false);
       inputRef.current?.blur();
     }
+    if (e.key === "Enter") {
+      router.push(`/search?searchTerm=${searchTerm}`);
+    }
   };
 
   const handleFocus = () => {
@@ -369,7 +377,7 @@ const SearchProducts = () => {
   return (
     <div ref={searchContainerRef} className="relative">
       <div className="relative">
-        <Link href={`/search?searchTerm=${searchTerm}`}>
+        <Link type="button" href={`/search?searchTerm=${searchTerm}`}>
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />
         </Link>
         <input
@@ -426,7 +434,7 @@ const SearchProducts = () => {
 // Main Header Component
 const Header = () => {
   return (
-    <header className="sticky top-0 w-full border-b bg-white bg-opacity-95 backdrop-blur z-50">
+    <header className="sticky top-0 w-full bg-white bg-opacity-95 backdrop-blur z-50">
       <div className="max-w-7xl mx-auto px-4 flex h-14 items-center">
         <div className="mr-4 hidden md:flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">

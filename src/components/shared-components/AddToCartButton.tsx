@@ -8,7 +8,9 @@ interface AddToCartButtonProps {
   productId: string;
   initialQuantity?: number;
 }
-const API_URL = "http://localhost:5000/api/v1/cart-items";
+
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
 export const AddToCartButton = ({
   productId,
   initialQuantity = 1,
@@ -20,7 +22,7 @@ export const AddToCartButton = ({
     try {
       setIsLoading(true);
 
-      const response = await fetch(`${API_URL}`, {
+      const response = await fetch(`${API_BASE_URL}/cart-items`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

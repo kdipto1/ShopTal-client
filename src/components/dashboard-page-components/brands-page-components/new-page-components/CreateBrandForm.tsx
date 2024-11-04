@@ -42,11 +42,13 @@ const CreateBrandForm = () => {
       name: "",
     },
   });
+  const API_BASE_URL =
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
 
   const fetchCategories = async () => {
     const data = await fetch(
       // "https://shoptal - server.vercel.app/api/v1/categories",
-      `http://localhost:5000/api/v1/categories`,
+      `${API_BASE_URL}/categories`,
       {
         method: "GET",
       }
@@ -60,7 +62,7 @@ const CreateBrandForm = () => {
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     try {
-      const response = await fetch("http://localhost:5000/api/v1/brands", {
+      const response = await fetch(`${API_BASE_URL}/brands`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

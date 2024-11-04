@@ -122,6 +122,9 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     minPrice: searchParams.minPrice ? Number(searchParams.minPrice) : undefined,
     maxPrice: searchParams.maxPrice ? Number(searchParams.maxPrice) : undefined,
     page: searchParams.page ? Number(searchParams.page) : 1,
+    categoryId: searchParams.categoryId,
+    subcategoryId: searchParams.subcategoryId,
+    brandId: searchParams.brandId,
   };
 
   const {

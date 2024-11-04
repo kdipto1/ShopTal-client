@@ -30,10 +30,12 @@ const CreateCategoryForm = () => {
       name: "",
     },
   });
+  const API_BASE_URL =
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     try {
-      const response = await fetch("http://localhost:5000/api/v1/categories", {
+      const response = await fetch(`${API_BASE_URL}/categories`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

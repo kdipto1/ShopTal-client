@@ -17,9 +17,9 @@ export async function fetchAPI<T>(
   const res = await fetch(url.toString(), { next: { revalidate: 60 } });
 
   if (!res.ok) {
-    throw new Error(`API Error: ${res.statusText}`);
+    throw new Error(`API Error: ${res?.statusText || ""}`);
   }
-
+  // console.log(res);
   return res.json();
 }
 
@@ -33,4 +33,7 @@ export const searchProducts = (params: SearchParams) =>
     minPrice: params.minPrice?.toString() || "",
     maxPrice: params.maxPrice?.toString() || "",
     page: params.page?.toString() || "1",
+    categoryId: params.categoryId || "",
+    subcategoryId: params.subcategoryId || "",
+    brandId: params.brandId || "",
   });

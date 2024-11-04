@@ -42,16 +42,15 @@ const CartPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [updatingItems, setUpdatingItems] = useState<Set<string>>(new Set());
 
+  const API_BASE_URL =
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
   const fetchCartItems = async () => {
     try {
-      const response = await fetch(
-        "http://localhost:5000/api/v1/cart-items/user-items",
-        {
-          headers: {
-            Authorization: `${localStorage.getItem("accessToken")}`,
-          },
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}/cart-items/user-items`, {
+        headers: {
+          Authorization: `${localStorage.getItem("accessToken")}`,
+        },
+      });
       if (!response.ok) {
         throw new Error("Failed to fetch cart items");
       }
@@ -69,17 +68,14 @@ const CartPage = () => {
   const updateQuantity = async (itemId: string, newQuantity: number) => {
     setUpdatingItems((prev) => new Set(prev).add(itemId));
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/v1/cart-items/${itemId}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `${localStorage.getItem("accessToken")}`,
-          },
-          body: JSON.stringify({ quantity: newQuantity }),
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}/cart-items/${itemId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${localStorage.getItem("accessToken")}`,
+        },
+        body: JSON.stringify({ quantity: newQuantity }),
+      });
 
       if (!response.ok) {
         throw new Error("Failed to update quantity");
@@ -107,15 +103,12 @@ const CartPage = () => {
   const removeItem = async (itemId: string) => {
     setUpdatingItems((prev) => new Set(prev).add(itemId));
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/v1/cart-items/${itemId}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `${localStorage.getItem("accessToken")}`,
-          },
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}/cart-items/${itemId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `${localStorage.getItem("accessToken")}`,
+        },
+      });
 
       if (!response.ok) {
         throw new Error("Failed to remove item");

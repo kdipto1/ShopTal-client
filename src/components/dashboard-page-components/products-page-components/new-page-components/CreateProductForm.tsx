@@ -61,6 +61,8 @@ const CreateProductForm = () => {
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
+  const API_BASE_URL =
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -89,21 +91,21 @@ const CreateProductForm = () => {
   };
 
   const fetchCategories = useCallback(async () => {
-    const res = await fetch(`http://localhost:5000/api/v1/categories`);
+    const res = await fetch(`${API_BASE_URL}/categories`);
     const data = await res.json();
     setCategories(data.data.data);
   }, []);
 
   const fetchSubcategories = useCallback(async (categoryId: string) => {
     const res = await fetch(
-      `http://localhost:5000/api/v1/subcategories?categoryId=${categoryId}`
+      `${API_BASE_URL}/subcategories?categoryId=${categoryId}`
     );
     const data = await res.json();
     setSubcategories(data.data.data);
   }, []);
 
   const fetchBrands = async () => {
-    const res = await fetch(`http://localhost:5000/api/v1/brands`);
+    const res = await fetch(`${API_BASE_URL}/brands`);
     const data = await res.json();
     setBrands(data.data.data);
   };
@@ -135,7 +137,7 @@ const CreateProductForm = () => {
       formData.append("file", data.file);
     }
 
-    const response = await fetch("http://localhost:5000/api/v1/products", {
+    const response = await fetch(`${API_BASE_URL}/products`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("accessToken")}`,

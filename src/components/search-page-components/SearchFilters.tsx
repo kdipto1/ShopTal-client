@@ -42,7 +42,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
               <div key={cat.id} className="flex items-center space-x-2">
                 <Checkbox
                   id={`category-${cat.id}`}
-                  name="category"
+                  name="categoryId"
                   value={cat.id}
                   defaultChecked={currentFilters.category === cat.id}
                 />

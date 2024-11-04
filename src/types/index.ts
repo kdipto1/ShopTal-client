@@ -26,4 +26,7 @@ export interface SearchParams {
   minPrice?: number;
   maxPrice?: number;
   page?: number;
+  categoryId?: string;
+  subcategoryId?: string;
+  brandId?: string;
 }
