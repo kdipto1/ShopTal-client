@@ -162,8 +162,7 @@ interface Product {
   createdAt: string;
 }
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 async function getProduct(id: string): Promise<{ data: Product }> {
   const res = await fetch(`${API_BASE_URL}/products/${id}`, {

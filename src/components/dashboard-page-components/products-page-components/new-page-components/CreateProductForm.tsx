@@ -61,8 +61,7 @@ const CreateProductForm = () => {
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
-  const API_BASE_URL =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {

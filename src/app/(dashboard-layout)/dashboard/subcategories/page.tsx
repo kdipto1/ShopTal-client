@@ -101,7 +101,7 @@ const SubcategoriesPage = () => {
       },
     },
   ];
-
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
   const fetchData = useCallback(
     async ({
       pageIndex,
@@ -117,7 +117,7 @@ const SubcategoriesPage = () => {
       setIsLoading(true);
       try {
         const response = await fetch(
-          `http://localhost:5000/api/v1/subcategories?page=${
+          `${API_BASE_URL}/subcategories?page=${
             pageIndex + 1
           }&limit=${pageSize}&searchTerm=${searchTerm}&sort=${JSON.stringify(
             sorting

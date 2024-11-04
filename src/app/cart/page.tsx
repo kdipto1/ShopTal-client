@@ -42,8 +42,7 @@ const CartPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [updatingItems, setUpdatingItems] = useState<Set<string>>(new Set());
 
-  const API_BASE_URL =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
   const fetchCartItems = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/cart-items/user-items`, {

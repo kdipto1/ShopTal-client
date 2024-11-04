@@ -143,15 +143,15 @@ export function NavigationMenuDemo() {
   }
 
   const renderSubcategories = (category: Category) => {
-    if (!category.productSubcategory?.length && !category.brands?.length) {
+    if (!category?.productSubcategory?.length && !category.brands?.length) {
       return null;
     }
 
     return (
       <NavigationMenuContent>
-        {category.productSubcategory?.length > 0 && (
+        {category?.productSubcategory?.length > 0 && (
           <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-            {category?.productSubcategory.map((subcategory) => (
+            {category?.productSubcategory?.map((subcategory) => (
               <ListItem
                 key={subcategory.id}
                 title={subcategory.name}
@@ -160,7 +160,7 @@ export function NavigationMenuDemo() {
             ))}
           </ul>
         )}
-        {category.brands?.length > 0 && (
+        {category?.brands?.length > 0 && (
           <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
             {category.brands.map((brand) => (
               <ListItem

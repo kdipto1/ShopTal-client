@@ -124,6 +124,7 @@ const ProductsPage = () => {
   //     setIsLoading(false);
   //   }
   // };
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
   const fetchData = useCallback(
     async ({
       pageIndex,
@@ -139,7 +140,7 @@ const ProductsPage = () => {
       setIsLoading(true);
       try {
         const response = await fetch(
-          `http://localhost:5000/api/v1/products?page=${
+          `${API_BASE_URL}/products?page=${
             pageIndex + 1
           }&limit=${pageSize}&searchTerm=${searchTerm}&sort=${JSON.stringify(
             sorting
