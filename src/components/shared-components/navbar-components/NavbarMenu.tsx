@@ -148,9 +148,9 @@ export function NavigationMenuDemo() {
     }
 
     return (
-      <NavigationMenuContent>
+      <NavigationMenuContent className="max-w-screen-xl mx-auto">
         {category?.productSubcategory?.length > 0 && (
-          <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+          <ul className="grid w-[400px] gap-1 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
             {category?.productSubcategory?.map((subcategory) => (
               <ListItem
                 key={subcategory.id}
@@ -161,7 +161,7 @@ export function NavigationMenuDemo() {
           </ul>
         )}
         {category?.brands?.length > 0 && (
-          <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+          <ul className="grid w-[400px] gap-1 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
             {category.brands.map((brand) => (
               <ListItem
                 key={brand.id}

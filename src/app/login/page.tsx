@@ -2,6 +2,7 @@ import LoginForm from "@/components/login-page-components/LoginForm";
 import second from "@/app/assets/undraw_login.svg";
 import Image from "next/image";
 import { Card } from "@/components/shadcn-ui/card";
+import { Suspense } from "react";
 
 export default function LoginPage() {
   return (
@@ -18,7 +19,9 @@ export default function LoginPage() {
               account
             </p>
           </div>
-          <LoginForm />
+          <Suspense fallback={<></>}>
+            <LoginForm />
+          </Suspense>
         </Card>
       </div>
     </div>

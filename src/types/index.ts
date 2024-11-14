@@ -30,3 +30,28 @@ export interface SearchParams {
   subcategoryId?: string;
   brandId?: string;
 }
+
+export interface LoginResponse {
+  statusCode: number;
+  success: boolean;
+  message: string;
+  data: {
+    accessToken: string;
+    role: string;
+  };
+}
+
+export interface AuthData {
+  accessToken: string;
+  role: string;
+  passwordChangeRequired?: boolean;
+}
+
+export interface RouteConfig {
+  [path: string]: string[];
+}
+
+export interface RedirectOptions {
+  passwordChangeRequired?: boolean;
+  redirect?: string;
+}
