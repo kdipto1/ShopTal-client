@@ -4,7 +4,7 @@ import Sidebar from "./Sidebar";
 import { cn } from "@/lib/utils";
 import { useStore } from "@/hooks/use-store";
 import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
-import Footer from "./Footer";
+import Footer from "./DashboardFooter";
 
 const AdminPanelLayout = ({ children }: { children: React.ReactNode }) => {
   const sidebar = useStore(useSidebarToggle, (state) => state);
