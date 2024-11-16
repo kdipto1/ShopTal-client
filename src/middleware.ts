@@ -52,6 +52,7 @@ export const PROTECTED_ROUTES: RouteConfig = {
   "/admin": ["admin"],
   "/dashboard": ["admin"],
   "/settings": ["admin", "user"],
+  "/cart": ["user", "admin"],
 };
 
 export const AUTH_ROUTES = {

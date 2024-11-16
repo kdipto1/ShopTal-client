@@ -12,15 +12,12 @@ export default function HomePage() {
     <div className="container mx-auto px-4 py-8">
       <Banner />
       <Suspense fallback={<NewArrivalsSkeleton />}>
-        {/* @ts-expect-error Async Server Component */}
         <NewArrivals />
       </Suspense>
       <Suspense fallback={<CategoriesSkeleton />}>
-        {/* @ts-expect-error Async Server Component */}
         <Categories />
       </Suspense>
       <Suspense fallback={<RandomProductsSkeleton />}>
-        {/* @ts-expect-error Async Server Component */}
         <RandomProducts />
       </Suspense>
     </div>

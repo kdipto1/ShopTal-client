@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Button } from "../shadcn-ui/button";
+import Link from "next/link";
 
 export default function Banner() {
   return (
@@ -18,7 +19,9 @@ export default function Banner() {
           <p className="text-xl md:text-2xl mb-6">
             Up to 50% off on selected items
           </p>
-          <Button size="lg">Shop Now</Button>
+          <Link href={"/search"}>
+            <Button size="lg">Shop Now</Button>
+          </Link>
         </div>
       </div>
     </section>

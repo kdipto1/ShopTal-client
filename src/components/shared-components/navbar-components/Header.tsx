@@ -452,12 +452,13 @@ const Header = () => {
             >
               <ShoppingCart className="h-5 w-5" />
             </Link>
-            <button
+            <Link
+              href="/profile"
               className="p-2 rounded-md hover:bg-gray-100 transition-colors"
               aria-label="User Account"
             >
               <User className="h-5 w-5" />
-            </button>
+            </Link>
           </nav>
         </div>
       </div>

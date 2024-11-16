@@ -5,6 +5,8 @@ import { Toaster } from "@/components/shadcn-ui/sonner";
 import Navbar from "@/components/shared-components/navbar-components/Navbar";
 import Header from "@/components/shared-components/navbar-components/Header";
 import Footer from "@/components/shared-components/Footer";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -29,6 +31,8 @@ export default function RootLayout({
         <main>{children}</main>
         <Footer />
         <Toaster />
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
