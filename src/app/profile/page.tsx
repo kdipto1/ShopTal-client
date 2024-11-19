@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/shadcn-ui/button";
 import { Input } from "@/components/shadcn-ui/input";
 import { Label } from "@/components/shadcn-ui/label";
@@ -23,6 +23,8 @@ import {
 } from "@/components/shadcn-ui/avatar";
 import { Badge } from "@/components/shadcn-ui/badge";
 import { Package, User, Settings } from "lucide-react";
+import Link from "next/link";
+import SignOutButton from "@/components/shared-components/SignOutButton";
 
 export default function ProfilePage() {
   const [user, setUser] = useState({
@@ -31,11 +33,34 @@ export default function ProfilePage() {
     avatar: "/placeholder.svg",
   });
 
+  useEffect(() => {
+    const getProfile = async () => {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/profile`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${localStorage.getItem("accessToken")}`,
+          },
+        }
+      ).then((res) => res.json());
+      console.log(response);
+      setUser({
+        avatar: response?.data.name,
+        email: response?.data.email,
+        name: response?.data.firstName,
+      });
+    };
+    getProfile();
+  }, []);
+
   const recentOrders = [
     { id: "1234", date: "2023-05-01", status: "Delivered", total: "$129.99" },
     { id: "5678", date: "2023-05-15", status: "Shipped", total: "$79.99" },
     { id: "9012", date: "2023-05-28", status: "Processing", total: "$199.99" },
   ];
+  const userRole = localStorage.getItem("userRole");
 
   return (
     <div className="container min-h-[70vh] mx-auto py-10">
@@ -57,12 +82,20 @@ export default function ProfilePage() {
             </Avatar>
             <h2 className="text-2xl font-semibold">{user.name}</h2>
             <p className="text-muted-foreground">{user.email}</p>
+
+            {userRole === "admin" ? (
+              <Link className="mt-4" href={"/dashboard"}>
+                <Button>Admin Dashboard</Button>
+              </Link>
+            ) : null}
+
+            <SignOutButton className="mt-4" />
           </CardContent>
         </Card>
         <Card className="col-span-1 md:col-span-2">
           <Tabs defaultValue="details">
             <CardHeader>
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-2">
                 {/* <TabsTrigger value="orders">
                   <Package className="mr-2 h-4 w-4" />
                   Orders
