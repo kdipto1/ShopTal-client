@@ -209,7 +209,7 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { ShoppingCart, User, Search } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 // Types
 interface Product {
@@ -432,6 +432,17 @@ const SearchProducts = () => {
 
 // Main Header Component
 const Header = () => {
+  const router = usePathname();
+
+  // Define the routes where you want to hide the component
+  const hideOnRoutes = ["/dashboard", "/another-route"];
+
+  // Check if the current route is in the hideOnRoutes array
+  const shouldHide = router.includes("/dashboard");
+
+  if (shouldHide) {
+    return null; // Don't render the component if on a specific route
+  }
   return (
     <header className="sticky top-0 w-full bg-white bg-opacity-95 backdrop-blur z-50">
       <div className="max-w-7xl mx-auto px-4 flex h-14 items-center">

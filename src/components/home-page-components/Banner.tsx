@@ -6,12 +6,7 @@ export default function Banner() {
   return (
     <section className="mb-12">
       <div className="relative h-[300px] md:h-[400px] lg:h-[500px] rounded-lg overflow-hidden">
-        <Image
-          src="/placeholder.svg"
-          alt="Banner"
-          fill
-          className="object-cover"
-        />
+        <Image src="/banner.webp" alt="Banner" fill className="object-cover" />
         <div className="absolute inset-0 flex flex-col justify-center items-start p-8 bg-black bg-opacity-50 text-white">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
             Summer Sale

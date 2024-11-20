@@ -132,7 +132,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   } = await getCategories();
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 min-h-[70vh]">
       <h1 className="text-3xl font-bold mb-6">Search Products</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">

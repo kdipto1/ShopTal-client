@@ -135,6 +135,7 @@
 // }
 
 // import React from "react";
+
 import { AddToCartButton } from "@/components/shared-components/AddToCartButton";
 import { Star } from "lucide-react";
 
@@ -148,6 +149,14 @@ interface Brand {
   name: string;
   id: string;
 }
+interface Category {
+  name: string;
+  id: string;
+}
+interface Subcategory {
+  name: string;
+  id: string;
+}
 
 interface Product {
   id: string;
@@ -157,6 +166,8 @@ interface Product {
   quantity: number;
   features: Feature[];
   brand?: Brand;
+  category?: Category;
+  subcategory?: Subcategory;
   categoryId: string;
   subcategoryId: string;
   createdAt: string;
@@ -233,10 +244,10 @@ const ProductDetails = ({ product }: { product: Product }) => (
         Brand: <Badge>{product?.brand?.name || "N/A"}</Badge>
       </p>
       <p>
-        Category: <Badge>{product.categoryId}</Badge>
+        Category: <Badge>{product?.category?.name || "N/A"}</Badge>
       </p>
       <p>
-        Subcategory: <Badge>{product.subcategoryId}</Badge>
+        Subcategory: <Badge>{product?.subcategory?.name || "N/A"}</Badge>
       </p>
       <p>Added: {new Date(product.createdAt).toLocaleDateString()}</p>
     </div>
@@ -259,10 +270,10 @@ const ProductPage = async ({ params }: { params: { id: string } }) => {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="grid md:grid-cols-2 gap-8">
-          <ProductImage src={product.image} alt={product.name} />
+          <ProductImage src={product?.image} alt={product?.name} />
 
           <div className="space-y-4">
-            <h1 className="text-3xl font-bold">{product.name}</h1>
+            <h1 className="text-3xl font-bold">{product?.name}</h1>
             <StarRating />
             <p className="text-2xl font-bold">
               ${(product.price / 100).toFixed(2)}
@@ -270,7 +281,7 @@ const ProductPage = async ({ params }: { params: { id: string } }) => {
             <p className="text-gray-500">In stock: {product.quantity}</p>
 
             <AddToCartButton productId={product?.id} />
-            <FeaturesList features={product.features} />
+            <FeaturesList features={product?.features} />
             <ProductDetails product={product} />
           </div>
         </div>
