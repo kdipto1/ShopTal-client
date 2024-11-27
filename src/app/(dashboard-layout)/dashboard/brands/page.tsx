@@ -45,11 +45,11 @@ const BrandsPage = () => {
       header: "Actions",
       id: "actions",
       cell: ({ row }) => {
-        const product = row.original;
+        const brand = row.original;
         return (
           <div className="">
             <Button variant="ghost" size="sm" asChild>
-              <Link href={`/dashboard/brands/${product.id}`}>
+              <Link href={`/dashboard/brands/edit/${brand.id}`}>
                 Edit
                 <ChevronRightIcon className="ml-2 h-4 w-4" />
               </Link>
