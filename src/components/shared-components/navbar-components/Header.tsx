@@ -3,7 +3,6 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { ShoppingCart, User, Search } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Separator } from "@/components/shadcn-ui/separator";
 import useClickOutside from "@/hooks/useClickOutside";
 
 // Types

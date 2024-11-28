@@ -1,5 +1,4 @@
 import BrandForm from "@/components/dashboard-page-components/brands-page-components/BrandForm";
-import CreateBrandForm from "@/components/dashboard-page-components/brands-page-components/new-page-components/CreateBrandForm";
 import ContentLayout from "@/components/dashboard-page-components/ContentLayout";
 import {
   Breadcrumb,
