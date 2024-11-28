@@ -3,6 +3,7 @@ import second from "@/app/assets/undraw_login.svg";
 import Image from "next/image";
 import { Card } from "@/components/shadcn-ui/card";
 import { Suspense } from "react";
+import Link from "next/link";
 
 export default function LoginPage() {
   return (
@@ -22,6 +23,13 @@ export default function LoginPage() {
           <Suspense fallback={<></>}>
             <LoginForm />
           </Suspense>
+          <p className="mt-4">
+            Don't have an account?
+            <Link className="text-[#6c63ff]" href={"/signup"}>
+              {" "}
+              Register now
+            </Link>
+          </p>
         </Card>
       </div>
     </div>
