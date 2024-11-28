@@ -4,6 +4,7 @@ import { ShoppingCart, User, Search } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Separator } from "@/components/shadcn-ui/separator";
+import useClickOutside from "@/hooks/useClickOutside";
 
 // Types
 interface Product {
@@ -46,29 +47,6 @@ const useDebounce = (callback: (...args: any[]) => void, delay: number) => {
     },
     [callback, delay]
   );
-};
-
-// Custom hook for handling clicks outside
-const useClickOutside = (
-  ref: React.RefObject<HTMLElement>,
-  handler: () => void
-) => {
-  useEffect(() => {
-    const listener = (event: MouseEvent | TouchEvent) => {
-      if (!ref.current || ref.current.contains(event.target as Node)) {
-        return;
-      }
-      handler();
-    };
-
-    document.addEventListener("mousedown", listener);
-    document.addEventListener("touchstart", listener);
-
-    return () => {
-      document.removeEventListener("mousedown", listener);
-      document.removeEventListener("touchstart", listener);
-    };
-  }, [ref, handler]);
 };
 
 // Individual Search Result Component
@@ -238,7 +216,7 @@ const Header = () => {
     return null; // Don't render the component if on a specific route
   }
   return (
-    <header className="sticky top-0 w-full bg-white bg-opacity-95 backdrop-blur z-50">
+    <header className="w-full bg-white bg-opacity-95 backdrop-blur">
       <div className="max-w-7xl mx-auto px-4 flex h-14 items-center">
         <div className="mr-4 hidden md:flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
@@ -267,7 +245,6 @@ const Header = () => {
           </nav>
         </div>
       </div>
-      <Separator />
     </header>
   );
 };

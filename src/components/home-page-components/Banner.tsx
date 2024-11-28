@@ -5,10 +5,10 @@ import Link from "next/link";
 export default function Banner() {
   return (
     <section className="mb-12">
-      <div className="relative h-[300px] md:h-[400px] lg:h-[500px] rounded-lg overflow-hidden">
+      <div className="relative h-[300px] md:h-[400px] lg:h-[500px] rounded-lg overflow-hidden -z-10">
         <Image
           src="/images/blackfriday.webp"
-          alt="Banner"
+          alt="Banner image"
           fill
           className="object-cover"
         />

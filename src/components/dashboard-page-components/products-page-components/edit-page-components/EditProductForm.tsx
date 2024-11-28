@@ -27,6 +27,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { EditProductFormSkeleton } from "./EditProductFormSkeleton";
 
 const FormSchema = z.object({
   id: z.string().optional(),
@@ -64,6 +65,7 @@ const EditProductForm = ({ productId }: { productId: string }) => {
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -86,9 +88,25 @@ const EditProductForm = ({ productId }: { productId: string }) => {
     name: "features",
   });
 
+  const fetchSubcategories = useCallback(
+    async (categoryId: string) => {
+      try {
+        const res = await fetch(
+          `${API_BASE_URL}/subcategories?categoryId=${categoryId}`
+        );
+        const data = await res.json();
+        setSubcategories(data.data.data);
+      } catch (error) {
+        toast.error("Failed to fetch subcategories");
+      }
+    },
+    [API_BASE_URL]
+  );
+
   // Fetch product details for editing
   const fetchProductDetails = useCallback(async () => {
     try {
+      setIsLoading(true);
       const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -96,7 +114,12 @@ const EditProductForm = ({ productId }: { productId: string }) => {
       });
       const { data } = await response.json();
 
-      // Set form values with existing product data
+      // First fetch subcategories for the product's category
+      if (data.categoryId) {
+        await fetchSubcategories(data.categoryId);
+      }
+
+      // Then reset form with all data including subcategoryId
       form.reset({
         id: data.id,
         name: data.name,
@@ -114,18 +137,12 @@ const EditProductForm = ({ productId }: { productId: string }) => {
       if (data.image) {
         setPreview(data.image);
       }
-
-      if (data.categoryId) {
-        const subcategoryRes = await fetch(
-          `${API_BASE_URL}/subcategories?categoryId=${data.categoryId}`
-        );
-        const subcategoryData = await subcategoryRes.json();
-        setSubcategories(subcategoryData.data.data);
-      }
     } catch (error) {
       toast.error("Failed to fetch product details");
+    } finally {
+      setIsLoading(false);
     }
-  }, [productId, form, API_BASE_URL]);
+  }, [productId, form, API_BASE_URL, fetchSubcategories]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -137,34 +154,42 @@ const EditProductForm = ({ productId }: { productId: string }) => {
   };
 
   const fetchCategories = useCallback(async () => {
-    const res = await fetch(`${API_BASE_URL}/categories`);
-    const data = await res.json();
-    setCategories(data.data.data);
-  }, []);
+    try {
+      const res = await fetch(`${API_BASE_URL}/categories`);
+      const data = await res.json();
+      setCategories(data.data.data);
+    } catch (error) {
+      toast.error("Failed to fetch categories");
+    }
+  }, [API_BASE_URL]);
 
-  const fetchSubcategories = useCallback(async (categoryId: string) => {
-    const res = await fetch(
-      `${API_BASE_URL}/subcategories?categoryId=${categoryId}`
-    );
-    const data = await res.json();
-    setSubcategories(data.data.data);
-  }, []);
-
-  const fetchBrands = async () => {
-    const res = await fetch(`${API_BASE_URL}/brands`);
-    const data = await res.json();
-    setBrands(data.data.data);
-  };
-
-  useEffect(() => {
-    fetchBrands();
-    fetchCategories();
-    fetchProductDetails();
-  }, [fetchProductDetails]);
+  const fetchBrands = useCallback(async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/brands`);
+      const data = await res.json();
+      setBrands(data.data.data);
+    } catch (error) {
+      toast.error("Failed to fetch brands");
+    }
+  }, [API_BASE_URL]);
 
   useEffect(() => {
-    const categoryId = form.getValues("categoryId");
-    if (categoryId) fetchSubcategories(categoryId);
+    const initializeForm = async () => {
+      await Promise.all([
+        fetchBrands(),
+        fetchCategories(),
+        fetchProductDetails(),
+      ]);
+    };
+    initializeForm();
+  }, [fetchBrands, fetchCategories, fetchProductDetails]);
+
+  // Handle category change
+  useEffect(() => {
+    const categoryId = form.watch("categoryId");
+    if (categoryId) {
+      fetchSubcategories(categoryId);
+    }
   }, [form.watch("categoryId"), fetchSubcategories]);
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
@@ -178,11 +203,9 @@ const EditProductForm = ({ productId }: { productId: string }) => {
     formData.append("subcategoryId", data.subcategoryId);
     formData.append("features", JSON.stringify(data.features));
 
-    // If a new file is selected, append it
     if (data.file) {
       formData.append("file", data.file);
     } else if (data.existingImage) {
-      // If existing image is to be kept, append the image URL
       formData.append("existingImage", data.existingImage);
     }
 
@@ -206,6 +229,11 @@ const EditProductForm = ({ productId }: { productId: string }) => {
       toast.error("An error occurred while updating the product");
     }
   };
+
+  if (isLoading) {
+    return <EditProductFormSkeleton />;
+    // return <div>Loading....</div>;
+  }
 
   return (
     <Form {...form}>
@@ -274,11 +302,11 @@ const EditProductForm = ({ productId }: { productId: string }) => {
                   ))}
                 </SelectContent>
               </Select>
-
               <FormMessage />
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="categoryId"
@@ -299,7 +327,6 @@ const EditProductForm = ({ productId }: { productId: string }) => {
                   ))}
                 </SelectContent>
               </Select>
-
               <FormMessage />
             </FormItem>
           )}
