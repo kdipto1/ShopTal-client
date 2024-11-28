@@ -18,11 +18,13 @@ import {
 interface Brand {
   id: string;
   name: string;
+  categoryId?: string;
 }
 
 interface ProductSubcategory {
   id: string;
   name: string;
+  categoryId?: string;
 }
 
 interface Category {
@@ -92,18 +94,16 @@ const SubcategoryList = ({ category }: { category: Category }) => {
         </Link>
       ))}
       {category.brands.length > 0 && (
-        <NavigationMenuItem>
-          <NavigationMenuTrigger>Brands</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ul className="grid w-[200px] gap-3 p-4 md:w-[300px] md:grid-cols-2 lg:w-[400px]">
-              {category.brands.map((brand) => (
-                <Link key={brand.id} href={`/search?brandId=${brand.id}`}>
-                  <ListItem title={brand.name} />
-                </Link>
-              ))}
-            </ul>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
+        <ul className="grid gap-3 p-4 md:w-[200px] md:grid-cols-1 lg:w-[300px] lg:grid-cols-2">
+          {category.brands.map((brand) => (
+            <Link
+              key={brand.id}
+              href={`/search?categoryId=${brand.categoryId}&brandId=${brand.id}`}
+            >
+              <ListItem title={brand.name} />
+            </Link>
+          ))}
+        </ul>
       )}
     </ul>
   );
@@ -116,7 +116,7 @@ const ListItem = React.forwardRef<
   return (
     <li>
       <NavigationMenuLink asChild>
-        <a
+        <span
           ref={ref}
           className={cn(
             "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
@@ -128,9 +128,11 @@ const ListItem = React.forwardRef<
           <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
             {children}
           </p>
-        </a>
+        </span>
       </NavigationMenuLink>
     </li>
   );
 });
 ListItem.displayName = "ListItem";
+
+/************************************************************************************************* */
