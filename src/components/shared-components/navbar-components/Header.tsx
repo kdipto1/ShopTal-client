@@ -4,6 +4,7 @@ import { ShoppingCart, User, Search } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import useClickOutside from "@/hooks/useClickOutside";
+import MobileNavbar from "./MobileNavbar";
 
 // Types
 interface Product {
@@ -205,9 +206,6 @@ const SearchProducts = () => {
 const Header = () => {
   const router = usePathname();
 
-  // Define the routes where you want to hide the component
-  const hideOnRoutes = ["/dashboard", "/another-route"];
-
   // Check if the current route is in the hideOnRoutes array
   const shouldHide = router.includes("/dashboard");
 
@@ -217,16 +215,17 @@ const Header = () => {
   return (
     <header className="w-full bg-white bg-opacity-95 backdrop-blur">
       <div className="max-w-7xl mx-auto px-4 flex h-14 items-center">
-        <div className="mr-4 hidden md:flex">
+        <div className="mr-4 flex">
+          <MobileNavbar />
           <Link href="/" className="mr-6 flex items-center space-x-2">
-            <span className="hidden font-bold sm:inline-block">ShopTal</span>
+            <span className="font-bold">ShopTal</span>
           </Link>
         </div>
         <div className="flex flex-1 items-center justify-end space-x-2 sm:justify-between sm:space-x-4 md:justify-end">
           <div className="w-full flex-1 md:w-auto md:flex-none">
             <SearchProducts />
           </div>
-          <nav className="flex items-center space-x-2">
+          <nav className="hidden  md:flex items-center space-x-2">
             <Link
               href={"/cart"}
               className="p-2 rounded-md hover:bg-gray-100 transition-colors"
@@ -249,3 +248,5 @@ const Header = () => {
 };
 
 export default Header;
+
+/************************************************************************************* */

@@ -14,7 +14,7 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="w-full border-b bg-white/95 backdrop-blur">
+    <nav className="hidden md:block w-full border-b bg-white/95 backdrop-blur">
       <div className="flex h-14 items-center justify-center">
         <ResponsiveMenu />
       </div>
