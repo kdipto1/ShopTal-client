@@ -13,6 +13,7 @@ import {
 import { Skeleton } from "@/components/shadcn-ui/skeleton";
 import { Button } from "@/components/shadcn-ui/button";
 import Image from "next/image";
+import Link from "next/link";
 
 interface CartItem {
   id: string;
@@ -235,7 +236,9 @@ const CartPage = () => {
                     {/* Product Details */}
                     <div className="flex-1 space-y-2">
                       <div className="flex justify-between">
-                        <h3 className="font-medium">{item.product.name}</h3>
+                        <Link href={`/product/${item.product.id}`}>
+                          <h3 className="font-medium">{item.product.name}</h3>
+                        </Link>
                         <Button
                           onClick={() => removeItem(item.id)}
                           variant="ghost"

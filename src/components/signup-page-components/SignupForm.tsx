@@ -80,7 +80,7 @@ const SignupForm = () => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className=" grid grid-cols-1 md:grid-cols-2 gap-8 "
+        className=" grid grid-cols-1 md:grid-cols-2 gap-8"
       >
         <FormField
           control={form.control}
