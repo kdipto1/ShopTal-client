@@ -1,5 +1,5 @@
-import BrandForm from "@/components/dashboard-page-components/brands-page-components/BrandForm";
 import ContentLayout from "@/components/dashboard-page-components/ContentLayout";
+import EditProductForm from "@/components/dashboard-page-components/products-page-components/edit-page-components/EditProductForm";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,7 +10,11 @@ import {
 } from "@/components/shadcn-ui/breadcrumb";
 import Link from "next/link";
 
-const CreateBrandPage = () => {
+export default async function EditProductPage({
+  params,
+}: {
+  params: { id: string };
+}) {
   return (
     <ContentLayout title="New">
       <Breadcrumb>
@@ -29,20 +33,17 @@ const CreateBrandPage = () => {
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link href="/dashboard/brands">Brands</Link>
+              <Link href="/dashboard/products">Products</Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage>New</BreadcrumbPage>
+            <BreadcrumbPage>Edit</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
       {/* <PlaceholderContent /> */}
-      {/* <CreateBrandForm /> */}
-      <BrandForm />
+      <EditProductForm productId={params.id} />
     </ContentLayout>
   );
-};
-
-export default CreateBrandPage;
+}

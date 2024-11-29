@@ -60,7 +60,7 @@ const ProductsPage = () => {
         return (
           <div className="">
             <Button variant="ghost" size="sm" asChild>
-              <Link href={`/dashboard/products/${product.id}`}>
+              <Link href={`/dashboard/products/edit/${product.id}`}>
                 Edit
                 <ChevronRightIcon className="ml-2 h-4 w-4" />
               </Link>

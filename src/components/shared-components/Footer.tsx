@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 
 import {
@@ -13,8 +14,20 @@ import {
 import { Input } from "../shadcn-ui/input";
 import { Button } from "../shadcn-ui/button";
 import { Separator } from "../shadcn-ui/separator";
+import { usePathname } from "next/navigation";
 
 export default function Footer() {
+  const router = usePathname();
+
+  // Define the routes where you want to hide the component
+  const hideOnRoutes = ["/dashboard", "/another-route"];
+
+  // Check if the current route is in the hideOnRoutes array
+  const shouldHide = router.includes("/dashboard");
+
+  if (shouldHide) {
+    return null; // Don't render the component if on a specific route
+  }
   return (
     <footer className="bg-muted text-muted-foreground">
       <div className="container mx-auto px-4 py-8 md:py-12">

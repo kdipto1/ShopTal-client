@@ -13,7 +13,7 @@ import {
 } from "@/components/shadcn-ui/breadcrumb";
 import { Button } from "@/components/shadcn-ui/button";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, ChevronRightIcon } from "lucide-react";
+import { ChevronRightIcon } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useState } from "react";
 
@@ -91,7 +91,7 @@ const SubcategoriesPage = () => {
         return (
           <div className="">
             <Button variant="ghost" size="sm" asChild>
-              <Link href={`/dashboard/subcategories/${product.id}`}>
+              <Link href={`/dashboard/subcategories/edit/${product.id}`}>
                 Edit
                 <ChevronRightIcon className="ml-2 h-4 w-4" />
               </Link>

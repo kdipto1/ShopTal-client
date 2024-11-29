@@ -6,9 +6,8 @@ import { redirect } from "next/navigation";
 import { AUTH_ROUTES } from "@/middleware";
 import { AuthData, RedirectOptions } from "@/types";
 
+const cookieStore = cookies();
 export async function setCookie(data: AuthData, options?: RedirectOptions) {
-  const cookieStore = cookies();
-
   // Set cookies with proper configuration
   cookieStore.set("accessToken", data.accessToken, {
     httpOnly: true,
@@ -34,4 +33,10 @@ export async function setCookie(data: AuthData, options?: RedirectOptions) {
   if (options?.redirect) {
     redirect(options.redirect);
   }
+}
+
+export async function signOut() {
+  cookieStore.delete("accessToken");
+  cookieStore.delete("userRole");
+  redirect(AUTH_ROUTES.LOGIN);
 }

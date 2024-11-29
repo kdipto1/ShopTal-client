@@ -10,9 +10,15 @@ import {
 } from "@/components/shadcn-ui/breadcrumb";
 import Link from "next/link";
 
-const CreateBrandPage = () => {
+export default async function EditBrandPage({
+  params,
+}: {
+  params: { id: string };
+}) {
+  const brandId = params.id;
+
   return (
-    <ContentLayout title="New">
+    <ContentLayout title="Edit Brand">
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -34,15 +40,11 @@ const CreateBrandPage = () => {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage>New</BreadcrumbPage>
+            <BreadcrumbPage>Edit</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      {/* <PlaceholderContent /> */}
-      {/* <CreateBrandForm /> */}
-      <BrandForm />
+      <BrandForm brandId={brandId} />
     </ContentLayout>
   );
-};
-
-export default CreateBrandPage;
+}

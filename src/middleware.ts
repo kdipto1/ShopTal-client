@@ -47,11 +47,12 @@
 
 import { NextResponse, NextRequest } from "next/server";
 import { RouteConfig } from "./types";
+import { toast } from "sonner";
 
 export const PROTECTED_ROUTES: RouteConfig = {
-  "/admin": ["admin"],
   "/dashboard": ["admin"],
-  "/settings": ["admin", "user"],
+  "/cart": ["user", "admin"],
+  "/profile": ["user", "admin"],
 };
 
 export const AUTH_ROUTES = {
@@ -77,6 +78,7 @@ export async function middleware(request: NextRequest) {
     if (!token || !role) {
       const loginUrl = new URL(AUTH_ROUTES.LOGIN, request.url);
       loginUrl.searchParams.set("callbackUrl", pathname);
+
       return NextResponse.redirect(loginUrl);
     }
 

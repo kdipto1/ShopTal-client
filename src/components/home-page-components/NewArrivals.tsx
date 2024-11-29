@@ -8,6 +8,7 @@ import {
 } from "../shadcn-ui/carousel";
 import { Card, CardContent, CardFooter, CardTitle } from "../shadcn-ui/card";
 import { Button } from "../shadcn-ui/button";
+import Link from "next/link";
 
 type Product = {
   id: string;
@@ -54,7 +55,9 @@ export default async function NewArrivals() {
                   <p className="text-xl font-bold">
                     ${product.price.toFixed(2)}
                   </p>
-                  <Button className="mt-2">Add to Cart</Button>
+                  <Link href={`/product/${product.id}`}>
+                    <Button className="mt-2">View Details</Button>
+                  </Link>
                 </CardFooter>
               </Card>
             </CarouselItem>

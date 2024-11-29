@@ -2,6 +2,8 @@ import SignupForm from "@/components/signup-page-components/SignupForm";
 import Image from "next/image";
 import signup from "@/app/assets/undraw_sign_up.svg";
 import { Card } from "@/components/shadcn-ui/card";
+import Link from "next/link";
+import { Suspense } from "react";
 
 const page = () => {
   return (
@@ -17,7 +19,16 @@ const page = () => {
               Fill up the from for signing up
             </p>
           </div>
-          <SignupForm />
+          <Suspense fallback={<></>}>
+            <SignupForm />
+          </Suspense>
+          <p className="mt-4">
+            Have an account?
+            <Link className="text-[#6c63ff]" href={"/login"}>
+              {" "}
+              Login now
+            </Link>
+          </p>
         </Card>
       </div>
     </div>

@@ -30,7 +30,7 @@ const Sidebar = () => {
         >
           <Link href="/" className="flex items-center gap-2">
             <PanelsTopLeft className="w-6 h-6 mr-1" />
-            <h1
+            <span
               className={cn(
                 "font-bold text-lg whitespace-nowrap transition-[transform,opacity,display] ease-in-out duration-300",
                 sidebar?.isOpen === false
@@ -39,7 +39,7 @@ const Sidebar = () => {
               )}
             >
               ShopTal
-            </h1>
+            </span>
           </Link>
         </Button>
         <Menu isOpen={sidebar?.isOpen} />

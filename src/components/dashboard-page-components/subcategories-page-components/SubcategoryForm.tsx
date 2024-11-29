@@ -25,40 +25,87 @@ import { z } from "zod";
 
 const FormSchema = z.object({
   name: z.string().min(2, {
-    message: "Brand name must be at least 2 characters.",
+    message: "Subcategory name must be at least 2 characters.",
   }),
-
-  categoryId: z
-    .string()
-    .uuid({ message: "Select UUID of a category" })
-    .optional(),
+  categoryId: z.string().min(2, {
+    message: "Select a valid category.",
+  }),
 });
 
-const CreateBrandForm = () => {
+const SubcategoryForm = ({ subcategoryId }: { subcategoryId?: string }) => {
   const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(!!subcategoryId);
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       name: "",
+      categoryId: "",
     },
   });
+
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
   const fetchCategories = async () => {
-    const data = await fetch(`${API_BASE_URL}/categories`, {
-      method: "GET",
-    });
-    const categories = await data.json();
-    setCategories(categories?.data?.data);
+    try {
+      const data = await fetch(`${API_BASE_URL}/categories`, {
+        method: "GET",
+      });
+      const categories = await data.json();
+      setCategories(categories?.data?.data);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      toast("Failed to fetch categories.");
+    }
   };
+
+  const fetchSubcategory = async () => {
+    if (!subcategoryId) return;
+
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/subcategories/${subcategoryId}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${
+              localStorage.getItem("accessToken") || ""
+            }`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch subcategory data");
+      }
+
+      const subcategoryData = await response.json();
+      form.reset({
+        name: subcategoryData.data.name,
+        categoryId: subcategoryData.data.categoryId,
+      });
+    } catch (error) {
+      console.error("Error fetching subcategory:", error);
+      toast("Failed to fetch subcategory data. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchCategories();
-  }, []);
+    if (subcategoryId) fetchSubcategory();
+  }, [subcategoryId]);
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/brands`, {
-        method: "POST",
+      const url = subcategoryId
+        ? `${API_BASE_URL}/subcategories/${subcategoryId}`
+        : `${API_BASE_URL}/subcategories`;
+      const method = subcategoryId ? "PATCH" : "POST";
+
+      const response = await fetch(url, {
+        method,
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,
@@ -68,7 +115,7 @@ const CreateBrandForm = () => {
 
       if (!response.ok) {
         const errorResponse = await response.json();
-        throw new Error(errorResponse.message || "Failed to create brand");
+        throw new Error(errorResponse.message || "Failed to process request");
       }
 
       const responseData = await response.json();
@@ -78,6 +125,9 @@ const CreateBrandForm = () => {
       toast("An error occurred. Please try again.", { duration: 960 });
     }
   };
+
+  if (loading) return <p>Loading...</p>;
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
@@ -95,13 +145,12 @@ const CreateBrandForm = () => {
                 </FormControl>
                 <SelectContent>
                   {categories.map((category: { name: string; id: string }) => (
-                    <SelectItem key={category?.id} value={category?.id}>
-                      {category?.name}
+                    <SelectItem key={category.id} value={category.id}>
+                      {category.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-
               <FormMessage />
             </FormItem>
           )}
@@ -111,18 +160,18 @@ const CreateBrandForm = () => {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Brand Name</FormLabel>
+              <FormLabel>Subcategory Name</FormLabel>
               <FormControl>
-                <Input placeholder="brand" {...field} />
+                <Input placeholder="Subcategory name" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button type="submit">{subcategoryId ? "Update" : "Create"}</Button>
       </form>
     </Form>
   );
 };
 
-export default CreateBrandForm;
+export default SubcategoryForm;

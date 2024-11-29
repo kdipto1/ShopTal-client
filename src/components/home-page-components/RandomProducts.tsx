@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Card, CardContent, CardFooter, CardTitle } from "../shadcn-ui/card";
 import { Button } from "../shadcn-ui/button";
+import Link from "next/link";
 
 type Product = {
   id: string;
@@ -42,7 +43,9 @@ export default async function RandomProducts() {
               <p className="text-xl font-bold mb-2">
                 ${product.price.toFixed(2)}
               </p>
-              <Button className="w-full">Add to Cart</Button>
+              <Link href={`/product/${product.id}`}>
+                <Button className="w-full">View Details</Button>
+              </Link>
             </CardFooter>
           </Card>
         ))}

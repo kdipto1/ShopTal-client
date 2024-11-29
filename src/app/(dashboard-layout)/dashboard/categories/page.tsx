@@ -49,7 +49,7 @@ const CategoriesPage = () => {
         return (
           <div className="">
             <Button variant="ghost" size="sm" asChild>
-              <Link href={`/dashboard/categories/${product.id}`}>
+              <Link href={`/dashboard/categories/edit/${product.id}`}>
                 Edit
                 <ChevronRightIcon className="ml-2 h-4 w-4" />
               </Link>
