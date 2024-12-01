@@ -10,7 +10,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/shadcn-ui/sheet";
-import { Menu, ShoppingCart, User } from "lucide-react";
+import { LogIn, Menu, ShoppingCart, User } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -41,6 +41,9 @@ interface Category {
 
 export default function MobileNavbar() {
   const { categories, isLoading, error } = useNavigation();
+  const isNotLoggedIn =
+    typeof window !== "undefined" &&
+    window.localStorage.getItem("accessToken") === null;
 
   // if (isLoading) {
   //   return <div className="flex justify-center p-4">Loading navigation...</div>;
@@ -65,32 +68,41 @@ export default function MobileNavbar() {
         <SheetHeader>
           <SheetTitle>
             <Link href="/" className="mr-6 flex items-center space-x-2">
-              <span className="font-bold ">ShopTal</span>
+              <span className="font-bold text-2xl">ShopTal</span>
             </Link>
           </SheetTitle>
-          <SheetDescription className="text-left mt-6">
-            Main Menu
-          </SheetDescription>
+          <SheetDescription className="text-left">Main Menu</SheetDescription>
         </SheetHeader>
+        {isNotLoggedIn && (
+          <Link
+            href="/profile"
+            className="rounded-md hover:bg-gray-100 transition-colors flex mt-4 font-semibold"
+            aria-label="User Account"
+          >
+            <LogIn className="h-5 w-5" /> &nbsp; Login
+          </Link>
+        )}
         <Link
           href="/profile"
-          className="rounded-md hover:bg-gray-100 transition-colors flex mt-2"
+          className="rounded-md hover:bg-gray-100 transition-colors flex mt-4 font-semibold"
           aria-label="User Account"
         >
-          <User className="h-5 w-5" /> Profile
+          <User className="h-5 w-5" /> &nbsp; Profile
         </Link>
         <Link
           href={"/cart"}
-          className="rounded-md hover:bg-gray-100 transition-colors flex mt-2"
+          className="rounded-md hover:bg-gray-100 transition-colors flex mt-4 font-semibold"
           aria-label="Shopping Cart"
         >
-          <ShoppingCart className="h-5 w-5" /> Cart
+          <ShoppingCart className="h-5 w-5" /> &nbsp; Cart
         </Link>
 
         <SheetDescription className="text-left mt-4">
           Browse Categories
         </SheetDescription>
         <Accordion type="single" collapsible className="w-full">
+          {isLoading && <p>Categories Loading...</p>}
+          {error && <p>Failed to lead categories. Try again...</p>}
           {categories.map((category: Category) => (
             <AccordionItem key={category.id} value={`category-${category.id}`}>
               <AccordionTrigger>

@@ -63,14 +63,14 @@ const ProductImage = ({ src, alt }: { src: string; alt: string }) => (
   </div>
 );
 
-const StarRating = ({ rating = 4.5 }: { rating?: number }) => (
+const StarRating = ({ rating = 4 }: { rating?: number }) => (
   <div className="flex items-center space-x-2">
     <div className="flex">
       {[...Array(5)].map((_, i) => (
         <Star
           key={i}
           className={`w-5 h-5 ${
-            i < Math.floor(rating) ? "fill-yellow-400" : "fill-gray-200"
+            i < Math.floor(rating) ? "fill-black" : "fill-gray-200"
           }`}
         />
       ))}

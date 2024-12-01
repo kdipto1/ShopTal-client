@@ -43,11 +43,10 @@
 //   matcher: ["/admin/:path*", "/dashboard/:path*", "/settings/:path*"],
 // };
 
-//***--*--*-**-* */
+//***--*--*-**-* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 import { NextResponse, NextRequest } from "next/server";
 import { RouteConfig } from "./types";
-import { toast } from "sonner";
 
 export const PROTECTED_ROUTES: RouteConfig = {
   "/dashboard": ["admin"],
@@ -96,30 +95,3 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: ["/((?!api|_next/static|_next/image|.*\\.png$).*)"],
 };
-// Configure middleware matcher
-// export const config = {
-//   matcher: [
-//     // Match specific paths that need protection
-//     {
-//       source: "/admin/:path*",
-//       missing: [
-//         { type: "cookie", key: "accessToken" },
-//         { type: "cookie", key: "userRole" },
-//       ],
-//     },
-//     {
-//       source: "/dashboard/:path*",
-//       missing: [
-//         { type: "cookie", key: "accessToken" },
-//         { type: "cookie", key: "userRole" },
-//       ],
-//     },
-//     {
-//       source: "/settings/:path*",
-//       missing: [
-//         { type: "cookie", key: "accessToken" },
-//         { type: "cookie", key: "userRole" },
-//       ],
-//     },
-//   ],
-// };

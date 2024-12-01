@@ -28,6 +28,7 @@ import { Loader2, Settings, User } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { signOut } from "@/lib/cookies";
 
 // Define types
 interface UserProfile {
@@ -151,9 +152,10 @@ const ProfilePage = () => {
       setIsUpdating(true);
       setError("");
 
-      const accessToken = getAccessToken();
+      const accessToken = await getAccessToken();
 
       if (!accessToken) {
+        await signOut();
         throw new Error("No access token found");
       }
 

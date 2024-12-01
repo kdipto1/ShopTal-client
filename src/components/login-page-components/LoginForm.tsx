@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -18,6 +18,8 @@ import {
 } from "../shadcn-ui/form";
 import { Input } from "../shadcn-ui/input";
 import { Button } from "../shadcn-ui/button";
+import { Switch } from "../shadcn-ui/switch";
+import { setCookie as setCookieNext } from "cookies-next/client";
 
 // Form validation schema
 const loginSchema = z.object({
@@ -34,9 +36,9 @@ type LoginFormData = z.infer<typeof loginSchema>;
 const LoginForm = () => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -82,6 +84,8 @@ const LoginForm = () => {
         // Store auth data
         localStorage.setItem("accessToken", data.data.accessToken);
         localStorage.setItem("userRole", data.data.role);
+        setCookieNext("accessToken", data.data.accessToken);
+        setCookieNext("userRole", data.data.role);
 
         // Set cookies and handle redirect
         await setCookie(data.data, {
@@ -104,54 +108,74 @@ const LoginForm = () => {
     }
   };
 
+  const handleSwitchChange = (checked: boolean) => {
+    setIsAdmin(checked);
+    form.reset({
+      phone: checked ? "1234567890" : "9876543210",
+      password: checked ? "test@123" : "123456",
+    });
+  };
+
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleLogin)} className="space-y-6">
-        <FormField
-          control={form.control}
-          name="phone"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Phone</FormLabel>
-              <FormControl>
-                <Input
-                  type="tel"
-                  placeholder="1234567890"
-                  {...field}
-                  disabled={isLoading}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+    <>
+      <div className="flex items-center space-x-2 mb-4">
+        <Switch
+          id="login-role"
+          checked={isAdmin}
+          onCheckedChange={handleSwitchChange}
         />
+        <label htmlFor="login-role" className="ml-2">
+          {isAdmin ? "Admin" : "Customer"}
+        </label>
+      </div>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(handleLogin)} className="space-y-6">
+          <FormField
+            control={form.control}
+            name="phone"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Phone</FormLabel>
+                <FormControl>
+                  <Input
+                    type="tel"
+                    placeholder="1234567890"
+                    {...field}
+                    disabled={isLoading}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <Input
-                  type="password"
-                  placeholder="••••••"
-                  {...field}
-                  disabled={isLoading}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input
+                    type="password"
+                    placeholder="••••••"
+                    {...field}
+                    disabled={isLoading}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        {error && <div className="text-red-500 text-sm">{error}</div>}
+          {error && <div className="text-red-500 text-sm">{error}</div>}
 
-        <Button type="submit" disabled={isLoading} className="w-full">
-          {isLoading ? "Logging in..." : "Login"}
-        </Button>
-      </form>
-    </Form>
+          <Button type="submit" disabled={isLoading} className="w-full">
+            {isLoading ? "Logging in..." : "Login"}
+          </Button>
+        </form>
+      </Form>
+    </>
   );
 };
 

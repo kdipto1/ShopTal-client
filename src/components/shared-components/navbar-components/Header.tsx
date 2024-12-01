@@ -1,6 +1,6 @@
 "use client";
 import { useState, useCallback, useRef, useEffect } from "react";
-import { ShoppingCart, User, Search } from "lucide-react";
+import { ShoppingCart, User, Search, LogIn } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import useClickOutside from "@/hooks/useClickOutside";
@@ -208,6 +208,9 @@ const Header = () => {
 
   // Check if the current route is in the hideOnRoutes array
   const shouldHide = router.includes("/dashboard");
+  const isNotLoggedIn =
+    typeof window !== "undefined" &&
+    window.localStorage.getItem("accessToken") === null;
 
   if (shouldHide) {
     return null; // Don't render the component if on a specific route
@@ -228,18 +231,27 @@ const Header = () => {
           <nav className="hidden  md:flex items-center space-x-2">
             <Link
               href={"/cart"}
-              className="p-2 rounded-md hover:bg-gray-100 transition-colors"
+              className="p-2 rounded-md hover:bg-gray-100 transition-colors flex font-semibold"
               aria-label="Shopping Cart"
             >
-              <ShoppingCart className="h-5 w-5" />
+              <ShoppingCart className="h-5 w-5" /> &nbsp; Cart
             </Link>
             <Link
               href="/profile"
-              className="p-2 rounded-md hover:bg-gray-100 transition-colors"
+              className="p-2 rounded-md hover:bg-gray-100 transition-colors flex font-semibold"
               aria-label="User Account"
             >
-              <User className="h-5 w-5" />
+              <User className="h-5 w-5" /> &nbsp; Profile
             </Link>
+            {isNotLoggedIn && (
+              <Link
+                href="/login"
+                className="p-2 rounded-md hover:bg-gray-100 transition-colors flex font-semibold"
+                aria-label="User Account"
+              >
+                <LogIn className="h-5 w-5" /> &nbsp; Login
+              </Link>
+            )}
           </nav>
         </div>
       </div>
@@ -248,5 +260,3 @@ const Header = () => {
 };
 
 export default Header;
-
-/************************************************************************************* */

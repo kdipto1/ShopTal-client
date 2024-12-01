@@ -34,7 +34,7 @@ interface Category {
   brands: Brand[];
 }
 
-export default function ResponsiveMenu() {
+export default function NavbarMenu() {
   const { categories, isLoading, error } = useNavigation();
 
   if (isLoading) {
@@ -84,7 +84,7 @@ export default function ResponsiveMenu() {
 
 const SubcategoryList = ({ category }: { category: Category }) => {
   return (
-    <ul className="grid gap-3 p-4 md:w-[200px] md:grid-cols-1 lg:w-[300px] lg:grid-cols-2 ">
+    <ul className="grid gap-3 p-4 md:w-[200px] md:grid-cols-1 lg:w-[300px] lg:grid-cols-2  ">
       {category.productSubcategory.map((subcategory) => (
         <Link
           key={subcategory.id}

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ShoppingCart } from "lucide-react";
 import { toast } from "sonner";
+import { Button } from "../shadcn-ui/button";
 
 interface AddToCartButtonProps {
   productId: string;
@@ -18,6 +19,15 @@ export const AddToCartButton = ({
   const [quantity, setQuantity] = useState(initialQuantity);
 
   const addToCart = async () => {
+    console.log(localStorage.getItem("accessToken"));
+    if (localStorage.getItem("accessToken") === null) {
+      toast.info("Login to add product to cart", {
+        closeButton: true,
+        position: "top-right",
+        richColors: true,
+      });
+      return;
+    }
     try {
       setIsLoading(true);
 
@@ -70,14 +80,22 @@ export const AddToCartButton = ({
         </select>
       </div>
 
-      <button
+      {/* <button
         onClick={addToCart}
         disabled={isLoading}
         className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <ShoppingCart className="mr-2 h-4 w-4" />
         {isLoading ? "Adding..." : "Add to Cart"}
-      </button>
+      </button> */}
+      <Button
+        onClick={addToCart}
+        disabled={isLoading}
+        // className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <ShoppingCart className="mr-2 h-4 w-4" />
+        {isLoading ? "Adding..." : "Add to Cart"}
+      </Button>
     </div>
   );
 };
