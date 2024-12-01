@@ -1,6 +1,5 @@
 import {
   LayoutGrid,
-  Settings,
   Users,
   LucideTag,
   LucideTags,
@@ -90,13 +89,13 @@ export function getMenuList(pathname: string): Group[] {
           icon: Users,
           submenus: [],
         },
-        {
-          href: "/dashboard/account",
-          label: "Account",
-          active: pathname.includes("/dashboard/account"),
-          icon: Settings,
-          submenus: [],
-        },
+        // {
+        //   href: "/dashboard/account",
+        //   label: "Account",
+        //   active: pathname.includes("/dashboard/account"),
+        //   icon: Settings,
+        //   submenus: [],
+        // },
       ],
     },
   ];

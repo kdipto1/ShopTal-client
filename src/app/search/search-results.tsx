@@ -1,5 +1,3 @@
-import React from "react";
-
 import { searchProducts } from "@/lib/api";
 import { SearchParams } from "@/types";
 import { ProductCard } from "@/components/search-page-components/ProductCard";

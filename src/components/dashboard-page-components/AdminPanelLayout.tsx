@@ -6,7 +6,11 @@ import { useStore } from "@/hooks/use-store";
 import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 import Footer from "./DashboardFooter";
 
-const AdminPanelLayout = ({ children }: { children: React.ReactNode }) => {
+export default function AdminPanelLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const sidebar = useStore(useSidebarToggle, (state) => state);
 
   if (!sidebar) return null;
@@ -32,6 +36,4 @@ const AdminPanelLayout = ({ children }: { children: React.ReactNode }) => {
       </footer>
     </>
   );
-};
-
-export default AdminPanelLayout;
+}

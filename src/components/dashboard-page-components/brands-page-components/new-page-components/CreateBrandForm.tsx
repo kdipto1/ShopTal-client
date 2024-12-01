@@ -34,7 +34,7 @@ const FormSchema = z.object({
     .optional(),
 });
 
-const CreateBrandForm = () => {
+export default function CreateBrandForm() {
   const [categories, setCategories] = useState([]);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -123,6 +123,4 @@ const CreateBrandForm = () => {
       </form>
     </Form>
   );
-};
-
-export default CreateBrandForm;
+}

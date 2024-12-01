@@ -7,7 +7,6 @@ import {
   Twitter,
   Youtube,
   CreditCard,
-  PlayIcon,
   // ApplePay,
   // GooglePay,
 } from "lucide-react";

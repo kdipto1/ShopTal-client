@@ -117,7 +117,11 @@ const ProductDetails = ({ product }: { product: Product }) => (
 );
 
 // Main Component
-const ProductPage = async ({ params }: { params: { id: string } }) => {
+export default async function ProductPage({
+  params,
+}: {
+  params: { id: string };
+}) {
   try {
     const { data: product } = await getProduct(params.id);
 
@@ -137,9 +141,7 @@ const ProductPage = async ({ params }: { params: { id: string } }) => {
           <div className="space-y-4">
             <h1 className="text-3xl font-bold">{product?.name}</h1>
             <StarRating />
-            <p className="text-2xl font-bold">
-              ${(product.price / 100).toFixed(2)}
-            </p>
+            <p className="text-2xl font-bold">${product.price.toFixed(2)}</p>
             <p className="text-gray-500">In stock: {product.quantity}</p>
 
             <AddToCartButton productId={product?.id} />
@@ -156,6 +158,4 @@ const ProductPage = async ({ params }: { params: { id: string } }) => {
       </div>
     );
   }
-};
-
-export default ProductPage;
+}

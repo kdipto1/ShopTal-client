@@ -40,7 +40,7 @@ interface CollapseMenuButtonProps {
   isOpen: boolean | undefined;
 }
 
-export function CollapseMenuButton({
+export default function CollapseMenuButton({
   icon: Icon,
   label,
   active,

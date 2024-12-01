@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import { Separator } from "@/components/shadcn-ui/separator";
 import NavbarMenu from "./NavbarMenu";
 
-const Navbar = () => {
+export default function Navbar() {
   const router = usePathname();
 
   const shouldHide = router.includes("/dashboard");
@@ -21,6 +21,4 @@ const Navbar = () => {
       <Separator />
     </section>
   );
-};
-
-export default Navbar;
+}

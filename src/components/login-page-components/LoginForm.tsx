@@ -33,7 +33,7 @@ const loginSchema = z.object({
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
-const LoginForm = () => {
+export default function LoginForm() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const searchParams = useSearchParams();
@@ -177,6 +177,4 @@ const LoginForm = () => {
       </Form>
     </>
   );
-};
-
-export default LoginForm;
+}

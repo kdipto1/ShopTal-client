@@ -9,7 +9,7 @@ import {
   SheetTrigger,
 } from "../shadcn-ui/sheet";
 
-const SheetMenu = () => {
+export default function SheetMenu() {
   return (
     <Sheet>
       <SheetTrigger className="lg:hidden" asChild>
@@ -24,7 +24,7 @@ const SheetMenu = () => {
             variant="link"
             asChild
           >
-            <Link href="/dashboard" className="flex items-center gap-2">
+            <Link href="/" className="flex items-center gap-2">
               <PanelsTopLeft className="w-6 h-6 mr-1" />
               <h1 className="font-bold text-lg">ShopTal</h1>
             </Link>
@@ -34,6 +34,4 @@ const SheetMenu = () => {
       </SheetContent>
     </Sheet>
   );
-};
-
-export default SheetMenu;
+}

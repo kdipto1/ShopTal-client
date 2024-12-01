@@ -1,7 +1,7 @@
 "use client";
 import { signOut } from "@/lib/cookies";
 import { LogOut } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "../shadcn-ui/button";
 import { deleteCookie } from "cookies-next/client";
@@ -30,11 +30,11 @@ interface SignOutButtonProps {
   className?: string;
 }
 
-const SignOutButton = ({
+export default function SignOutButton({
   variant = "ghost",
   size = "default",
   className,
-}: SignOutButtonProps) => {
+}: SignOutButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
@@ -100,6 +100,4 @@ const SignOutButton = ({
       </AlertDialogContent>
     </AlertDialog>
   );
-};
-
-export default SignOutButton;
+}

@@ -17,7 +17,7 @@ export default function EditCategoryPage({
 }) {
   return (
     <ContentLayout title="New">
-      <Breadcrumb>
+      <Breadcrumb className="mb-4">
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>

@@ -60,7 +60,7 @@ const FormSchema = z.object({
     .nonempty({ message: "At least one feature is required." }),
 });
 
-const EditProductForm = ({ productId }: { productId: string }) => {
+export default function EditProductForm({ productId }: { productId: string }) {
   const [preview, setPreview] = useState("");
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
@@ -407,12 +407,20 @@ const EditProductForm = ({ productId }: { productId: string }) => {
                   </FormItem>
                 )}
               />
-              <Button type="button" onClick={() => remove(index)}>
+              <Button
+                className="mt-8"
+                type="button"
+                onClick={() => remove(index)}
+              >
                 Delete
               </Button>
             </div>
           ))}
-          <Button type="button" onClick={() => append({ name: "", value: "" })}>
+          <Button
+            className="mt-4"
+            type="button"
+            onClick={() => append({ name: "", value: "" })}
+          >
             Add Feature
           </Button>
         </div>
@@ -421,6 +429,4 @@ const EditProductForm = ({ productId }: { productId: string }) => {
       </form>
     </Form>
   );
-};
-
-export default EditProductForm;
+}

@@ -9,7 +9,7 @@ import {
 } from "@/components/shadcn-ui/breadcrumb";
 import Link from "next/link";
 
-const UsersPage = () => {
+export default function UsersPage() {
   return (
     <ContentLayout title="Users">
       <Breadcrumb>
@@ -34,6 +34,4 @@ const UsersPage = () => {
       {/* <PlaceholderContent /> */}
     </ContentLayout>
   );
-};
-
-export default UsersPage;
+}

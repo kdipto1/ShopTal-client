@@ -1,5 +1,5 @@
 "use client";
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useRef } from "react";
 import { ShoppingCart, User, Search, LogIn } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -203,7 +203,7 @@ const SearchProducts = () => {
 };
 
 // Main Header Component
-const Header = () => {
+export default function Header() {
   const router = usePathname();
 
   // Check if the current route is in the hideOnRoutes array
@@ -220,7 +220,7 @@ const Header = () => {
       <div className="max-w-7xl mx-auto px-4 flex h-14 items-center">
         <div className="mr-4 flex">
           <MobileNavbar />
-          <Link href="/" className="mr-6 flex items-center space-x-2">
+          <Link href="/" className="mr-6 flex items-center space-x-2 text-2xl">
             <span className="font-bold">ShopTal</span>
           </Link>
         </div>
@@ -231,14 +231,14 @@ const Header = () => {
           <nav className="hidden  md:flex items-center space-x-2">
             <Link
               href={"/cart"}
-              className="p-2 rounded-md hover:bg-gray-100 transition-colors flex font-semibold"
+              className="p-2 rounded-md hover:bg-gray-100 transition-colors flex"
               aria-label="Shopping Cart"
             >
               <ShoppingCart className="h-5 w-5" /> &nbsp; Cart
             </Link>
             <Link
               href="/profile"
-              className="p-2 rounded-md hover:bg-gray-100 transition-colors flex font-semibold"
+              className="p-2 rounded-md hover:bg-gray-100 transition-colors flex"
               aria-label="User Account"
             >
               <User className="h-5 w-5" /> &nbsp; Profile
@@ -246,7 +246,7 @@ const Header = () => {
             {isNotLoggedIn && (
               <Link
                 href="/login"
-                className="p-2 rounded-md hover:bg-gray-100 transition-colors flex font-semibold"
+                className="p-2 rounded-md hover:bg-gray-100 transition-colors flex"
                 aria-label="User Account"
               >
                 <LogIn className="h-5 w-5" /> &nbsp; Login
@@ -257,6 +257,4 @@ const Header = () => {
       </div>
     </header>
   );
-};
-
-export default Header;
+}

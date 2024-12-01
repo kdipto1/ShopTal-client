@@ -19,7 +19,6 @@ export const AddToCartButton = ({
   const [quantity, setQuantity] = useState(initialQuantity);
 
   const addToCart = async () => {
-    console.log(localStorage.getItem("accessToken"));
     if (localStorage.getItem("accessToken") === null) {
       toast.info("Login to add product to cart", {
         closeButton: true,

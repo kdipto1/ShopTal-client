@@ -14,13 +14,13 @@ import {
 import { Button } from "../shadcn-ui/button";
 import { Ellipsis, LogOut } from "lucide-react";
 import Link from "next/link";
-import { CollapseMenuButton } from "./CollapseMenuButton";
+import CollapseMenuButton from "./CollapseMenuButton";
 
 interface MenuProps {
   isOpen: boolean | undefined;
 }
 
-const Menu = ({ isOpen }: MenuProps) => {
+export default function Menu({ isOpen }: MenuProps) {
   const pathname = usePathname();
   const menuList = getMenuList(pathname);
   return (
@@ -134,6 +134,4 @@ const Menu = ({ isOpen }: MenuProps) => {
       </nav>
     </ScrollArea>
   );
-};
-
-export default Menu;
+}

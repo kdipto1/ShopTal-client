@@ -55,7 +55,7 @@ const profileSchema = z.object({
 
 type ProfileFormData = z.infer<typeof profileSchema>;
 
-const ProfilePage = () => {
+export default function ProfilePage() {
   const [user, setUser] = useState<UserProfile>({
     firstName: "",
     lastName: "",
@@ -345,6 +345,4 @@ const ProfilePage = () => {
       </div>
     </div>
   );
-};
-
-export default ProfilePage;
+}

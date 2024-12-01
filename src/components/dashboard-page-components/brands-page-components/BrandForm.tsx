@@ -33,7 +33,7 @@ const FormSchema = z.object({
     .optional(),
 });
 
-const BrandForm = ({ brandId }: { brandId?: string }) => {
+export default function BrandForm({ brandId }: { brandId?: string }) {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(!!brandId);
 
@@ -169,6 +169,4 @@ const BrandForm = ({ brandId }: { brandId?: string }) => {
       </form>
     </Form>
   );
-};
-
-export default BrandForm;
+}
