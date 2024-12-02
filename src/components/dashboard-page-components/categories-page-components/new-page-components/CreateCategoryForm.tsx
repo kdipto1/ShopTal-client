@@ -23,7 +23,7 @@ const FormSchema = z.object({
   }),
 });
 
-const CreateCategoryForm = () => {
+export default function CreateCategoryForm() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -75,6 +75,4 @@ const CreateCategoryForm = () => {
       </form>
     </Form>
   );
-};
-
-export default CreateCategoryForm;
+}

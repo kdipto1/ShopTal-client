@@ -36,7 +36,7 @@ const formSchema = z.object({
   }),
 });
 
-const SignupForm = () => {
+export default function SignupForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -80,7 +80,7 @@ const SignupForm = () => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className=" grid grid-cols-1 md:grid-cols-2 gap-8 "
+        className=" grid grid-cols-1 md:grid-cols-2 gap-8"
       >
         <FormField
           control={form.control}
@@ -170,6 +170,4 @@ const SignupForm = () => {
       </form>
     </Form>
   );
-};
-
-export default SignupForm;
+}

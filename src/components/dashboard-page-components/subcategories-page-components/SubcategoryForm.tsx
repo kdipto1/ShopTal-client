@@ -32,7 +32,11 @@ const FormSchema = z.object({
   }),
 });
 
-const SubcategoryForm = ({ subcategoryId }: { subcategoryId?: string }) => {
+export default function SubcategoryForm({
+  subcategoryId,
+}: {
+  subcategoryId?: string;
+}) {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(!!subcategoryId);
 
@@ -172,6 +176,4 @@ const SubcategoryForm = ({ subcategoryId }: { subcategoryId?: string }) => {
       </form>
     </Form>
   );
-};
-
-export default SubcategoryForm;
+}

@@ -7,7 +7,7 @@ import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 import Link from "next/link";
 import Menu from "./Menu";
 
-const Sidebar = () => {
+export default function Sidebar() {
   const sidebar = useStore(useSidebarToggle, (state) => state);
 
   if (!sidebar) return null;
@@ -46,6 +46,4 @@ const Sidebar = () => {
       </div>
     </aside>
   );
-};
-
-export default Sidebar;
+}

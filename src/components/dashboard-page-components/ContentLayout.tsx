@@ -5,13 +5,11 @@ interface ContentLayoutProps {
   children: React.ReactNode;
 }
 
-const ContentLayout = ({ title, children }: ContentLayoutProps) => {
+export default function ContentLayout({ title, children }: ContentLayoutProps) {
   return (
     <div>
       <DashboardNavbar title={title} />
       <div className="container pt-8 pb-8 px-4 sm:px-8">{children}</div>
     </div>
   );
-};
-
-export default ContentLayout;
+}

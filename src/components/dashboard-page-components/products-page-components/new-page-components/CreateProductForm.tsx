@@ -56,7 +56,7 @@ const FormSchema = z.object({
     .nonempty({ message: "At least one feature is required." }),
 });
 
-const CreateProductForm = () => {
+export default function CreateProductForm() {
   const [preview, setPreview] = useState("");
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
@@ -294,7 +294,10 @@ const CreateProductForm = () => {
         <div>
           <h2>Features:</h2>
           {fields.map((item, index) => (
-            <div key={item.id} className="flex space-x-4  items-center">
+            <div
+              key={item.id}
+              className="flex space-x-4 align-middle items-center"
+            >
               <FormField
                 control={form.control}
                 name={`features.${index}.name`}
@@ -321,12 +324,21 @@ const CreateProductForm = () => {
                   </FormItem>
                 )}
               />
-              <Button type="button" onClick={() => remove(index)}>
+
+              <Button
+                className="mt-8"
+                type="button"
+                onClick={() => remove(index)}
+              >
                 Delete
               </Button>
             </div>
           ))}
-          <Button type="button" onClick={() => append({ name: "", value: "" })}>
+          <Button
+            type="button"
+            className="mt-4"
+            onClick={() => append({ name: "", value: "" })}
+          >
             Add Feature
           </Button>
         </div>
@@ -335,6 +347,4 @@ const CreateProductForm = () => {
       </form>
     </Form>
   );
-};
-
-export default CreateProductForm;
+}

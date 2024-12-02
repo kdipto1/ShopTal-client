@@ -19,7 +19,7 @@ export default async function EditBrandPage({
 
   return (
     <ContentLayout title="Edit Brand">
-      <Breadcrumb>
+      <Breadcrumb className="mb-4">
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>

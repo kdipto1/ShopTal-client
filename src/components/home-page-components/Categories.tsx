@@ -37,7 +37,8 @@ export default async function Categories() {
               <CardContent className="p-0">
                 <div className="relative h-[200px]">
                   <Image
-                    src={category.image}
+                    // src={category.image}
+                    src={""}
                     alt={category.name}
                     fill
                     className="object-cover transition-transform group-hover:scale-105"

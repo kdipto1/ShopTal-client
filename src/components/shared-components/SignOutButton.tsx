@@ -1,8 +1,10 @@
+"use client";
 import { signOut } from "@/lib/cookies";
 import { LogOut } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "../shadcn-ui/button";
+import { deleteCookie } from "cookies-next/client";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,6 +16,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../shadcn-ui/alert-dialog";
+import { useRouter } from "next/navigation";
 
 interface SignOutButtonProps {
   variant?:
@@ -27,12 +30,13 @@ interface SignOutButtonProps {
   className?: string;
 }
 
-const SignOutButton = ({
+export default function SignOutButton({
   variant = "ghost",
   size = "default",
   className,
-}: SignOutButtonProps) => {
+}: SignOutButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const handleSignOut = async () => {
     try {
@@ -41,11 +45,13 @@ const SignOutButton = ({
       // Clear client-side storage
       localStorage.removeItem("accessToken");
       localStorage.removeItem("userRole");
-
+      deleteCookie("accessToken");
+      deleteCookie("userRole");
       // Call server action to clear cookies and redirect
       await signOut();
 
       toast.success("Signed out successfully");
+      router.push("/");
     } catch (error) {
       toast.error("Error signing out");
       console.error("Sign out error:", error);
@@ -94,6 +100,4 @@ const SignOutButton = ({
       </AlertDialogContent>
     </AlertDialog>
   );
-};
-
-export default SignOutButton;
+}

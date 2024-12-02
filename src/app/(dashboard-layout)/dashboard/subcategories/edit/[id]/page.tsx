@@ -17,7 +17,7 @@ export default async function EditSubcategoryPage({
 }) {
   return (
     <ContentLayout title="New">
-      <Breadcrumb>
+      <Breadcrumb className="mb-4">
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>

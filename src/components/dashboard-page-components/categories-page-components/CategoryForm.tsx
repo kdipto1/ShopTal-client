@@ -22,7 +22,7 @@ const FormSchema = z.object({
   }),
 });
 
-const CategoryForm = ({ categoryId }: { categoryId?: string }) => {
+export default function CategoryForm({ categoryId }: { categoryId?: string }) {
   const [loading, setLoading] = useState(!!categoryId);
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -116,6 +116,4 @@ const CategoryForm = ({ categoryId }: { categoryId?: string }) => {
       </form>
     </Form>
   );
-};
-
-export default CategoryForm;
+}

@@ -13,6 +13,7 @@ import {
 import { Skeleton } from "@/components/shadcn-ui/skeleton";
 import { Button } from "@/components/shadcn-ui/button";
 import Image from "next/image";
+import Link from "next/link";
 
 interface CartItem {
   id: string;
@@ -36,7 +37,7 @@ interface ApiResponse {
   data: CartItem[];
 }
 
-const CartPage = () => {
+export default function CartPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -235,7 +236,9 @@ const CartPage = () => {
                     {/* Product Details */}
                     <div className="flex-1 space-y-2">
                       <div className="flex justify-between">
-                        <h3 className="font-medium">{item.product.name}</h3>
+                        <Link href={`/product/${item.product.id}`}>
+                          <h3 className="font-medium">{item.product.name}</h3>
+                        </Link>
                         <Button
                           onClick={() => removeItem(item.id)}
                           variant="ghost"
@@ -283,10 +286,7 @@ const CartPage = () => {
                           </Button>
                         </div>
                         <p className="font-medium">
-                          $
-                          {((item.product.price * item.quantity) / 100).toFixed(
-                            2
-                          )}
+                          ${(item.product.price * item.quantity).toFixed(2)}
                         </p>
                       </div>
                     </div>
@@ -307,7 +307,7 @@ const CartPage = () => {
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Subtotal</span>
-                  <span>${(calculateTotal() / 100).toFixed(2)}</span>
+                  <span>${calculateTotal().toFixed(2)}</span>
                 </div>
 
                 <div className="flex justify-between">
@@ -320,7 +320,7 @@ const CartPage = () => {
                 <div className="border-t pt-2 mt-2">
                   <div className="flex justify-between font-bold">
                     <span>Total</span>
-                    <span>${(calculateTotal() / 100).toFixed(2)}</span>
+                    <span>${calculateTotal().toFixed(2)}</span>
                   </div>
                 </div>
               </div>
@@ -333,7 +333,8 @@ const CartPage = () => {
                   // Add checkout functionality here
                   toast("Proceeding to checkout...");
                 }}
-                disabled={cartItems.length === 0}
+                // disabled={cartItems.length === 0}
+                disabled
               >
                 Proceed to Checkout
               </Button>
@@ -343,6 +344,4 @@ const CartPage = () => {
       </div>
     </div>
   );
-};
-
-export default CartPage;
+}

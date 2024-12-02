@@ -9,7 +9,7 @@ import { Suspense } from "react";
 
 export default function HomePage() {
   return (
-    <div className="container mx-auto px-4 py-8">
+    <section className="container mx-auto px-4 py-8">
       <Banner />
       <Suspense fallback={<NewArrivalsSkeleton />}>
         <NewArrivals />
@@ -20,6 +20,6 @@ export default function HomePage() {
       <Suspense fallback={<RandomProductsSkeleton />}>
         <RandomProducts />
       </Suspense>
-    </div>
+    </section>
   );
 }

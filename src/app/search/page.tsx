@@ -1,6 +1,5 @@
 import React, { Suspense } from "react";
 import SearchResults from "./search-results";
-
 import { getCategories } from "@/lib/api";
 import { SearchParams } from "@/types";
 import { SearchFilters } from "@/components/search-page-components/SearchFilters";

@@ -25,7 +25,7 @@ export type Subcategory = {
   updateAt: Date;
 };
 
-const SubcategoriesPage = () => {
+export default function SubcategoriesPage() {
   const [data, setData] = useState<Subcategory[]>([]);
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
@@ -151,7 +151,7 @@ const SubcategoriesPage = () => {
   );
   return (
     <ContentLayout title="Subcategories">
-      <Breadcrumb>
+      <Breadcrumb className="mb-4">
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
@@ -186,6 +186,4 @@ const SubcategoriesPage = () => {
       </div>
     </ContentLayout>
   );
-};
-
-export default SubcategoriesPage;
+}

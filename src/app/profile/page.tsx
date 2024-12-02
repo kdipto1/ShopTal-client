@@ -28,6 +28,7 @@ import { Loader2, Settings, User } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { signOut } from "@/lib/cookies";
 
 // Define types
 interface UserProfile {
@@ -54,7 +55,7 @@ const profileSchema = z.object({
 
 type ProfileFormData = z.infer<typeof profileSchema>;
 
-const ProfilePage = () => {
+export default function ProfilePage() {
   const [user, setUser] = useState<UserProfile>({
     firstName: "",
     lastName: "",
@@ -151,9 +152,10 @@ const ProfilePage = () => {
       setIsUpdating(true);
       setError("");
 
-      const accessToken = getAccessToken();
+      const accessToken = await getAccessToken();
 
       if (!accessToken) {
+        await signOut();
         throw new Error("No access token found");
       }
 
@@ -343,6 +345,4 @@ const ProfilePage = () => {
       </div>
     </div>
   );
-};
-
-export default ProfilePage;
+}

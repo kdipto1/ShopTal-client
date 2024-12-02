@@ -9,7 +9,7 @@ import {
 } from "@/components/shadcn-ui/breadcrumb";
 import Link from "next/link";
 
-const DashboardPage = () => {
+export default function DashboardPage() {
   return (
     <ContentLayout title="Dashboard">
       <Breadcrumb>
@@ -29,6 +29,4 @@ const DashboardPage = () => {
       <section>Dashboard page</section>
     </ContentLayout>
   );
-};
-
-export default DashboardPage;
+}

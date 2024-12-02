@@ -5,10 +5,10 @@ import { Card } from "@/components/shadcn-ui/card";
 import Link from "next/link";
 import { Suspense } from "react";
 
-const page = () => {
+export default function page() {
   return (
-    <div className="h-screen p-8  flex flex-col-reverse md:flex-row justify-around items-center gap-4">
-      <div>
+    <div className="min-h-screen p-8  flex flex-col-reverse md:flex-row justify-around items-center gap-4">
+      <div className="hidden md:block">
         <Image src={signup} alt="signup page image" width={500} height={500} />
       </div>
       <div className="max-w-lg">
@@ -33,6 +33,4 @@ const page = () => {
       </div>
     </div>
   );
-};
-
-export default page;
+}

@@ -31,7 +31,7 @@ const FormSchema = z.object({
   }),
 });
 
-const CreateSubcategoryForm = () => {
+export default function CreateSubcategoryForm() {
   const [categories, setCategories] = useState([]);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -129,6 +129,4 @@ const CreateSubcategoryForm = () => {
       </form>
     </Form>
   );
-};
-
-export default CreateSubcategoryForm;
+}
