@@ -212,9 +212,11 @@ export default function CartPage() {
             <Card>
               <CardContent className="p-8 text-center">
                 <p className="text-muted-foreground">Your cart is empty</p>
-                <Button className="mt-4" variant="outline">
-                  Continue Shopping
-                </Button>
+                <Link href={"/search"}>
+                  <Button className="mt-4" variant="outline">
+                    Continue Shopping
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
           ) : (

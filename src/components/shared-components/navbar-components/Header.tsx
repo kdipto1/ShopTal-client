@@ -1,12 +1,5 @@
 "use client";
-import {
-  useState,
-  useCallback,
-  useRef,
-  useEffect,
-  useLayoutEffect,
-  Suspense,
-} from "react";
+import { useState, useCallback, useRef } from "react";
 import { ShoppingCart, User, Search, LogIn } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -216,13 +209,10 @@ export default function Header() {
   // Check if the current route is in the hideOnRoutes array
   const shouldHide = router.includes("/dashboard");
 
-  const isNotLoggedIn =
-    typeof window !== "undefined" &&
-    window.localStorage.getItem("accessToken") === null;
-
   if (shouldHide) {
     return null; // Don't render the component if on a specific route
   }
+
   return (
     <header className="w-full bg-white bg-opacity-95 backdrop-blur">
       <div className="max-w-7xl mx-auto px-4 flex h-14 items-center">
@@ -251,17 +241,14 @@ export default function Header() {
             >
               <User className="h-5 w-5" /> &nbsp; Profile
             </Link>
-            <Suspense fallback={<></>}>
-              {isNotLoggedIn && (
-                <Link
-                  href="/login"
-                  className="p-2 rounded-md hover:bg-gray-100 transition-colors flex"
-                  aria-label="User Account"
-                >
-                  <LogIn className="h-5 w-5" /> &nbsp; Login
-                </Link>
-              )}
-            </Suspense>
+
+            <Link
+              href="/login"
+              className="p-2 rounded-md hover:bg-gray-100 transition-colors flex"
+              aria-label="User Account"
+            >
+              <LogIn className="h-5 w-5" /> &nbsp; Login
+            </Link>
           </nav>
         </div>
       </div>

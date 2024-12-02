@@ -124,7 +124,7 @@ export default function LoginForm() {
           checked={isAdmin}
           onCheckedChange={handleSwitchChange}
         />
-        <label htmlFor="login-role" className="ml-2">
+        <label htmlFor="login-role" className="ml-2 text-[#6c63ff]">
           {isAdmin ? "Admin" : "Customer"}
         </label>
       </div>
