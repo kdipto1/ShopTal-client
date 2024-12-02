@@ -16,7 +16,7 @@ export default async function EditProductPage({
   params: { id: string };
 }) {
   return (
-    <ContentLayout title="New">
+    <ContentLayout title="Edit Product">
       <Breadcrumb className="mb-4">
         <BreadcrumbList>
           <BreadcrumbItem>

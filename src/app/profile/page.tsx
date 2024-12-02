@@ -132,7 +132,7 @@ export default function ProfilePage() {
 
       const data = (await response.json()) as ApiResponse;
       setUser({
-        avatar: data?.data.name || "/placeholder.svg",
+        avatar: data?.data.name || "/avatar.webp",
         email: data?.data.email || "",
         firstName: data?.data.firstName || "",
         lastName: data?.data.lastName || "",
@@ -317,7 +317,9 @@ export default function ProfilePage() {
                         Receive emails about your account activity
                       </p>
                     </div>
-                    <Button variant="outline">Manage</Button>
+                    <Button variant="outline" disabled>
+                      Manage
+                    </Button>
                   </div>
                   <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
                     <div>
@@ -326,7 +328,9 @@ export default function ProfilePage() {
                         Change your password
                       </p>
                     </div>
-                    <Button variant="outline">Update</Button>
+                    <Button variant="outline" disabled>
+                      Update
+                    </Button>
                   </div>
                   <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
                     <div>
@@ -335,7 +339,9 @@ export default function ProfilePage() {
                         Add an extra layer of security to your account
                       </p>
                     </div>
-                    <Button variant="outline">Enable</Button>
+                    <Button variant="outline" disabled>
+                      Enable
+                    </Button>
                   </div>
                 </div>
               </TabsContent>

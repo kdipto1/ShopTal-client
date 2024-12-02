@@ -16,7 +16,7 @@ export default function EditCategoryPage({
   params: { id: string };
 }) {
   return (
-    <ContentLayout title="New">
+    <ContentLayout title="Edit Category">
       <Breadcrumb className="mb-4">
         <BreadcrumbList>
           <BreadcrumbItem>

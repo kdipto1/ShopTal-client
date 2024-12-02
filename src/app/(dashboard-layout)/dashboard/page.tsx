@@ -12,7 +12,7 @@ import Link from "next/link";
 export default function DashboardPage() {
   return (
     <ContentLayout title="Dashboard">
-      <Breadcrumb>
+      <Breadcrumb className="mb-4">
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
