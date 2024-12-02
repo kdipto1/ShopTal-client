@@ -16,7 +16,7 @@ export default async function EditSubcategoryPage({
   params: { id: string };
 }) {
   return (
-    <ContentLayout title="New">
+    <ContentLayout title="Edit Subcategory">
       <Breadcrumb className="mb-4">
         <BreadcrumbList>
           <BreadcrumbItem>

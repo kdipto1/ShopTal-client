@@ -1,5 +1,12 @@
 "use client";
-import { useState, useCallback, useRef } from "react";
+import {
+  useState,
+  useCallback,
+  useRef,
+  useEffect,
+  useLayoutEffect,
+  Suspense,
+} from "react";
 import { ShoppingCart, User, Search, LogIn } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -208,6 +215,7 @@ export default function Header() {
 
   // Check if the current route is in the hideOnRoutes array
   const shouldHide = router.includes("/dashboard");
+
   const isNotLoggedIn =
     typeof window !== "undefined" &&
     window.localStorage.getItem("accessToken") === null;
@@ -243,15 +251,17 @@ export default function Header() {
             >
               <User className="h-5 w-5" /> &nbsp; Profile
             </Link>
-            {isNotLoggedIn && (
-              <Link
-                href="/login"
-                className="p-2 rounded-md hover:bg-gray-100 transition-colors flex"
-                aria-label="User Account"
-              >
-                <LogIn className="h-5 w-5" /> &nbsp; Login
-              </Link>
-            )}
+            <Suspense fallback={<></>}>
+              {isNotLoggedIn && (
+                <Link
+                  href="/login"
+                  className="p-2 rounded-md hover:bg-gray-100 transition-colors flex"
+                  aria-label="User Account"
+                >
+                  <LogIn className="h-5 w-5" /> &nbsp; Login
+                </Link>
+              )}
+            </Suspense>
           </nav>
         </div>
       </div>

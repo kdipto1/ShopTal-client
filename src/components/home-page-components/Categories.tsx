@@ -30,20 +30,20 @@ export default async function Categories() {
         {categories.map((category) => (
           <Link
             key={category.id}
-            href={`/search?category=${category.id}`}
+            href={`/search?categoryId=${category.id}`}
             className="group"
           >
             <Card className="overflow-hidden">
               <CardContent className="p-0">
                 <div className="relative h-[200px]">
                   <Image
-                    // src={category.image}
-                    src={""}
+                    src={"/classification.png"}
                     alt={category.name}
+                    sizes="(min-width: 100px) 10vw, 20vw"
                     fill
-                    className="object-cover transition-transform group-hover:scale-105"
+                    className="object-contain transition-transform group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                  <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center">
                     <h3 className="text-2xl font-bold text-white">
                       {category.name}
                     </h3>

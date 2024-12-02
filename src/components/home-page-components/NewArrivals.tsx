@@ -40,14 +40,14 @@ export default async function NewArrivals() {
               key={product.id}
               className="md:basis-1/2 lg:basis-1/3"
             >
-              <Card>
+              <Card className="group">
                 <CardContent className="p-4">
                   <Image
                     src={product.image}
                     alt={product.name}
                     width={300}
                     height={300}
-                    className="w-full h-[200px] object-cover rounded-md"
+                    className="w-full h-[200px] object-cover rounded-md transition-transform group-hover:scale-105"
                   />
                 </CardContent>
                 <CardFooter className="flex flex-col items-start">
