@@ -43,6 +43,7 @@ async function getProduct(id: string): Promise<{ data: Product }> {
     headers: {
       "Content-Type": "application/json",
     },
+    cache: "no-store",
   });
 
   if (!res.ok) {

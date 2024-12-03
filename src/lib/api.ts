@@ -13,7 +13,10 @@ export async function fetchAPI<T>(
     });
   }
 
-  const res = await fetch(url.toString(), { next: { revalidate: 60 } });
+  const res = await fetch(url.toString(), {
+    // next: { revalidate: 60 }
+    cache: "no-store",
+  });
 
   if (!res.ok) {
     throw new Error(`API Error: ${res?.statusText || ""}`);
