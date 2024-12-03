@@ -20,7 +20,10 @@ type Product = {
 async function fetchNewArrivals(): Promise<Product[]> {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/products?limit=8&sortBy=createdAt&sortOrder=desc`,
-    { next: { revalidate: 3600 } }
+    {
+      // next: { revalidate: 600 },
+      cache: "no-store",
+    }
   );
   if (!res.ok) throw new Error("Failed to fetch new arrivals");
   const data = await res.json();

@@ -41,9 +41,6 @@ interface Category {
 
 export default function MobileNavbar() {
   const { categories, isLoading, error } = useNavigation();
-  const isNotLoggedIn =
-    typeof window !== "undefined" &&
-    window.localStorage.getItem("accessToken") === null;
 
   // if (isLoading) {
   //   return <div className="flex justify-center p-4">Loading navigation...</div>;
@@ -73,15 +70,13 @@ export default function MobileNavbar() {
           </SheetTitle>
           <SheetDescription className="text-left">Main Menu</SheetDescription>
         </SheetHeader>
-        {isNotLoggedIn && (
-          <Link
-            href="/profile"
-            className="rounded-md hover:bg-gray-100 transition-colors flex mt-4 font-semibold"
-            aria-label="User Account"
-          >
-            <LogIn className="h-5 w-5" /> &nbsp; Login
-          </Link>
-        )}
+        <Link
+          href="/profile"
+          className="rounded-md hover:bg-gray-100 transition-colors flex mt-4 font-semibold"
+          aria-label="User Account"
+        >
+          <LogIn className="h-5 w-5" /> &nbsp; Login
+        </Link>
         <Link
           href="/profile"
           className="rounded-md hover:bg-gray-100 transition-colors flex mt-4 font-semibold"

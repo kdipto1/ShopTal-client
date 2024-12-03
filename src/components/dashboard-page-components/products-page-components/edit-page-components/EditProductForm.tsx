@@ -232,7 +232,6 @@ export default function EditProductForm({ productId }: { productId: string }) {
 
   if (isLoading) {
     return <EditProductFormSkeleton />;
-    // return <div>Loading....</div>;
   }
 
   return (
