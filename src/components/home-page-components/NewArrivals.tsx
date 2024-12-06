@@ -36,12 +36,22 @@ export default async function NewArrivals() {
   return (
     <section className="mb-12">
       <h2 className="text-3xl font-bold mb-6">New Arrivals</h2>
-      <Carousel>
+      <Carousel
+        opts={{
+          align: "start",
+          dragFree: true,
+        }}
+        className="relative"
+      >
+        <div className="block md:hidden absolute -top-10 right-20">
+          <CarouselPrevious />
+          <CarouselNext />
+        </div>
         <CarouselContent>
           {newArrivals.map((product) => (
             <CarouselItem
               key={product.id}
-              className="md:basis-1/2 lg:basis-1/3"
+              className="basis-full sm:basis-1/2 md:basis-1/2 lg:basis-1/3 pl-4"
             >
               <Card className="group">
                 <CardContent className="p-4">
@@ -66,8 +76,10 @@ export default async function NewArrivals() {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
+        <div className="hidden md:block">
+          <CarouselPrevious />
+          <CarouselNext />
+        </div>
       </Carousel>
     </section>
   );
