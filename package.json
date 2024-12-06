@@ -41,7 +41,6 @@
     "clsx": "^2.1.1",
     "cookies-next": "^5.0.2",
     "embla-carousel-react": "^8.5.1",
-    "js-cookie": "^3.0.5",
     "lucide-react": "^0.441.0",
     "next": "14.2.15",
     "next-themes": "^0.3.0",
@@ -52,7 +51,7 @@
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.23.8",
-    "zustand": "^5.0.0"
+    "zustand": "^5.0.2"
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^14.2.15",
@@ -67,10 +66,10 @@
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "postcss": "^8.4.49",
-    "tailwindcss": "^3.4.15",
+    "tailwindcss": "^3.4.16",
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.6.3"
   },
-  "packageManager": "pnpm@9.13.2+sha512.88c9c3864450350e65a33587ab801acf946d7c814ed1134da4a924f6df5a2120fd36b46aab68f7cd1d413149112d53c7db3a4136624cfd00ff1846a0c6cef48a"
+  "packageManager": "pnpm@9.14.2+sha512.6e2baf77d06b9362294152c851c4f278ede37ab1eba3a55fda317a4a17b209f4dbb973fb250a77abc463a341fcb1f17f17cfa24091c4eb319cda0d9b84278387"
 }

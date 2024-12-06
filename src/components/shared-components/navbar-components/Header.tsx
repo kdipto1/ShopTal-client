@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import useClickOutside from "@/hooks/useClickOutside";
 import MobileNavbar from "./MobileNavbar";
+import { log } from "console";
 
 // Types
 interface Product {
@@ -45,7 +46,7 @@ const useDebounce = (callback: (...args: any[]) => void, delay: number) => {
 
       setTimeoutId(newTimeoutId);
     },
-    [callback, delay]
+    [callback, delay],
   );
 };
 
@@ -105,7 +106,7 @@ const SearchProducts = () => {
     setIsLoading(true);
     try {
       const response = await fetch(
-        `${API_BASE_URL}/products?searchTerm=${term}`
+        `${API_BASE_URL}/products?searchTerm=${term}`,
       );
       const data = await response.json();
       setSearchResults(data?.data?.data || []);
@@ -214,7 +215,7 @@ export default function Header() {
   }
 
   return (
-    <header className="w-full bg-white bg-opacity-95 backdrop-blur">
+    <header className="w-full bg-white bg-opacity-95 backdrop-blur relative z-[60]">
       <div className="max-w-7xl mx-auto px-4 flex h-14 items-center">
         <div className="mr-4 flex">
           <MobileNavbar />
