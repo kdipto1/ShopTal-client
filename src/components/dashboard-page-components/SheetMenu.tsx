@@ -5,7 +5,9 @@ import Menu from "./Menu";
 import {
   Sheet,
   SheetContent,
+  SheetDescription,
   SheetHeader,
+  SheetTitle,
   SheetTrigger,
 } from "../shadcn-ui/sheet";
 
@@ -18,6 +20,10 @@ export default function SheetMenu() {
         </Button>
       </SheetTrigger>
       <SheetContent className="sm:w-72 px-3 h-full flex flex-col" side="left">
+        <SheetTitle className="sr-only">Dashboard mobile navigation</SheetTitle>
+        <SheetDescription className="sr-only">
+          dashboard mobile navigation
+        </SheetDescription>
         <SheetHeader>
           <Button
             className="flex justify-center items-center pb-2 pt-1"

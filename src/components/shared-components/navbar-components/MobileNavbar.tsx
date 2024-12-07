@@ -61,7 +61,7 @@ export default function MobileNavbar() {
           <span className="sr-only">Toggle menu</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="overflow-y-auto">
+      <SheetContent side="left" className="overflow-y-auto z-[70]">
         <SheetHeader>
           <SheetTitle>
             <Link href="/" className="mr-6 flex items-center space-x-2">

@@ -62,27 +62,27 @@ export default function Footer() {
             <h3 className="mb-4 text-lg font-semibold">Quick Links</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/products" className="hover:underline">
+                <Link href="#" className="hover:underline">
                   All Products
                 </Link>
               </li>
               <li>
-                <Link href="/categories" className="hover:underline">
+                <Link href="#" className="hover:underline">
                   Categories
                 </Link>
               </li>
               <li>
-                <Link href="/deals" className="hover:underline">
+                <Link href="#" className="hover:underline">
                   Deals & Promotions
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="hover:underline">
+                <Link href="#" className="hover:underline">
                   About Us
                 </Link>
               </li>
               <li>
-                <Link href="/blog" className="hover:underline">
+                <Link href="#" className="hover:underline">
                   Blog
                 </Link>
               </li>
@@ -94,27 +94,27 @@ export default function Footer() {
             <h3 className="mb-4 text-lg font-semibold">Customer Service</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/contact" className="hover:underline">
+                <Link href="#" className="hover:underline">
                   Contact Us
                 </Link>
               </li>
               <li>
-                <Link href="/faq" className="hover:underline">
+                <Link href="#" className="hover:underline">
                   FAQ
                 </Link>
               </li>
               <li>
-                <Link href="/shipping" className="hover:underline">
+                <Link href="#" className="hover:underline">
                   Shipping & Returns
                 </Link>
               </li>
               <li>
-                <Link href="/privacy" className="hover:underline">
+                <Link href="#" className="hover:underline">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="hover:underline">
+                <Link href="#" className="hover:underline">
                   Terms & Conditions
                 </Link>
               </li>
