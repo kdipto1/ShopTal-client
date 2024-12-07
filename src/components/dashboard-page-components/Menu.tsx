@@ -2,7 +2,6 @@
 
 import { getMenuList } from "@/lib/menu-list";
 import { usePathname } from "next/navigation";
-import React from "react";
 import { ScrollArea } from "../shadcn-ui/scroll-area";
 import { cn } from "@/lib/utils";
 import {
