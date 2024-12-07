@@ -15,6 +15,7 @@ export default async function EditProductPage({
 }: {
   params: { id: string };
 }) {
+  const productId = await params.id;
   return (
     <ContentLayout title="Edit Product">
       <Breadcrumb className="mb-4">
@@ -43,7 +44,7 @@ export default async function EditProductPage({
         </BreadcrumbList>
       </Breadcrumb>
       {/* <PlaceholderContent /> */}
-      <EditProductForm productId={params.id} />
+      <EditProductForm productId={productId} />
     </ContentLayout>
   );
 }
