@@ -142,7 +142,15 @@ export default function EditProductForm({ productId }: { productId: string }) {
     } finally {
       setIsLoading(false);
     }
-  }, [productId, form, API_BASE_URL, fetchSubcategories]);
+  }, [productId, API_BASE_URL]);
+
+  useEffect(() => {
+    return () => {
+      if (preview.startsWith("blob:")) {
+        URL.revokeObjectURL(preview);
+      }
+    };
+  }, [preview]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -182,7 +190,7 @@ export default function EditProductForm({ productId }: { productId: string }) {
       ]);
     };
     initializeForm();
-  }, [fetchBrands, fetchCategories, fetchProductDetails]);
+  }, []);
 
   // Handle category change
   useEffect(() => {
@@ -190,7 +198,7 @@ export default function EditProductForm({ productId }: { productId: string }) {
     if (categoryId) {
       fetchSubcategories(categoryId);
     }
-  }, [form.watch("categoryId"), fetchSubcategories]);
+  }, [form.watch("categoryId")]);
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     const formData = new FormData();
