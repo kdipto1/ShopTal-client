@@ -25,7 +25,7 @@ export default async function RandomProducts() {
   const randomProducts = await fetchRandomProducts();
 
   return (
-    <section>
+    <section className="mb-14">
       <h2 className="text-3xl font-bold mb-6">Discover More</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {randomProducts.map((product) => (

@@ -36,7 +36,7 @@ export default async function NewArrivals() {
   const newArrivals = await fetchNewArrivals();
 
   return (
-    <section className="mb-12">
+    <section className="mb-14">
       <h2 className="text-3xl font-bold mb-6">New Arrivals</h2>
       <Carousel
         opts={{
