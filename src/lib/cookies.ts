@@ -2,7 +2,6 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-
 import { AUTH_ROUTES } from "@/middleware";
 import { AuthData, RedirectOptions } from "@/types";
 
@@ -26,9 +25,9 @@ export async function setCookie(data: AuthData, options?: RedirectOptions) {
   });
 
   // Handle redirects based on options
-  if (options?.passwordChangeRequired) {
-    redirect(AUTH_ROUTES.CHANGE_PASSWORD);
-  }
+  // if (options?.passwordChangeRequired) {
+  //   redirect(AUTH_ROUTES.CHANGE_PASSWORD);
+  // }
 
   if (options?.redirect) {
     redirect(options.redirect);

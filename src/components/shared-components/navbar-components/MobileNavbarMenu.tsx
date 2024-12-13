@@ -17,7 +17,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/shadcn-ui/accordion";
-// import { useNavigation } from "@/hooks/useNavigation";
 import Link from "next/link";
 
 interface Brand {
@@ -44,20 +43,6 @@ export default function MobileNavbarMenu({
 }: {
   categories: Category[];
 }) {
-  // const { categories, isLoading, error } = useNavigation();
-
-  // if (isLoading) {
-  //   return <div className="flex justify-center p-4">Loading navigation...</div>;
-  // }
-
-  // if (error) {
-  //   return (
-  //     <div className="flex justify-center p-4 text-red-500">
-  //       Error loading navigation
-  //     </div>
-  //   );
-  // }
-
   return (
     <Sheet>
       <SheetTrigger asChild>
