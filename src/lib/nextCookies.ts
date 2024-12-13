@@ -7,7 +7,7 @@
 //   console.log(data);
 // }
 
-"use server";
+// "use server";
 
 import { cookies } from "next/headers";
 
