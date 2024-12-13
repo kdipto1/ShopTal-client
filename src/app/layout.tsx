@@ -27,8 +27,9 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </head>
       <body className={`bg-gray-100 ${inter.className}`}>
-        <MobileNavbar />
-        <Header />
+        <Header>
+          <MobileNavbar />
+        </Header>
         <Navbar />
         <main>{children}</main>
         <Footer />
