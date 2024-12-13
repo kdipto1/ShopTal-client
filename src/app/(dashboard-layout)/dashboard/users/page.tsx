@@ -32,6 +32,9 @@ export default function UsersPage() {
         </BreadcrumbList>
       </Breadcrumb>
       {/* <PlaceholderContent /> */}
+      <h2 className="text-center text-red-500 font-bold text-4xl">
+        Page under maintenance
+      </h2>
     </ContentLayout>
   );
 }
