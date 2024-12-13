@@ -15,6 +15,8 @@ export async function fetchAPI<T>(
 
   const res = await fetch(url.toString(), {
     // next: { revalidate: 60 }
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
     cache: "no-store",
   });
 
