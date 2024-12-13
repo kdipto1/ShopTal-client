@@ -144,7 +144,7 @@ export default function Footer() {
 
         <div className="flex flex-col items-center justify-between space-y-4 md:flex-row md:space-y-0">
           <div className="text-sm">
-            &copy; {new Date().getFullYear()} ShopTal. All rights reserved.
+            &copy; 2024 Dipto Karmaker. All rights reserved.
           </div>
           <div className="flex space-x-4">
             <CreditCard className="h-6 w-6" />

@@ -1,4 +1,5 @@
 import ContentLayout from "@/components/dashboard-page-components/ContentLayout";
+import AnalyticsDashboard from "@/components/dashboard-page-components/dashboard-components/AnalyticsDashboard";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -26,7 +27,7 @@ export default function DashboardPage() {
         </BreadcrumbList>
       </Breadcrumb>
       {/* <PlaceholderContent /> */}
-      <section>Dashboard page</section>
+      <AnalyticsDashboard />
     </ContentLayout>
   );
 }

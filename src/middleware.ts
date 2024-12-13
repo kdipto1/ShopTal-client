@@ -9,8 +9,8 @@ export const PROTECTED_ROUTES: RouteConfig = {
 
 export const AUTH_ROUTES = {
   LOGIN: "/login",
-  UNAUTHORIZED: "/unauthorized",
-  CHANGE_PASSWORD: "/dashboard/change-password",
+  // UNAUTHORIZED: "/unauthorized",
+  // CHANGE_PASSWORD: "/dashboard/change-password",
 };
 
 export async function middleware(request: NextRequest) {
@@ -36,9 +36,7 @@ export async function middleware(request: NextRequest) {
 
     // Redirect to unauthorized if role doesn't match
     if (!allowedRoles.includes(role)) {
-      return NextResponse.redirect(
-        new URL(AUTH_ROUTES.UNAUTHORIZED, request.url)
-      );
+      return NextResponse.redirect(new URL(AUTH_ROUTES.LOGIN, request.url));
     }
   }
 

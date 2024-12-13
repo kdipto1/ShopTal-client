@@ -28,7 +28,8 @@ export const useNavigation = () => {
     const fetchCategories = async () => {
       try {
         const response = await fetch(
-          `${API_BASE_URL}/categories/navbar-category`
+          `${API_BASE_URL}/categories/navbar-category`,
+          { next: { revalidate: 60 } }
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

@@ -13,8 +13,8 @@ type Category = {
 async function fetchCategories(): Promise<Category[]> {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/categories?limit=8&sortBy=createdAt&sortOrder=desc`,
-    // { next: { revalidate: 3600 } }
-    { cache: "no-store" }
+    { next: { revalidate: 60 } }
+    // { cache: "no-store" }
   );
   if (!res.ok) throw new Error("Failed to fetch categories");
   const data = await res.json();

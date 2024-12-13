@@ -29,6 +29,8 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signOut } from "@/lib/cookies";
+import { deleteCookie } from "cookies-next/client";
+import { useRouter } from "next/navigation";
 
 // Define types
 interface UserProfile {
@@ -66,6 +68,7 @@ export default function ProfilePage() {
   const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError] = useState<string>("");
   const [userRole, setUserRole] = useState<string | null>(null);
+  const router = useRouter();
 
   const {
     register,
@@ -112,7 +115,10 @@ export default function ProfilePage() {
       const accessToken = getAccessToken();
 
       if (!accessToken) {
-        throw new Error("No access token found");
+        router.push("/login");
+        deleteCookie("accessToken");
+        deleteCookie("userRole");
+        throw new Error("Please login first!");
       }
 
       const response = await fetch(
