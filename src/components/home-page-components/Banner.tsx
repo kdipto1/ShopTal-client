@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function Banner() {
   return (
-    <section className="mb-12">
+    <section className="mb-14">
       <div className="relative h-[300px] md:h-[400px] lg:h-[500px] rounded-lg overflow-hidden">
         <Image
           src="/images/blackfriday.webp"
