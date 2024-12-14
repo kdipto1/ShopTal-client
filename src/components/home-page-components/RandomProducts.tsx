@@ -36,7 +36,7 @@ export default async function RandomProducts() {
                 alt={product.name}
                 width={300}
                 height={300}
-                className="w-full h-[200px] object-cover rounded-md transition-transform group-hover:scale-105"
+                className="w-full h-[200px] object-cover rounded-md duration-300 transition-transform group-hover:scale-105"
               />
             </CardContent>
             <CardFooter className="flex flex-col items-start">

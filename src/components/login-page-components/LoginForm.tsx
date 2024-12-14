@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -35,17 +35,20 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginForm() {
   const router = useRouter();
-  const isLoggedId = localStorage.getItem("accessToken");
-  if (!!isLoggedId) {
-    toast.info("You are already logged in");
-    router.push("/profile");
-    return;
-  }
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
   const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const isLoggedId = localStorage.getItem("accessToken");
+    if (!!isLoggedId) {
+      toast.info("You are already logged in");
+      router.push("/profile");
+      return;
+    }
+  }, []);
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
