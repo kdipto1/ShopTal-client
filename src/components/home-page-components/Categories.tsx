@@ -63,19 +63,21 @@ export default async function Categories() {
       <h2 className="text-3xl font-bold mb-6 text-center">Shop by Category</h2>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
         {categories.map((category) => (
-          <Link
-            key={category.id}
-            href={`/search?categoryId=${category.id}`}
-            className="group"
-          >
-            <Card className="rounded-full overflow-hidden border-4 border-black  flex items-center justify-center h-[150px] w-[150px] md:h-[200px] md:w-[200px] relative mx-auto">
-              <div className="bg-white w-full ">
-                <h3 className="text-lg font-bold text-black text-center">
-                  {category.name}
-                </h3>
-              </div>
-            </Card>
-          </Link>
+          <div key={category.id}>
+            <Link
+              key={category.id}
+              href={`/search?categoryId=${category.id}`}
+              className="group"
+            >
+              <Card className="rounded-full overflow-hidden border-4 border-black  flex items-center justify-center h-[150px] w-[150px] md:h-[200px] md:w-[200px] relative mx-auto">
+                <div className="bg-white w-full ">
+                  <h3 className="text-lg font-bold text-black text-center">
+                    {category.name}
+                  </h3>
+                </div>
+              </Card>
+            </Link>
+          </div>
         ))}
       </div>
     </section>

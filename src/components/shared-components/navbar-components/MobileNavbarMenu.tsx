@@ -54,33 +54,41 @@ export default function MobileNavbarMenu({
       <SheetContent side="left" className="overflow-y-auto z-[70]">
         <SheetHeader>
           <SheetTitle>
-            <Link href="/" className="mr-6 flex items-center space-x-2">
-              <span className="font-bold text-2xl">ShopTal</span>
-            </Link>
+            <SheetClose asChild>
+              <Link href="/" className="mr-6 flex items-center space-x-2">
+                <span className="font-bold text-2xl">ShopTal</span>
+              </Link>
+            </SheetClose>
           </SheetTitle>
           <SheetDescription className="text-left">Main Menu</SheetDescription>
         </SheetHeader>
-        <Link
-          href="/profile"
-          className="rounded-md hover:bg-gray-100 transition-colors flex mt-4 font-semibold"
-          aria-label="User Account"
-        >
-          <LogIn className="h-5 w-5" /> &nbsp; Login
-        </Link>
-        <Link
-          href="/profile"
-          className="rounded-md hover:bg-gray-100 transition-colors flex mt-4 font-semibold"
-          aria-label="User Account"
-        >
-          <User className="h-5 w-5" /> &nbsp; Profile
-        </Link>
-        <Link
-          href={"/cart"}
-          className="rounded-md hover:bg-gray-100 transition-colors flex mt-4 font-semibold"
-          aria-label="Shopping Cart"
-        >
-          <ShoppingCart className="h-5 w-5" /> &nbsp; Cart
-        </Link>
+        <SheetClose asChild>
+          <Link
+            href="/profile"
+            className="rounded-md hover:bg-gray-100 transition-colors flex mt-4 font-semibold"
+            aria-label="User Account"
+          >
+            <LogIn className="h-5 w-5" /> &nbsp; Login
+          </Link>
+        </SheetClose>
+        <SheetClose asChild>
+          <Link
+            href="/profile"
+            className="rounded-md hover:bg-gray-100 transition-colors flex mt-4 font-semibold"
+            aria-label="User Account"
+          >
+            <User className="h-5 w-5" /> &nbsp; Profile
+          </Link>
+        </SheetClose>
+        <SheetClose asChild>
+          <Link
+            href={"/cart"}
+            className="rounded-md hover:bg-gray-100 transition-colors flex mt-4 font-semibold"
+            aria-label="Shopping Cart"
+          >
+            <ShoppingCart className="h-5 w-5" /> &nbsp; Cart
+          </Link>
+        </SheetClose>
 
         <SheetDescription className="text-left mt-4">
           Browse Categories
@@ -91,12 +99,14 @@ export default function MobileNavbarMenu({
           {categories.map((category: Category) => (
             <AccordionItem key={category.id} value={`category-${category.id}`}>
               <AccordionTrigger>
-                <Link
-                  href={`/search?categoryId=${category.id}`}
-                  className="w-full text-left hover:underline"
-                >
-                  {category.name}
-                </Link>
+                <SheetClose asChild>
+                  <Link
+                    href={`/search?categoryId=${category.id}`}
+                    className="w-full text-left hover:underline"
+                  >
+                    {category.name}
+                  </Link>
+                </SheetClose>
               </AccordionTrigger>
               <AccordionContent>
                 <Accordion

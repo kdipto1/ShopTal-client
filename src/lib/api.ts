@@ -50,7 +50,7 @@ export async function fetchCategories(): Promise<NavbarCategory[]> {
     const response = await fetch(`${API_BASE_URL}/categories/navbar-category`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
-      next: { revalidate: 60 },
+      // next: { revalidate: 60 },
     });
 
     if (!response.ok) {
