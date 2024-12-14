@@ -19,7 +19,7 @@ import {
 import { Input } from "../shadcn-ui/input";
 import { Button } from "../shadcn-ui/button";
 import { Switch } from "../shadcn-ui/switch";
-import { setCookie as setCookieNext } from "cookies-next/client";
+import { setCookie as setCookieNext } from "cookies-next";
 
 // Form validation schema
 const loginSchema = z.object({

@@ -4,7 +4,7 @@ import { LogOut } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "../shadcn-ui/button";
-import { deleteCookie } from "cookies-next/client";
+import { deleteCookie } from "cookies-next";
 import {
   AlertDialog,
   AlertDialogAction,

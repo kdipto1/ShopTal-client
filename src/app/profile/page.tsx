@@ -29,8 +29,8 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signOut } from "@/lib/cookies";
-import { deleteCookie } from "cookies-next/client";
 import { useRouter } from "next/navigation";
+import { deleteCookie } from "cookies-next";
 
 // Define types
 interface UserProfile {
@@ -115,9 +115,9 @@ export default function ProfilePage() {
       const accessToken = getAccessToken();
 
       if (!accessToken) {
-        router.push("/login");
         deleteCookie("accessToken");
         deleteCookie("userRole");
+        router.push("/login");
         throw new Error("Please login first!");
       }
 
