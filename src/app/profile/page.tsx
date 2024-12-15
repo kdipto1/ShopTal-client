@@ -28,6 +28,7 @@ import { Loader2, Settings, User } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 
 // Define types
 interface UserProfile {
@@ -65,6 +66,7 @@ export default function ProfilePage() {
   const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError] = useState<string>("");
   const [userRole, setUserRole] = useState<string | null>(null);
+  const router = useRouter();
 
   const {
     register,
@@ -80,15 +82,21 @@ export default function ProfilePage() {
     },
   });
 
+  useEffect(() => {
+    const isLoggedIn = localStorage.getItem("accessToken");
+    if (!isLoggedIn) {
+      toast.error("Please login first");
+      router.push("/login");
+      return;
+    }
+    getProfile();
+  }, []);
+
   // Initialize user role from localStorage
   useEffect(() => {
     if (typeof window !== "undefined") {
       setUserRole(localStorage.getItem("userRole"));
     }
-  }, []);
-
-  useEffect(() => {
-    getProfile();
   }, []);
 
   useEffect(() => {
@@ -104,7 +112,7 @@ export default function ProfilePage() {
   //   return localStorage.getItem("accessToken");
   // };
 
-  const getProfile = async () => {
+  async function getProfile() {
     try {
       setIsLoading(true);
       setError("");
@@ -140,7 +148,7 @@ export default function ProfilePage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }
 
   const onSubmit = async (formData: ProfileFormData) => {
     try {

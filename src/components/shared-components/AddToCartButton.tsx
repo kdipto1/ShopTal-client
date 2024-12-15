@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ShoppingCart } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "../shadcn-ui/button";
+import { useRouter } from "next/navigation";
 
 interface AddToCartButtonProps {
   productId: string;
@@ -17,6 +18,7 @@ export const AddToCartButton = ({
 }: AddToCartButtonProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [quantity, setQuantity] = useState(initialQuantity);
+  const router = useRouter();
 
   const addToCart = async () => {
     if (localStorage.getItem("accessToken") === null) {
@@ -25,6 +27,7 @@ export const AddToCartButton = ({
         position: "top-right",
         richColors: true,
       });
+      router.push(`/login?callbackUrl=%2Fproduct/${productId}`);
       return;
     }
     try {

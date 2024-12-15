@@ -14,6 +14,7 @@ import { Skeleton } from "@/components/shadcn-ui/skeleton";
 import { Button } from "@/components/shadcn-ui/button";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface CartItem {
   id: string;
@@ -42,6 +43,7 @@ export default function CartPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [updatingItems, setUpdatingItems] = useState<Set<string>>(new Set());
+  const router = useRouter();
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
   const fetchCartItems = async () => {
@@ -131,6 +133,12 @@ export default function CartPage() {
   };
 
   useEffect(() => {
+    const isLoggedIn = localStorage.getItem("accessToken");
+    if (!isLoggedIn) {
+      toast.error("Please login first");
+      router.push("/login");
+      return;
+    }
     fetchCartItems();
   }, []);
 
