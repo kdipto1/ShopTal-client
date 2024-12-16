@@ -345,6 +345,9 @@ export default function CreateProductForm() {
 
         <Button type="submit">Submit</Button>
       </form>
+      <Button onClick={() => form.reset()} className="mt-4 bg-red-500">
+        Reset Form
+      </Button>
     </Form>
   );
 }
