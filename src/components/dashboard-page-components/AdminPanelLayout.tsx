@@ -5,12 +5,24 @@ import { cn } from "@/lib/utils";
 import { useStore } from "@/hooks/use-store";
 import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 import Footer from "./DashboardFooter";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function AdminPanelLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+  useEffect(() => {
+    const isAdmin = localStorage.getItem("userRole") === "admin";
+    if (!isAdmin) {
+      toast.info("You are not authorized to visit this page");
+      router.push("/");
+      return;
+    }
+  }, []);
   const sidebar = useStore(useSidebarToggle, (state) => state);
 
   if (!sidebar) return null;

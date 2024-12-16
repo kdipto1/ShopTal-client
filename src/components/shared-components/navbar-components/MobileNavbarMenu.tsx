@@ -64,7 +64,7 @@ export default function MobileNavbarMenu({
         </SheetHeader>
         <SheetClose asChild>
           <Link
-            href="/profile"
+            href="/login"
             className="rounded-md hover:bg-gray-100 transition-colors flex mt-4 font-semibold"
             aria-label="User Account"
           >

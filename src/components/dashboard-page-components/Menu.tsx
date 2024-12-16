@@ -109,6 +109,7 @@ export default function Menu({ isOpen }: MenuProps) {
                     onClick={() => {}}
                     variant="outline"
                     className="w-full justify-center h-10 mt-5"
+                    disabled
                   >
                     <span className={cn(isOpen === false ? "" : "mr-4")}>
                       <LogOut size={18} />

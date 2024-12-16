@@ -45,7 +45,8 @@ export default function LoginForm() {
     const isLoggedId = localStorage.getItem("accessToken");
     if (!!isLoggedId) {
       toast.info("You are already logged in");
-      router.push("/profile");
+      // router.push("/profile");
+      router.back();
       return;
     }
   }, []);

@@ -41,7 +41,7 @@ export function getMenuList(pathname: string): Group[] {
       ],
     },
     {
-      groupLabel: "Main",
+      groupLabel: "Product's Data Management",
       menus: [
         {
           href: "/dashboard/products",
@@ -80,7 +80,7 @@ export function getMenuList(pathname: string): Group[] {
       ],
     },
     {
-      groupLabel: "Settings",
+      groupLabel: "User's Management",
       menus: [
         {
           href: "/dashboard/users",

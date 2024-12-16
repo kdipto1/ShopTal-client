@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Card } from "../shadcn-ui/card";
 import { fetchCategories } from "@/lib/api";
 
 // type Category = {
