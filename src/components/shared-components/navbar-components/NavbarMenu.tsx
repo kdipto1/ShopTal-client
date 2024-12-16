@@ -82,17 +82,19 @@ export default function NavbarMenu({ categories }: { categories: Category[] }) {
 
 const SubcategoryList = ({ category }: { category: Category }) => {
   return (
-    <ul className="grid gap-3 p-4 md:w-[200px] md:grid-cols-1 lg:w-[300px] lg:grid-cols-2  ">
-      {category.productSubcategory.map((subcategory) => (
-        <Link
-          key={subcategory.id}
-          href={`/search?categoryId=${category.id}&subcategoryId=${subcategory.id}`}
-        >
-          <ListItem title={subcategory.name} />
-        </Link>
-      ))}
+    <div>
+      <ul className="grid gap-3 p-2 md:w-[200px] md:grid-cols-1 lg:w-[300px] lg:grid-cols-2  ">
+        {category.productSubcategory.map((subcategory) => (
+          <Link
+            key={subcategory.id}
+            href={`/search?categoryId=${category.id}&subcategoryId=${subcategory.id}`}
+          >
+            <ListItem title={subcategory.name} />
+          </Link>
+        ))}
+      </ul>
       {category.brands.length > 0 && (
-        <ul className="grid gap-3 p-4 md:w-[200px] md:grid-cols-1 lg:w-[300px] lg:grid-cols-2">
+        <ul className="grid gap-3 p-2 md:w-[200px] md:grid-cols-1 lg:w-[300px] lg:grid-cols-2">
           {category.brands.map((brand) => (
             <Link
               key={brand.id}
@@ -103,7 +105,7 @@ const SubcategoryList = ({ category }: { category: Category }) => {
           ))}
         </ul>
       )}
-    </ul>
+    </div>
   );
 };
 

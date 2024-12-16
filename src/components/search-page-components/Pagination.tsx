@@ -9,11 +9,11 @@ interface PaginationProps {
   searchParams: SearchParams;
 }
 
-export const Pagination: React.FC<PaginationProps> = ({
+export function Pagination({
   currentPage,
   totalPages,
   searchParams,
-}) => {
+}: PaginationProps) {
   const generatePageUrl = (page: number) => {
     const params = new URLSearchParams({
       ...(searchParams.searchTerm && { searchTerm: searchParams.searchTerm }),
@@ -54,4 +54,4 @@ export const Pagination: React.FC<PaginationProps> = ({
       )}
     </div>
   );
-};
+}
