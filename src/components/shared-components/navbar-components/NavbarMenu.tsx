@@ -15,9 +15,12 @@ import { usePathname } from "next/navigation";
 import { Separator } from "@/components/shadcn-ui/separator";
 
 interface Brand {
-  id: string;
-  name: string;
-  categoryId?: string;
+  brandId: string;
+  categoryId: string;
+  brand: {
+    id: string;
+    name: string;
+  };
 }
 
 interface ProductSubcategory {
@@ -95,12 +98,12 @@ const SubcategoryList = ({ category }: { category: Category }) => {
       </ul>
       {category.brands.length > 0 && (
         <ul className="grid gap-3 p-2 md:w-[200px] md:grid-cols-1 lg:w-[300px] lg:grid-cols-2">
-          {category.brands.map((brand) => (
+          {category.brands.map((brandItem) => (
             <Link
-              key={brand.id}
-              href={`/search?categoryId=${brand.categoryId}&brandId=${brand.id}`}
+              key={brandItem.brand.id}
+              href={`/search?categoryId=${brandItem.categoryId}&brandId=${brandItem.brand.id}`}
             >
-              <ListItem title={brand.name} />
+              <ListItem title={brandItem.brand.name} />
             </Link>
           ))}
         </ul>

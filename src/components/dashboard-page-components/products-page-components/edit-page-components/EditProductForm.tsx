@@ -208,7 +208,12 @@ export default function EditProductForm({ productId }: { productId: string }) {
     formData.append("quantity", data.quantity.toString());
     formData.append("brandId", data.brandId);
     formData.append("categoryId", data.categoryId);
-    formData.append("subcategoryId", data.subcategoryId);
+    // formData.append("subcategoryId", data.subcategoryId);
+    // Correctly handle subcategoryId
+    formData.append(
+      "subcategoryId",
+      data.subcategoryId === "null" ? "" : data.subcategoryId
+    );
     formData.append("features", JSON.stringify(data.features));
 
     if (data.file) {
@@ -352,6 +357,9 @@ export default function EditProductForm({ productId }: { productId: string }) {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
+                  <SelectItem key="null" value="null">
+                    No Subcategory
+                  </SelectItem>
                   {subcategories.map(
                     (subcategory: { name: string; id: string }) => (
                       <SelectItem key={subcategory?.id} value={subcategory?.id}>

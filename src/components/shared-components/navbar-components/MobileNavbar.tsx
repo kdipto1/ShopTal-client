@@ -2,9 +2,12 @@ import { fetchCategories } from "@/lib/api";
 import MobileNavbarMenu from "./MobileNavbarMenu";
 
 interface Brand {
-  id: string;
-  name: string;
-  categoryId?: string;
+  brandId: string;
+  categoryId: string;
+  brand: {
+    id: string;
+    name: string;
+  };
 }
 
 interface ProductSubcategory {

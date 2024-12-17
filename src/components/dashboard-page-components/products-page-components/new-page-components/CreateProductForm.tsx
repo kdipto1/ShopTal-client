@@ -129,7 +129,11 @@ export default function CreateProductForm() {
     formData.append("quantity", data.quantity.toString());
     formData.append("brandId", data.brandId);
     formData.append("categoryId", data.categoryId);
-    formData.append("subcategoryId", data.subcategoryId);
+    // formData.append("subcategoryId", data.subcategoryId);
+    formData.append(
+      "subcategoryId",
+      data.subcategoryId === "null" ? "" : data.subcategoryId
+    );
     formData.append("features", JSON.stringify(data.features));
 
     if (data.file) {
@@ -251,7 +255,7 @@ export default function CreateProductForm() {
           name="subcategoryId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Subcategory</FormLabel>
+              <FormLabel>Subcategory (optional)</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
@@ -259,11 +263,20 @@ export default function CreateProductForm() {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
+                  <SelectItem key="null" value="null">
+                    No Subcategory
+                  </SelectItem>
                   {subcategories.map(
                     (subcategory: { name: string; id: string }) => (
-                      <SelectItem key={subcategory?.id} value={subcategory?.id}>
-                        {subcategory?.name}
-                      </SelectItem>
+                      <>
+                        <SelectItem
+                          key={subcategory?.id}
+                          value={subcategory?.id}
+                        >
+                          {subcategory?.name}
+                        </SelectItem>
+                        <SelectItem value=""></SelectItem>
+                      </>
                     )
                   )}
                 </SelectContent>

@@ -20,9 +20,12 @@ import {
 import Link from "next/link";
 
 interface Brand {
-  id: string;
-  name: string;
-  categoryId?: string;
+  brandId: string;
+  categoryId: string;
+  brand: {
+    id: string;
+    name: string;
+  };
 }
 
 interface ProductSubcategory {
@@ -94,8 +97,6 @@ export default function MobileNavbarMenu({
           Browse Categories
         </SheetDescription>
         <Accordion type="single" collapsible className="w-full">
-          {/* {isLoading && <p>Categories Loading...</p>} */}
-          {/* {error && <p>Failed to lead categories. Try again...</p>} */}
           {categories.map((category: Category) => (
             <AccordionItem key={category.id} value={`category-${category.id}`}>
               <AccordionTrigger>
@@ -146,14 +147,14 @@ export default function MobileNavbarMenu({
                       </AccordionTrigger>
                       <AccordionContent>
                         <ul className="space-y-2">
-                          {category.brands.map((brand) => (
-                            <li key={brand.id}>
+                          {category.brands.map((brandItem) => (
+                            <li key={brandItem.brand.id}>
                               <SheetClose asChild>
                                 <Link
-                                  href={`/search?categoryId=${brand.categoryId}&brandId=${brand.id}`}
+                                  href={`/search?categoryId=${brandItem.categoryId}&brandId=${brandItem.brand.id}`}
                                   className="block px-4 py-2 hover:bg-accent hover:text-accent-foreground rounded"
                                 >
-                                  {brand.name}
+                                  {brandItem.brand.name}
                                 </Link>
                               </SheetClose>
                             </li>
