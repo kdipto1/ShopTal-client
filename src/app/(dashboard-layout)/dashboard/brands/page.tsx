@@ -58,6 +58,66 @@ export default function BrandsPage() {
         );
       },
     },
+    {
+      header: "Actions",
+      id: "actions",
+      cell: ({ row }) => {
+        const brand = row.original;
+
+        const handleDelete = async () => {
+          // Confirm deletion
+          const confirmDelete = window.confirm(
+            `Are you sure you want to delete the brand: ${brand.name}?`
+          );
+
+          if (confirmDelete) {
+            try {
+              const response = await fetch(
+                `${API_BASE_URL}/brands/${brand.id}`,
+                {
+                  method: "DELETE",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                }
+              );
+
+              if (!response.ok) {
+                throw new Error("Failed to delete brand");
+              }
+
+              // Refresh the data after successful deletion
+              fetchData({
+                pageIndex: 0, // Reset to first page
+                pageSize: 10, // Default page size, adjust as needed
+                searchTerm: "",
+                sorting: [],
+              });
+
+              // Optional: Add a toast or notification for successful deletion
+              alert(`Brand "${brand.name}" has been deleted successfully`);
+            } catch (error) {
+              console.error("Error deleting brand:", error);
+              alert("Failed to delete the brand");
+            }
+          }
+        };
+
+        return (
+          <div className="flex space-x-2">
+            <Button variant="ghost" size="sm" asChild>
+              <Link href={`/dashboard/brands/edit/${brand.id}`}>
+                Edit
+                <ChevronRightIcon className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+            <Button variant="destructive" size="sm" onClick={handleDelete}>
+              Delete
+            </Button>
+          </div>
+        );
+      },
+    },
   ];
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
   const fetchData = useCallback(

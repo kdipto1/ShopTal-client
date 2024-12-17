@@ -28,6 +28,7 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { EditProductFormSkeleton } from "./EditProductFormSkeleton";
+import Image from "next/image";
 
 const FormSchema = z.object({
   id: z.string().optional(),
@@ -127,7 +128,7 @@ export default function EditProductForm({ productId }: { productId: string }) {
         quantity: data.quantity,
         brandId: data.brandId,
         categoryId: data.categoryId,
-        subcategoryId: data.subcategoryId,
+        subcategoryId: data.subcategoryId || "null",
         existingImage: data.image,
         features:
           data.features.length > 0 ? data.features : [{ name: "", value: "" }],
@@ -387,10 +388,18 @@ export default function EditProductForm({ productId }: { productId: string }) {
             </FormItem>
           )}
         />
-        <Avatar className="w-36 h-36">
-          <AvatarImage className="rounded-md" src={preview} />
+        {/* <Avatar className="w-36 h-36">
+          <AvatarImage className="rounded-md hover:scale-150" src={preview} />
           <AvatarFallback className="rounded-md">Image Preview</AvatarFallback>
-        </Avatar>
+        </Avatar> */}
+        <h2>Image Preview:</h2>
+        <Image
+          src={preview}
+          width={300}
+          height={300}
+          alt="Image Preview"
+          className="drop-shadow-xl"
+        />
 
         <div>
           <h2>Features:</h2>

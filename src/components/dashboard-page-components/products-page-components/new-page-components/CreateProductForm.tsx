@@ -23,6 +23,7 @@ import {
   SelectValue,
 } from "@/components/shadcn-ui/select";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { toast } from "sonner";
@@ -268,15 +269,9 @@ export default function CreateProductForm() {
                   </SelectItem>
                   {subcategories.map(
                     (subcategory: { name: string; id: string }) => (
-                      <>
-                        <SelectItem
-                          key={subcategory?.id}
-                          value={subcategory?.id}
-                        >
-                          {subcategory?.name}
-                        </SelectItem>
-                        <SelectItem value=""></SelectItem>
-                      </>
+                      <SelectItem key={subcategory?.id} value={subcategory?.id}>
+                        {subcategory?.name}
+                      </SelectItem>
                     )
                   )}
                 </SelectContent>
@@ -299,10 +294,18 @@ export default function CreateProductForm() {
             </FormItem>
           )}
         />
-        <Avatar className="w-36 h-36">
+        {/* <Avatar className="w-36 h-36">
           <AvatarImage className="rounded-md" src={preview} />
           <AvatarFallback className="rounded-md">Image Preview</AvatarFallback>
-        </Avatar>
+        </Avatar> */}
+        <h2>Image Preview:</h2>
+        <Image
+          src={preview || "/placeholder.svg"}
+          width={300}
+          height={300}
+          alt="Image Preview"
+          className="drop-shadow-xl"
+        />
 
         <div>
           <h2>Features:</h2>

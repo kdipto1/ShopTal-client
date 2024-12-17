@@ -22,8 +22,8 @@ export function ProductCard({ product }: ProductCardProps) {
         <Image
           src={product.image || "/placeholder.svg"}
           alt={product.name}
-          width={200}
-          height={200}
+          width={600}
+          height={600}
           className="w-full h-48 object-cover rounded-t-lg"
           priority={false}
         />

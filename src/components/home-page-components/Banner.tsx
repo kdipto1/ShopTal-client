@@ -9,10 +9,12 @@ export default function Banner() {
         <Image
           src="/images/blackfriday.webp"
           alt="Banner image"
-          fill
+          // fill
+          width={1920}
+          height={1097}
           className="object-cover"
         />
-        <div className="absolute inset-0 flex flex-col justify-center items-start p-8 bg-black bg-opacity-50 text-white">
+        <div className="absolute inset-0 flex flex-col justify-center items-start p-8 bg-black bg-opacity-30 text-white">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
             Black Friday Sale
           </h1>

@@ -1,5 +1,6 @@
 import { AddToCartButton } from "@/components/shared-components/AddToCartButton";
 import { Star } from "lucide-react";
+import Image from "next/image";
 
 // Types
 interface Feature {
@@ -56,10 +57,12 @@ async function getProduct(id: string): Promise<{ data: Product }> {
 // Subcomponents
 const ProductImage = ({ src, alt }: { src: string; alt: string }) => (
   <div className="relative aspect-square w-full">
-    <img
+    <Image
       src={src}
       alt={alt}
-      className="rounded-lg object-cover w-full h-full"
+      width={600}
+      height={600}
+      className="rounded-lg"
     />
   </div>
 );

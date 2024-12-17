@@ -34,8 +34,8 @@ export default async function RandomProducts() {
               <Image
                 src={product.image}
                 alt={product.name}
-                width={300}
-                height={300}
+                width={600}
+                height={600}
                 className="w-full h-[200px] object-cover rounded-md duration-300 transition-transform group-hover:scale-105"
               />
             </CardContent>
