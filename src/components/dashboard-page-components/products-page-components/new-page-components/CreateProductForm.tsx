@@ -1,10 +1,5 @@
 "use client";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/shadcn-ui/avatar";
 import { Button } from "@/components/shadcn-ui/button";
 import {
   Form,
@@ -294,10 +289,7 @@ export default function CreateProductForm() {
             </FormItem>
           )}
         />
-        {/* <Avatar className="w-36 h-36">
-          <AvatarImage className="rounded-md" src={preview} />
-          <AvatarFallback className="rounded-md">Image Preview</AvatarFallback>
-        </Avatar> */}
+
         <h2>Image Preview:</h2>
         <Image
           src={preview || "/placeholder.svg"}
