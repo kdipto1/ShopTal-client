@@ -289,7 +289,6 @@ export default function MultipleCategoryBrandForm({
   }, [brandId]);
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-    console.log(data);
     try {
       const url = brandId
         ? `${API_BASE_URL}/brands/${brandId}`
@@ -309,6 +308,9 @@ export default function MultipleCategoryBrandForm({
         },
         body: JSON.stringify(payload),
       });
+      if (response.ok) {
+        form.reset();
+      }
 
       if (!response.ok) {
         const errorResponse = await response.json();
@@ -317,9 +319,9 @@ export default function MultipleCategoryBrandForm({
 
       const responseData = await response.json();
       toast(responseData.message, { duration: 960 });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error submitting form:", error);
-      toast("An error occurred. Please try again.", { duration: 960 });
+      toast.error(error.message, { duration: 960 });
     }
   };
 

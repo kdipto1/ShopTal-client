@@ -1,4 +1,4 @@
-import CreateCategoryForm from "@/components/dashboard-page-components/categories-page-components/new-page-components/CreateCategoryForm";
+import CategoryForm from "@/components/dashboard-page-components/categories-page-components/CategoryForm";
 import ContentLayout from "@/components/dashboard-page-components/ContentLayout";
 import {
   Breadcrumb,
@@ -39,7 +39,8 @@ export default function CreateCategoryPage() {
         </BreadcrumbList>
       </Breadcrumb>
       {/* <PlaceholderContent /> */}
-      <CreateCategoryForm />
+      {/* <CreateCategoryForm /> */}
+      <CategoryForm />
     </ContentLayout>
   );
 }

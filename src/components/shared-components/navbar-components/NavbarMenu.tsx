@@ -47,9 +47,9 @@ export default function NavbarMenu({ categories }: { categories: Category[] }) {
 
   return (
     <section className="hidden md:block w-full border-b bg-white/95 backdrop-blur relative z-50">
-      <div className="flex h-14 items-center justify-center">
-        <NavigationMenu>
-          <NavigationMenuList>
+      <div className="flex min-h-14 items-center justify-center">
+        <NavigationMenu className="max-w-screen-2xl">
+          <NavigationMenuList className="flex flex-wrap gap-1">
             {categories?.map((category) => (
               <NavigationMenuItem key={category.id}>
                 <NavigationMenuTrigger>{category.name}</NavigationMenuTrigger>

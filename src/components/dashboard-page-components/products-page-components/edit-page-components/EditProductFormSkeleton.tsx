@@ -23,6 +23,7 @@ export const EditProductFormSkeleton = () => {
       <InputSkeleton label="Category" />
       <InputSkeleton label="Subcategory" />
       <InputSkeleton label="Product Image" />
+      <InputSkeleton label="Product Description" />
 
       {/* Image Preview Skeleton */}
       <Skeleton className="w-36 h-36 rounded-md" />

@@ -14,7 +14,7 @@ async function fetchRandomProducts(): Promise<Product[]> {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/products?random=true`,
     // { cache: "no-store" },
-    { next: { revalidate: 3600 } }
+    { next: { revalidate: 60 } }
   );
   if (!res.ok) throw new Error("Failed to fetch random products");
   const data = await res.json();

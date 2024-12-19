@@ -1,3 +1,4 @@
+import { FeaturesList } from "@/components/product-page-components/FeaturesList";
 import { AddToCartButton } from "@/components/shared-components/AddToCartButton";
 import { Star } from "lucide-react";
 import Image from "next/image";
@@ -34,6 +35,7 @@ interface Product {
   categoryId: string;
   subcategoryId: string;
   createdAt: string;
+  description: string;
 }
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -83,18 +85,19 @@ const StarRating = ({ rating = 4 }: { rating?: number }) => (
   </div>
 );
 
-const FeaturesList = ({ features }: { features: Feature[] }) => (
-  <div className="bg-white rounded-lg border p-4">
-    <h3 className="font-semibold mb-2">Features:</h3>
-    <ul className="list-disc list-inside space-y-1">
-      {features.map((feature, index) => (
-        <li key={index}>
-          <span className="font-medium">{feature.name}:</span> {feature.value}
-        </li>
-      ))}
-    </ul>
-  </div>
-);
+// const FeaturesList = ({ product }: { product: Product }) => (
+//   <div className="bg-white rounded-lg border p-4">
+//     <h3 className="font-semibold mb-2">Features:</h3>
+//     {/* <ul className="list-disc list-inside space-y-1">
+//       {features.map((feature, index) => (
+//         <li key={index}>
+//           <span className="font-medium">{feature.name}:</span> {feature.value}
+//         </li>
+//       ))}
+//     </ul> */}
+//     <pre className=" mt-2">{product.description}</pre>
+//   </div>
+// );
 
 const Badge = ({ children }: { children: React.ReactNode }) => (
   <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
@@ -138,7 +141,7 @@ export default async function ProductPage({
     }
 
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 ">
         <div className="grid md:grid-cols-2 gap-8">
           <ProductImage src={product?.image} alt={product?.name} />
 
@@ -149,7 +152,7 @@ export default async function ProductPage({
             <p className="text-gray-500">In stock: {product.quantity}</p>
 
             <AddToCartButton productId={product?.id} />
-            <FeaturesList features={product?.features} />
+            <FeaturesList product={product} />
             <ProductDetails product={product} />
           </div>
         </div>

@@ -24,6 +24,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { EditProductFormSkeleton } from "./EditProductFormSkeleton";
 import Image from "next/image";
+import { Textarea } from "@/components/shadcn-ui/textarea";
 
 const FormSchema = z.object({
   id: z.string().optional(),
@@ -43,17 +44,20 @@ const FormSchema = z.object({
   }),
   file: z.any().optional(),
   existingImage: z.string().optional(),
-  features: z
-    .array(
-      z.object({
-        id: z.string().optional(),
-        name: z.string().min(1, { message: "Feature name must be provided." }),
-        value: z
-          .string()
-          .min(1, { message: "Feature value must be provided." }),
-      })
-    )
-    .nonempty({ message: "At least one feature is required." }),
+  // features: z
+  //   .array(
+  //     z.object({
+  //       id: z.string().optional(),
+  //       name: z.string().min(1, { message: "Feature name must be provided." }),
+  //       value: z
+  //         .string()
+  //         .min(1, { message: "Feature value must be provided." }),
+  //     })
+  //   )
+  //   .nonempty({ message: "At least one feature is required." }),
+  description: z
+    .string()
+    .min(2, { message: "Product description must be at least 2 characters." }),
 });
 
 export default function EditProductForm({ productId }: { productId: string }) {
@@ -75,14 +79,15 @@ export default function EditProductForm({ productId }: { productId: string }) {
       subcategoryId: "",
       file: "",
       existingImage: "",
-      features: [{ name: "", value: "" }],
+      // features: [{ name: "", value: "" }],
+      description: "",
     },
   });
 
-  const { fields, append, remove } = useFieldArray({
-    control: form.control,
-    name: "features",
-  });
+  // const { fields, append, remove } = useFieldArray({
+  //   control: form.control,
+  //   name: "features",
+  // });
 
   const fetchSubcategories = useCallback(
     async (categoryId: string) => {
@@ -125,8 +130,9 @@ export default function EditProductForm({ productId }: { productId: string }) {
         categoryId: data.categoryId,
         subcategoryId: data.subcategoryId || "null",
         existingImage: data.image,
-        features:
-          data.features.length > 0 ? data.features : [{ name: "", value: "" }],
+        // features:
+        //   data.features.length > 0 ? data.features : [{ name: "", value: "" }],
+        description: data.description,
       });
 
       // Set image preview
@@ -210,7 +216,9 @@ export default function EditProductForm({ productId }: { productId: string }) {
       "subcategoryId",
       data.subcategoryId === "null" ? "" : data.subcategoryId
     );
-    formData.append("features", JSON.stringify(data.features));
+    // formData.append("features", JSON.stringify(data.features));
+
+    formData.append("description", data.description);
 
     if (data.file) {
       formData.append("file", data.file);
@@ -372,6 +380,24 @@ export default function EditProductForm({ productId }: { productId: string }) {
 
         <FormField
           control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Product Description</FormLabel>
+              <FormControl>
+                <Textarea
+                  rows={10}
+                  placeholder="Product description"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
           name="file"
           render={() => (
             <FormItem>
@@ -393,7 +419,7 @@ export default function EditProductForm({ productId }: { productId: string }) {
           className="drop-shadow-xl"
         />
 
-        <div>
+        {/* <div>
           <h2>Features:</h2>
           {fields.map((item, index) => (
             <div key={item.id} className="flex space-x-4 items-center">
@@ -439,7 +465,7 @@ export default function EditProductForm({ productId }: { productId: string }) {
           >
             Add Feature
           </Button>
-        </div>
+        </div> */}
 
         <Button type="submit">Update Product</Button>
       </form>

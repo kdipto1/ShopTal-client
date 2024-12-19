@@ -81,6 +81,8 @@ export default function CategoryForm({ categoryId }: { categoryId?: string }) {
         body: JSON.stringify(data),
       });
 
+      if (response.ok) form.reset();
+
       if (!response.ok) {
         const errorResponse = await response.json();
         throw new Error(errorResponse.message || "Failed to process request");
@@ -88,9 +90,9 @@ export default function CategoryForm({ categoryId }: { categoryId?: string }) {
 
       const responseData = await response.json();
       toast(responseData.message, { duration: 960 });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error submitting form:", error);
-      toast("An error occurred. Please try again.", { duration: 960 });
+      toast.error(error.message, { duration: 960 });
     }
   };
 
