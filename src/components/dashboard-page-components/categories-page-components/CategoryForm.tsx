@@ -81,7 +81,7 @@ export default function CategoryForm({ categoryId }: { categoryId?: string }) {
         body: JSON.stringify(data),
       });
 
-      if (response.ok) form.reset();
+      if (response.ok && !categoryId) form.reset();
 
       if (!response.ok) {
         const errorResponse = await response.json();

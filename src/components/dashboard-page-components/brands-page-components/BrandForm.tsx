@@ -308,7 +308,7 @@ export default function MultipleCategoryBrandForm({
         },
         body: JSON.stringify(payload),
       });
-      if (response.ok) {
+      if (response.ok && !brandId) {
         form.reset();
       }
 

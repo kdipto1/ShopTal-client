@@ -39,12 +39,12 @@ export default async function Categories() {
             <Link
               key={category.id}
               href={`/search?categoryId=${category.id}`}
-              className="relative rounded-full overflow-hidden border-4 border-black flex items-center justify-center h-[80px] w-[170px] md:h-[100px] md:w-[300px] bg-white duration-300  transition-all mx-auto"
+              className="relative rounded-full overflow-hidden border-4 border-black hover:border-white flex items-center justify-center h-[80px] w-[170px] md:h-[100px] md:w-[300px] bg-white duration-300  transition-all mx-auto text-black hover:text-white"
             >
-              <h3 className="text-lg font-bold text-black text-center z-10 relative">
+              <h3 className="text-lg font-bold text-center z-10 relative">
                 {category.name}
               </h3>
-              <div className="absolute bottom-0 left-0 w-full h-0 bg-gray-200 transition-all duration-300 group-hover:h-full"></div>
+              <div className="absolute bottom-0 left-0 w-full h-0 bg-[#e11d47] transition-all duration-300 group-hover:h-full"></div>
             </Link>
           </div>
         ))}

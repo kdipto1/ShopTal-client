@@ -21,7 +21,7 @@ export default function Header({ children }: { children: any }) {
           {/* <MobileNavbar /> */}
           {children}
           <Link href="/" className="mr-6 flex items-center space-x-2 text-2xl">
-            <span className="font-bold">ShopTal</span>
+            <span className="font-bold text-primary">ShopTal</span>
           </Link>
         </div>
         <div className="flex flex-1 items-center justify-end space-x-2 sm:justify-between sm:space-x-4 md:justify-end">

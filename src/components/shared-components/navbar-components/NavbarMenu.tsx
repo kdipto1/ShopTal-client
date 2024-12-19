@@ -51,9 +51,11 @@ export default function NavbarMenu({ categories }: { categories: Category[] }) {
         <NavigationMenu className="max-w-screen-2xl">
           <NavigationMenuList className="flex flex-wrap gap-1">
             {categories?.map((category) => (
-              <NavigationMenuItem key={category.id}>
-                <NavigationMenuTrigger>{category.name}</NavigationMenuTrigger>
-                <NavigationMenuContent>
+              <NavigationMenuItem key={category.id} className="">
+                <NavigationMenuTrigger className="">
+                  {category.name}
+                </NavigationMenuTrigger>
+                <NavigationMenuContent className="">
                   <div className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
                     <div className="row-span-3">
                       <NavigationMenuLink asChild>
@@ -85,7 +87,7 @@ export default function NavbarMenu({ categories }: { categories: Category[] }) {
 
 const SubcategoryList = ({ category }: { category: Category }) => {
   return (
-    <div>
+    <div className="">
       <ul className="grid gap-3 p-2 md:w-[200px] md:grid-cols-1 lg:w-[300px] lg:grid-cols-2  ">
         {category.productSubcategory.map((subcategory) => (
           <Link

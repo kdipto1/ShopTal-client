@@ -117,6 +117,8 @@ export default function SubcategoryForm({
         body: JSON.stringify(data),
       });
 
+      if (response.ok && !subcategoryId) form.reset();
+
       if (!response.ok) {
         const errorResponse = await response.json();
         throw new Error(errorResponse.message || "Failed to process request");
