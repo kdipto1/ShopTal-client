@@ -1,5 +1,5 @@
 "use client";
-import { ShoppingCart, User, LogIn } from "lucide-react";
+import { LogIn, ShoppingCart, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import SearchProducts from "./HeaderSearchProducts";
