@@ -376,9 +376,11 @@ export default function CreateProductForm() {
           </Button>
         </div> */}
 
-        <Button type="submit">Submit</Button>
+        <Button className="bg-primary" type="submit">
+          Submit
+        </Button>
       </form>
-      <Button onClick={() => form.reset()} className="mt-4 bg-red-500">
+      <Button onClick={() => form.reset()} className="mt-4 bg-red-900">
         Reset Form
       </Button>
     </Form>

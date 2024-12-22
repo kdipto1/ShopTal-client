@@ -37,7 +37,7 @@ export default async function NewArrivals() {
 
   return (
     <section className="mb-14">
-      <h2 className="text-3xl font-bold mb-6">New Arrivals</h2>
+      <h2 className="text-3xl font-bold mb-6 text-primary">New Arrivals</h2>
       <Carousel
         opts={{
           align: "start",
