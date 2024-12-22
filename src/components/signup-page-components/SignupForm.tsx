@@ -60,21 +60,36 @@ export default function SignupForm() {
     const lastName = values.lastName;
     const email = values.email;
     const address = values.address;
-    const response = await fetch(`${API_BASE_URL}/auth/signup`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        firstName,
-        lastName,
-        email,
-        phone,
-        address,
-        password,
-      }),
-    });
-    const data = await response.json();
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/signup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          email,
+          phone,
+          address,
+          password,
+        }),
+      });
 
-    toast(data.message);
+      if (response.ok) form.reset();
+
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        throw new Error(errorResponse.message || "Failed to process request");
+      }
+
+      const responseData = await response.json();
+      toast.info(responseData.message + " " + "Now you can login!", {
+        duration: 4000,
+      });
+      // toast.info("Now you can login", { duration: 960 });
+    } catch (error: any) {
+      console.error("Error submitting form:", error);
+      toast.error(error.message, { duration: 960 });
+    }
   };
   return (
     <Form {...form}>

@@ -37,7 +37,7 @@ export default async function NewArrivals() {
 
   return (
     <section className="mb-14">
-      <h2 className="text-3xl font-bold mb-6">New Arrivals</h2>
+      <h2 className="text-3xl font-bold mb-6 text-primary">New Arrivals</h2>
       <Carousel
         opts={{
           align: "start",
@@ -60,9 +60,9 @@ export default async function NewArrivals() {
                   <Image
                     src={product.image}
                     alt={product.name}
-                    width={300}
-                    height={300}
-                    className="w-full h-[200px] object-cover rounded-md transition-transform group-hover:scale-105"
+                    width={600}
+                    height={600}
+                    className="w-full h-[200px] object-cover rounded-md duration-300 transition-transform group-hover:scale-105"
                   />
                 </CardContent>
                 <CardFooter className="flex flex-col items-start">

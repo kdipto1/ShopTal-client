@@ -1,10 +1,10 @@
 "use client";
 import { signOut } from "@/lib/cookies";
 import { LogOut } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "../shadcn-ui/button";
-import { deleteCookie } from "cookies-next/client";
+import { deleteCookie } from "cookies-next";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -38,26 +38,40 @@ export default function SignOutButton({
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
+  // const handleSignOut = async () => {
+  //   try {
+  //     setIsLoading(true);
+  //     // Clear client-side storage
+  //     localStorage.removeItem("accessToken");
+  //     localStorage.removeItem("userRole");
+  //     deleteCookie("accessToken");
+  //     deleteCookie("userRole");
+  //     document.cookie = `accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+  //     document.cookie = `userRole=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+  //     // Call server action to clear cookies and redirect
+  //     await signOut();
+
+  //     toast.success("Signed out successfully");
+  //     router.push("/");
+  //   } catch (error) {
+  //     toast.error("Error signing out");
+  //     console.error("Sign out error:", error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
   const handleSignOut = async () => {
-    try {
-      setIsLoading(true);
-
-      // Clear client-side storage
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("userRole");
-      deleteCookie("accessToken");
-      deleteCookie("userRole");
-      // Call server action to clear cookies and redirect
-      await signOut();
-
-      toast.success("Signed out successfully");
-      router.push("/");
-    } catch (error) {
-      toast.error("Error signing out");
-      console.error("Sign out error:", error);
-    } finally {
-      setIsLoading(false);
-    }
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("userRole");
+    deleteCookie("accessToken");
+    deleteCookie("userRole");
+    document.cookie = `accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+    document.cookie = `userRole=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+    // Call server action to clear cookies and redirect
+    await signOut();
+    toast.success("Signed out successfully");
+    router.push("/");
   };
 
   return (

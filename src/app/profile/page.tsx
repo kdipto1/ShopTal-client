@@ -28,8 +28,6 @@ import { Loader2, Settings, User } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signOut } from "@/lib/cookies";
-import { deleteCookie } from "cookies-next/client";
 import { useRouter } from "next/navigation";
 
 // Define types
@@ -84,15 +82,21 @@ export default function ProfilePage() {
     },
   });
 
+  useEffect(() => {
+    const isLoggedIn = localStorage.getItem("accessToken");
+    if (!isLoggedIn) {
+      toast.error("Please login first");
+      router.push("/login");
+      return;
+    }
+    getProfile();
+  }, []);
+
   // Initialize user role from localStorage
   useEffect(() => {
     if (typeof window !== "undefined") {
       setUserRole(localStorage.getItem("userRole"));
     }
-  }, []);
-
-  useEffect(() => {
-    getProfile();
   }, []);
 
   useEffect(() => {
@@ -103,23 +107,16 @@ export default function ProfilePage() {
     });
   }, [user, reset]);
 
-  const getAccessToken = () => {
-    if (typeof window === "undefined") return null;
-    return localStorage.getItem("accessToken");
-  };
+  // const getAccessToken = () => {
+  //   if (typeof window === "undefined") return null;
+  //   return localStorage.getItem("accessToken");
+  // };
 
-  const getProfile = async () => {
+  async function getProfile() {
     try {
       setIsLoading(true);
       setError("");
-      const accessToken = getAccessToken();
-
-      if (!accessToken) {
-        router.push("/login");
-        deleteCookie("accessToken");
-        deleteCookie("userRole");
-        throw new Error("Please login first!");
-      }
+      // const accessToken = getAccessToken();
 
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/profile`,
@@ -127,7 +124,7 @@ export default function ProfilePage() {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
           },
         }
       );
@@ -151,19 +148,19 @@ export default function ProfilePage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }
 
   const onSubmit = async (formData: ProfileFormData) => {
     try {
       setIsUpdating(true);
       setError("");
 
-      const accessToken = await getAccessToken();
+      // const accessToken = await getAccessToken();
 
-      if (!accessToken) {
-        await signOut();
-        throw new Error("No access token found");
-      }
+      // if (!accessToken) {
+      //   await signOut();
+      //   throw new Error("No access token found");
+      // }
 
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/profile`,
@@ -171,7 +168,7 @@ export default function ProfilePage() {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
           },
           body: JSON.stringify(formData),
         }

@@ -14,7 +14,7 @@ async function fetchRandomProducts(): Promise<Product[]> {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/products?random=true`,
     // { cache: "no-store" },
-    { next: { revalidate: 3600 } }
+    { next: { revalidate: 60 } }
   );
   if (!res.ok) throw new Error("Failed to fetch random products");
   const data = await res.json();
@@ -26,7 +26,7 @@ export default async function RandomProducts() {
 
   return (
     <section className="mb-14">
-      <h2 className="text-3xl font-bold mb-6">Discover More</h2>
+      <h2 className="text-3xl font-bold mb-6 text-primary">Discover More</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {randomProducts.map((product) => (
           <Card key={product.id} className="group">
@@ -34,9 +34,9 @@ export default async function RandomProducts() {
               <Image
                 src={product.image}
                 alt={product.name}
-                width={300}
-                height={300}
-                className="w-full h-[200px] object-cover rounded-md transition-transform group-hover:scale-105"
+                width={600}
+                height={600}
+                className="w-full h-[200px] object-cover rounded-md duration-300 transition-transform group-hover:scale-105"
               />
             </CardContent>
             <CardFooter className="flex flex-col items-start">

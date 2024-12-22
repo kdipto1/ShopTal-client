@@ -1,10 +1,5 @@
 "use client";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/shadcn-ui/avatar";
 import { Button } from "@/components/shadcn-ui/button";
 import {
   Form,
@@ -22,7 +17,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/shadcn-ui/select";
+import { Textarea } from "@/components/shadcn-ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { toast } from "sonner";
@@ -44,16 +41,14 @@ const FormSchema = z.object({
     message: "Subcategory for product must be selected.",
   }),
   file: z.any({ message: "Image file must be selected" }),
-  features: z
-    .array(
-      z.object({
-        name: z.string().min(1, { message: "Feature name must be provided." }),
-        value: z
-          .string()
-          .min(1, { message: "Feature value must be provided." }),
-      })
-    )
-    .nonempty({ message: "At least one feature is required." }),
+  // features: z.array(
+  //   z.object({
+  //     name: z.string().min(1, { message: "Feature name must be provided." }),
+  //     value: z.string().min(1, { message: "Feature value must be provided." }),
+  //   })
+  // ),
+  // .nonempty({ message: "At least one feature is required." }),
+  description: z.string(),
 });
 
 export default function CreateProductForm() {
@@ -72,14 +67,15 @@ export default function CreateProductForm() {
       categoryId: "",
       subcategoryId: "",
       file: "",
-      features: [{ name: "", value: "" }],
+      // features: [{ name: "", value: "" }],
+      description: "",
     },
   });
 
-  const { fields, append, remove } = useFieldArray({
-    control: form.control,
-    name: "features",
-  });
+  // const { fields, append, remove } = useFieldArray({
+  //   control: form.control,
+  //   name: "features",
+  // });
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -129,23 +125,33 @@ export default function CreateProductForm() {
     formData.append("quantity", data.quantity.toString());
     formData.append("brandId", data.brandId);
     formData.append("categoryId", data.categoryId);
-    formData.append("subcategoryId", data.subcategoryId);
-    formData.append("features", JSON.stringify(data.features));
+    formData.append("description", data.description);
+    // formData.append("subcategoryId", data.subcategoryId);
+    formData.append(
+      "subcategoryId",
+      data.subcategoryId === "null" ? "" : data.subcategoryId
+    );
+    // formData.append("features", JSON.stringify(data.features));
 
     if (data.file) {
       formData.append("file", data.file);
     }
 
-    const response = await fetch(`${API_BASE_URL}/products`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-      },
-      body: formData,
-    });
+    try {
+      const response = await fetch(`${API_BASE_URL}/products`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+        body: formData,
+      });
 
-    const responseData = await response.json();
-    toast(responseData.message, { duration: 960 });
+      const responseData = await response.json();
+      toast(responseData.message, { duration: 960 });
+    } catch (error: any) {
+      console.log("Product creation failed error:", error);
+      toast.error(error.message, { duration: 900 });
+    }
   };
 
   return (
@@ -251,7 +257,7 @@ export default function CreateProductForm() {
           name="subcategoryId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Subcategory</FormLabel>
+              <FormLabel>Subcategory (optional)</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
@@ -259,6 +265,9 @@ export default function CreateProductForm() {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
+                  <SelectItem key="null" value="null">
+                    No Subcategory
+                  </SelectItem>
                   {subcategories.map(
                     (subcategory: { name: string; id: string }) => (
                       <SelectItem key={subcategory?.id} value={subcategory?.id}>
@@ -268,6 +277,25 @@ export default function CreateProductForm() {
                   )}
                 </SelectContent>
               </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Product Description</FormLabel>
+              <FormControl>
+                <Textarea
+                  rows={10}
+                  placeholder="Product description"
+                  // type="number"
+                  {...field}
+                />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
@@ -286,12 +314,17 @@ export default function CreateProductForm() {
             </FormItem>
           )}
         />
-        <Avatar className="w-36 h-36">
-          <AvatarImage className="rounded-md" src={preview} />
-          <AvatarFallback className="rounded-md">Image Preview</AvatarFallback>
-        </Avatar>
 
-        <div>
+        <h2>Image Preview:</h2>
+        <Image
+          src={preview || "/placeholder.svg"}
+          width={300}
+          height={300}
+          alt="Image Preview"
+          className="drop-shadow-xl"
+        />
+
+        {/* <div className="sr-only">
           <h2>Features:</h2>
           {fields.map((item, index) => (
             <div
@@ -341,10 +374,15 @@ export default function CreateProductForm() {
           >
             Add Feature
           </Button>
-        </div>
+        </div> */}
 
-        <Button type="submit">Submit</Button>
+        <Button className="bg-primary" type="submit">
+          Submit
+        </Button>
       </form>
+      <Button onClick={() => form.reset()} className="mt-4 bg-red-900">
+        Reset Form
+      </Button>
     </Form>
   );
 }

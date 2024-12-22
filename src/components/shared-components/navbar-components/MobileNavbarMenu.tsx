@@ -20,9 +20,12 @@ import {
 import Link from "next/link";
 
 interface Brand {
-  id: string;
-  name: string;
-  categoryId?: string;
+  brandId: string;
+  categoryId: string;
+  brand: {
+    id: string;
+    name: string;
+  };
 }
 
 interface ProductSubcategory {
@@ -54,49 +57,57 @@ export default function MobileNavbarMenu({
       <SheetContent side="left" className="overflow-y-auto z-[70]">
         <SheetHeader>
           <SheetTitle>
-            <Link href="/" className="mr-6 flex items-center space-x-2">
-              <span className="font-bold text-2xl">ShopTal</span>
-            </Link>
+            <SheetClose asChild>
+              <Link href="/" className="mr-6 flex items-center space-x-2">
+                <span className="font-bold text-2xl">ShopTal</span>
+              </Link>
+            </SheetClose>
           </SheetTitle>
           <SheetDescription className="text-left">Main Menu</SheetDescription>
         </SheetHeader>
-        <Link
-          href="/profile"
-          className="rounded-md hover:bg-gray-100 transition-colors flex mt-4 font-semibold"
-          aria-label="User Account"
-        >
-          <LogIn className="h-5 w-5" /> &nbsp; Login
-        </Link>
-        <Link
-          href="/profile"
-          className="rounded-md hover:bg-gray-100 transition-colors flex mt-4 font-semibold"
-          aria-label="User Account"
-        >
-          <User className="h-5 w-5" /> &nbsp; Profile
-        </Link>
-        <Link
-          href={"/cart"}
-          className="rounded-md hover:bg-gray-100 transition-colors flex mt-4 font-semibold"
-          aria-label="Shopping Cart"
-        >
-          <ShoppingCart className="h-5 w-5" /> &nbsp; Cart
-        </Link>
+        <SheetClose asChild>
+          <Link
+            href="/login"
+            className="rounded-md hover:bg-gray-100 transition-colors flex mt-4 font-semibold"
+            aria-label="User Account"
+          >
+            <LogIn className="h-5 w-5" /> &nbsp; Login
+          </Link>
+        </SheetClose>
+        <SheetClose asChild>
+          <Link
+            href="/profile"
+            className="rounded-md hover:bg-gray-100 transition-colors flex mt-4 font-semibold"
+            aria-label="User Account"
+          >
+            <User className="h-5 w-5" /> &nbsp; Profile
+          </Link>
+        </SheetClose>
+        <SheetClose asChild>
+          <Link
+            href={"/cart"}
+            className="rounded-md hover:bg-gray-100 transition-colors flex mt-4 font-semibold"
+            aria-label="Shopping Cart"
+          >
+            <ShoppingCart className="h-5 w-5" /> &nbsp; Cart
+          </Link>
+        </SheetClose>
 
         <SheetDescription className="text-left mt-4">
           Browse Categories
         </SheetDescription>
         <Accordion type="single" collapsible className="w-full">
-          {/* {isLoading && <p>Categories Loading...</p>} */}
-          {/* {error && <p>Failed to lead categories. Try again...</p>} */}
           {categories.map((category: Category) => (
             <AccordionItem key={category.id} value={`category-${category.id}`}>
               <AccordionTrigger>
-                <Link
-                  href={`/search?categoryId=${category.id}`}
-                  className="w-full text-left hover:underline"
-                >
-                  {category.name}
-                </Link>
+                <SheetClose asChild>
+                  <Link
+                    href={`/search?categoryId=${category.id}`}
+                    className="w-full text-left hover:underline"
+                  >
+                    {category.name}
+                  </Link>
+                </SheetClose>
               </AccordionTrigger>
               <AccordionContent>
                 <Accordion
@@ -136,14 +147,14 @@ export default function MobileNavbarMenu({
                       </AccordionTrigger>
                       <AccordionContent>
                         <ul className="space-y-2">
-                          {category.brands.map((brand) => (
-                            <li key={brand.id}>
+                          {category.brands.map((brandItem) => (
+                            <li key={brandItem.brand.id}>
                               <SheetClose asChild>
                                 <Link
-                                  href={`/search?categoryId=${brand.categoryId}&brandId=${brand.id}`}
+                                  href={`/search?categoryId=${brandItem.categoryId}&brandId=${brandItem.brand.id}`}
                                   className="block px-4 py-2 hover:bg-accent hover:text-accent-foreground rounded"
                                 >
-                                  {brand.name}
+                                  {brandItem.brand.name}
                                 </Link>
                               </SheetClose>
                             </li>

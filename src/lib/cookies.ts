@@ -35,7 +35,7 @@ export async function setCookie(data: AuthData, options?: RedirectOptions) {
 }
 
 export async function signOut() {
-  await cookieStore.delete("accessToken");
-  await cookieStore.delete("userRole");
+  cookieStore.delete("accessToken");
+  cookieStore.delete("userRole");
   redirect(AUTH_ROUTES.LOGIN);
 }

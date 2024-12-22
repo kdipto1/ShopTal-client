@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -19,7 +19,7 @@ import {
 import { Input } from "../shadcn-ui/input";
 import { Button } from "../shadcn-ui/button";
 import { Switch } from "../shadcn-ui/switch";
-import { setCookie as setCookieNext } from "cookies-next/client";
+import { setCookie as setCookieNext } from "cookies-next";
 
 // Form validation schema
 const loginSchema = z.object({
@@ -34,11 +34,22 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginForm() {
+  const router = useRouter();
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
   const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const isLoggedId = localStorage.getItem("accessToken");
+    if (!!isLoggedId) {
+      toast.info("You are already logged in");
+      // router.push("/profile");
+      router.back();
+      return;
+    }
+  }, []);
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),

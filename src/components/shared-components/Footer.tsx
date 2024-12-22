@@ -133,7 +133,7 @@ export default function Footer() {
                 placeholder="Your email address"
                 className="bg-background"
               />
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full" disabled>
                 Subscribe
               </Button>
             </form>

@@ -15,26 +15,28 @@ interface ProductCardProps {
   product: Product;
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({ product }) => (
-  <Card className="flex flex-col h-full">
-    <CardHeader className="p-0">
-      <Image
-        src={product.image || "/placeholder.svg"}
-        alt={product.name}
-        width={200}
-        height={200}
-        className="w-full h-48 object-cover rounded-t-lg"
-        priority={false}
-      />
-    </CardHeader>
-    <CardContent className="p-4 flex-grow">
-      <CardTitle className="text-lg line-clamp-2">{product.name}</CardTitle>
-      <p className="text-xl font-bold mt-2">${product.price.toFixed(2)}</p>
-    </CardContent>
-    <CardFooter className="p-4">
-      <Button asChild className="w-full">
-        <Link href={`/product/${product.id}`}>View Details</Link>
-      </Button>
-    </CardFooter>
-  </Card>
-);
+export function ProductCard({ product }: ProductCardProps) {
+  return (
+    <Card className="flex flex-col h-full">
+      <CardHeader className="p-0">
+        <Image
+          src={product.image || "/placeholder.svg"}
+          alt={product.name}
+          width={600}
+          height={600}
+          className="w-full h-48 object-cover rounded-t-lg"
+          priority={false}
+        />
+      </CardHeader>
+      <CardContent className="p-4 flex-grow">
+        <CardTitle className="text-lg line-clamp-2">{product.name}</CardTitle>
+        <p className="text-xl font-bold mt-2">${product.price.toFixed(2)}</p>
+      </CardContent>
+      <CardFooter className="p-4">
+        <Button asChild className="w-full">
+          <Link href={`/product/${product.id}`}>View Details</Link>
+        </Button>
+      </CardFooter>
+    </Card>
+  );
+}

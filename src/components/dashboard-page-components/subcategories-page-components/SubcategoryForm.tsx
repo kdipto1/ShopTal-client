@@ -24,11 +24,11 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 const FormSchema = z.object({
-  name: z.string().min(2, {
-    message: "Subcategory name must be at least 2 characters.",
-  }),
   categoryId: z.string().min(2, {
     message: "Select a valid category.",
+  }),
+  name: z.string().min(2, {
+    message: "Subcategory name must be at least 2 characters.",
   }),
 });
 
@@ -43,8 +43,8 @@ export default function SubcategoryForm({
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      name: "",
       categoryId: "",
+      name: "",
     },
   });
 
@@ -85,12 +85,12 @@ export default function SubcategoryForm({
 
       const subcategoryData = await response.json();
       form.reset({
-        name: subcategoryData.data.name,
         categoryId: subcategoryData.data.categoryId,
+        name: subcategoryData.data.name,
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error fetching subcategory:", error);
-      toast("Failed to fetch subcategory data. Please try again.");
+      toast.error(error.message);
     } finally {
       setLoading(false);
     }
@@ -116,6 +116,8 @@ export default function SubcategoryForm({
         },
         body: JSON.stringify(data),
       });
+
+      if (response.ok && !subcategoryId) form.reset();
 
       if (!response.ok) {
         const errorResponse = await response.json();

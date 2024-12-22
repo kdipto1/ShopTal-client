@@ -1,8 +1,8 @@
 import React, { Suspense } from "react";
-import SearchResults from "./search-results";
 import { getCategories } from "@/lib/api";
 import { SearchParams } from "@/types";
 import { SearchFilters } from "@/components/search-page-components/SearchFilters";
+import SearchResults from "@/components/search-page-components/SearchResults";
 
 interface SearchPageProps {
   searchParams: { [key: string]: string | undefined };
