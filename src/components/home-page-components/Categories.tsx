@@ -1,5 +1,4 @@
 import Link from "next/link";
-// import { fetchCategories } from "@/lib/api";
 
 type Category = {
   id: string;
