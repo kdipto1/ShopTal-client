@@ -20,7 +20,10 @@ export default function Header({ children }: { children: any }) {
         <div className="mr-4 flex">
           {/* <MobileNavbar /> */}
           {children}
-          <Link href="/" className="mr-6 flex items-center space-x-2 text-2xl">
+          <Link
+            href="/"
+            className="ml-2 md:ml-0 mr-6 flex items-center space-x-2 text-2xl"
+          >
             <span className="font-bold text-primary">ShopTal</span>
           </Link>
         </div>

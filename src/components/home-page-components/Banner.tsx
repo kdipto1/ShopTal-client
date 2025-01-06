@@ -12,7 +12,7 @@ export default function Banner() {
           // fill
           width={1920}
           height={1097}
-          // fill
+          priority
           className="object-cover"
         />
         <div className="absolute inset-0 flex flex-col justify-center items-start p-8 bg-black bg-opacity-30 text-white">
