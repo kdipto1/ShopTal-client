@@ -90,7 +90,7 @@
 
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Card,
@@ -119,6 +119,15 @@ export function SearchFilters({
     minPrice: currentFilters.minPrice || "",
     maxPrice: currentFilters.maxPrice || "",
   });
+
+  useEffect(() => {
+    setFilters({
+      searchTerm: currentFilters.searchTerm || "",
+      categoryId: currentFilters.categoryId || "",
+      minPrice: currentFilters.minPrice || "",
+      maxPrice: currentFilters.maxPrice || "",
+    });
+  }, [currentFilters]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
