@@ -28,8 +28,10 @@ export async function fetchAPI<T>(
   return res.json();
 }
 
-export const getCategories = () =>
-  fetchAPI<PaginatedResponse<Category>>("/categories");
+export const getCategories = (params: any) =>
+  fetchAPI<PaginatedResponse<Category>>("/categories", {
+    ...params,
+  });
 
 export const searchProducts = (params: SearchParams) =>
   fetchAPI<PaginatedResponse<Product>>("/products", {

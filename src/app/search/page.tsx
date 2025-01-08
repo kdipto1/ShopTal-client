@@ -22,7 +22,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
   const {
     data: { data: categories },
-  } = await getCategories();
+  } = await getCategories({ limit: 20 });
 
   return (
     <div className="container mx-auto px-4 py-8 min-h-[70vh]">
