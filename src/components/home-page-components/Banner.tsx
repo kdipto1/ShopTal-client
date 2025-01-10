@@ -16,10 +16,10 @@ export default function Banner() {
           className="object-cover"
         />
         <div className="absolute inset-0 flex flex-col justify-center items-start p-8 bg-black bg-opacity-30 text-white">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
+          <h1 className="text-2xl md:text-5xl lg:text-6xl font-bold mb-4">
             Black Friday Sale
           </h1>
-          <p className="text-xl md:text-2xl mb-6">
+          <p className="text-lg md:text-2xl mb-6">
             Up to 50% off on selected items
           </p>
           <Link href={"/search"}>

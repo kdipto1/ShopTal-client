@@ -14,6 +14,11 @@ export interface Category {
 export interface PaginatedResponse<T> {
   data: {
     data: T[];
+    meta: {
+      page: number;
+      limit: number;
+      total: number;
+    };
     total: number;
     currentPage: number;
     totalPages: number;
@@ -29,6 +34,7 @@ export interface SearchParams {
   categoryId?: string;
   subcategoryId?: string;
   brandId?: string;
+  limit?: number;
 }
 
 export interface LoginResponse {

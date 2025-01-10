@@ -15,6 +15,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     minPrice: searchParams.minPrice ? Number(searchParams.minPrice) : undefined,
     maxPrice: searchParams.maxPrice ? Number(searchParams.maxPrice) : undefined,
     page: searchParams.page ? Number(searchParams.page) : 1,
+    limit: searchParams.limit ? Number(searchParams.limit) : 10,
     categoryId: searchParams.categoryId,
     subcategoryId: searchParams.subcategoryId,
     brandId: searchParams.brandId,

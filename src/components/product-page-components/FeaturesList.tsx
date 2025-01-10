@@ -17,7 +17,7 @@ export const FeaturesList = ({ product }: { product: any }) => {
         </li>
       ))}
     </ul> */}
-      <pre className="whitespace-pre-wrap mt-2">
+      <pre className="whitespace-pre-wrap mt-2 font-sans">
         {isClient ? product.description : ""}
       </pre>
     </div>

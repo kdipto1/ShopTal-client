@@ -10,9 +10,16 @@ interface SearchResultsProps {
 export default async function SearchResults({
   searchParams,
 }: SearchResultsProps) {
-  const {
-    data: { data: products, totalPages, currentPage },
-  } = await searchProducts(searchParams);
+  // const {
+  //   data: { data: products, totalPages, currentPage },
+  // } = await searchProducts(searchParams);
+  // console.log(currentPage, totalPages);
+  const data = await searchProducts(searchParams);
+  const products = data.data.data;
+
+  const currentPage = data?.data.meta.page;
+  const limit = data?.data.meta.limit;
+  const totalPages = Math.ceil(data?.data.meta.total / limit);
 
   if (products.length === 0) {
     return (
@@ -25,7 +32,7 @@ export default async function SearchResults({
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {products.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
@@ -35,6 +42,7 @@ export default async function SearchResults({
         currentPage={currentPage}
         totalPages={totalPages}
         searchParams={searchParams}
+        pageLimit={limit}
       />
     </div>
   );
