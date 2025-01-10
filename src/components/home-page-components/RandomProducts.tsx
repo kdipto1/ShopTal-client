@@ -12,7 +12,7 @@ type Product = {
 
 async function fetchRandomProducts(): Promise<Product[]> {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/products?random=true`,
+    `${process.env.NEXT_PUBLIC_API_URL}/products?random=true&limit=16`,
     // { cache: "no-store" },
     { next: { revalidate: 60 } }
   );
@@ -36,7 +36,7 @@ export default async function RandomProducts() {
                 alt={product.name}
                 width={600}
                 height={600}
-                className="w-full h-[200px] object-cover rounded-md duration-300 transition-transform group-hover:scale-105"
+                className="w-full h-[200px] object-contain rounded-md duration-300 transition-transform group-hover:scale-110"
               />
             </CardContent>
             <CardFooter className="flex flex-col items-start">

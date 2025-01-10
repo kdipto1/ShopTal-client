@@ -19,7 +19,7 @@ import {
 } from "@/components/shadcn-ui/select";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback, useEffect, useState } from "react";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { EditProductFormSkeleton } from "./EditProductFormSkeleton";
@@ -93,7 +93,7 @@ export default function EditProductForm({ productId }: { productId: string }) {
     async (categoryId: string) => {
       try {
         const res = await fetch(
-          `${API_BASE_URL}/subcategories?categoryId=${categoryId}`
+          `${API_BASE_URL}/subcategories?categoryId=${categoryId}&limit=100`
         );
         const data = await res.json();
         setSubcategories(data.data.data);
@@ -165,7 +165,7 @@ export default function EditProductForm({ productId }: { productId: string }) {
 
   const fetchCategories = useCallback(async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/categories`);
+      const res = await fetch(`${API_BASE_URL}/categories?limit=100`);
       const data = await res.json();
       setCategories(data.data.data);
     } catch (error) {
@@ -175,7 +175,7 @@ export default function EditProductForm({ productId }: { productId: string }) {
 
   const fetchBrands = useCallback(async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/brands`);
+      const res = await fetch(`${API_BASE_URL}/brands?limit=100`);
       const data = await res.json();
       setBrands(data.data.data);
     } catch (error) {

@@ -142,7 +142,7 @@ export default async function ProductPage({
 
     return (
       <div className="container mx-auto px-4 py-8 ">
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid md:grid-cols-2 gap-8 mb-4 md:mb-0">
           <ProductImage src={product?.image} alt={product?.name} />
 
           <div className="space-y-4">
@@ -152,10 +152,10 @@ export default async function ProductPage({
             <p className="text-gray-500">In stock: {product.quantity}</p>
 
             <AddToCartButton productId={product?.id} />
-            <FeaturesList product={product} />
             <ProductDetails product={product} />
           </div>
         </div>
+        <FeaturesList product={product} />
       </div>
     );
   } catch (error) {

@@ -86,21 +86,21 @@ export default function CreateProductForm() {
   };
 
   const fetchCategories = useCallback(async () => {
-    const res = await fetch(`${API_BASE_URL}/categories`);
+    const res = await fetch(`${API_BASE_URL}/categories?limit=100`);
     const data = await res.json();
     setCategories(data.data.data);
   }, []);
 
   const fetchSubcategories = useCallback(async (categoryId: string) => {
     const res = await fetch(
-      `${API_BASE_URL}/subcategories?categoryId=${categoryId}`
+      `${API_BASE_URL}/subcategories?categoryId=${categoryId}&limit=100`
     );
     const data = await res.json();
     setSubcategories(data.data.data);
   }, []);
 
   const fetchBrands = async () => {
-    const res = await fetch(`${API_BASE_URL}/brands`);
+    const res = await fetch(`${API_BASE_URL}/brands?limit=100`);
     const data = await res.json();
     setBrands(data.data.data);
   };
@@ -147,7 +147,10 @@ export default function CreateProductForm() {
       });
 
       const responseData = await response.json();
-      toast(responseData.message, { duration: 960 });
+      toast.success(responseData.message, {
+        duration: 960,
+        position: "top-center",
+      });
     } catch (error: any) {
       console.log("Product creation failed error:", error);
       toast.error(error.message, { duration: 900 });
