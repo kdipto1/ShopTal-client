@@ -246,31 +246,30 @@ export default function NavbarMenu({ categories }: { categories: Category[] }) {
                       </Link>
                     </div>
                     <div className="grid gap-6">
-                      <div>
-                        <ul className="grid gap-2 sm:grid-cols-2">
-                          {category.productSubcategory.map((subcategory) => (
-                            <li key={subcategory.id}>
-                              <Link
-                                href={`/search?categoryId=${category.id}&subcategoryId=${subcategory.id}`}
-                                className="block rounded-md px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-                              >
-                                {subcategory.name}
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
+                      {category.productSubcategory.length > 0 && (
+                        <div>
+                          <ul className="grid gap-2 sm:grid-cols-2">
+                            {category.productSubcategory.map((subcategory) => (
+                              <li key={subcategory.id}>
+                                <Link
+                                  href={`/search?categoryId=${category.id}&subcategoryId=${subcategory.id}`}
+                                  className="block rounded-md px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                                >
+                                  {subcategory.name}
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
                       {category.brands.length > 0 && (
                         <div>
-                          <h3 className="font-medium text-sm text-slate-900 mb-3">
-                            Brands
-                          </h3>
                           <ul className="grid gap-2 sm:grid-cols-2">
                             {category.brands.map((brandItem) => (
                               <li key={brandItem.brand.id}>
                                 <Link
                                   href={`/search?categoryId=${brandItem.categoryId}&brandId=${brandItem.brand.id}`}
-                                  className="block rounded-md px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                                  className="block rounded-md px-3 py-2 text-sm text-black hover:bg-slate-50 hover:text-slate-900"
                                 >
                                   {brandItem.brand.name}
                                 </Link>

@@ -4,7 +4,7 @@ import Sidebar from "./Sidebar";
 import { cn } from "@/lib/utils";
 import { useStore } from "@/hooks/use-store";
 import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
-import Footer from "./DashboardFooter";
+import DashboardFooter from "./DashboardFooter";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -44,7 +44,7 @@ export default function AdminPanelLayout({
           sidebar?.isOpen === false ? "lg:ml-[90px]" : "lg:ml-72"
         )}
       >
-        <Footer />
+        <DashboardFooter />
       </footer>
     </>
   );

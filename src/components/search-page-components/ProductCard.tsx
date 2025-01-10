@@ -24,7 +24,7 @@ export function ProductCard({ product }: ProductCardProps) {
           alt={product.name}
           width={600}
           height={600}
-          className="w-full h-48 object-cover rounded-t-lg"
+          className="w-full h-48 object-contain rounded-t-lg"
           priority={false}
         />
       </CardHeader>

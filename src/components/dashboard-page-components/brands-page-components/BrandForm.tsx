@@ -225,7 +225,7 @@ export default function MultipleCategoryBrandForm({
   // Fetch categories
   const fetchCategories = async () => {
     try {
-      const data = await fetch(`${API_BASE_URL}/categories`, {
+      const data = await fetch(`${API_BASE_URL}/categories?limit=100`, {
         method: "GET",
       });
       const categoriesResponse = await data.json();

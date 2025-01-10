@@ -62,7 +62,8 @@ export default async function NewArrivals() {
                     alt={product.name}
                     width={600}
                     height={600}
-                    className="w-full h-[200px] object-cover rounded-md duration-300 transition-transform group-hover:scale-105"
+                    // objectFit="none"
+                    className="w-full h-[200px] object-contain rounded-md duration-300 transition-transform group-hover:scale-110"
                   />
                 </CardContent>
                 <CardFooter className="flex flex-col items-start">
