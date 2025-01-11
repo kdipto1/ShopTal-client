@@ -1,14 +1,4 @@
-import Image from "next/image";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "../shadcn-ui/carousel";
-import { Card, CardContent, CardFooter, CardTitle } from "../shadcn-ui/card";
-import { Button } from "../shadcn-ui/button";
-import Link from "next/link";
+import NewArrivalsCarousel from "./NewArrivalsCarousel";
 
 type Product = {
   id: string;
@@ -36,54 +26,9 @@ export default async function NewArrivals() {
   const newArrivals = await fetchNewArrivals();
 
   return (
-    <section className="mb-14">
+    <section className="mb-14 md:px-10">
       <h2 className="text-3xl font-bold mb-6 text-primary">New Arrivals</h2>
-      <Carousel
-        opts={{
-          align: "start",
-          dragFree: true,
-        }}
-        className="relative"
-      >
-        <div className="block md:hidden absolute -top-10 right-20">
-          <CarouselPrevious />
-          <CarouselNext />
-        </div>
-        <CarouselContent>
-          {newArrivals.map((product) => (
-            <CarouselItem
-              key={product.id}
-              className="basis-full sm:basis-1/2 md:basis-1/2 lg:basis-1/3 pl-4"
-            >
-              <Card className="group">
-                <CardContent className="p-4">
-                  <Image
-                    src={product.image}
-                    alt={product.name}
-                    width={600}
-                    height={600}
-                    // objectFit="none"
-                    className="w-full h-[200px] object-contain rounded-md duration-300 transition-transform group-hover:scale-110"
-                  />
-                </CardContent>
-                <CardFooter className="flex flex-col items-start">
-                  <CardTitle className="text-lg mb-2">{product.name}</CardTitle>
-                  <p className="text-xl font-bold">
-                    ${product.price.toFixed(2)}
-                  </p>
-                  <Link href={`/product/${product.id}`}>
-                    <Button className="mt-2">View Details</Button>
-                  </Link>
-                </CardFooter>
-              </Card>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <div className="hidden md:block">
-          <CarouselPrevious />
-          <CarouselNext />
-        </div>
-      </Carousel>
+      <NewArrivalsCarousel newArrivals={newArrivals} />
     </section>
   );
 }

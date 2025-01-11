@@ -200,7 +200,7 @@ export function SearchFilters({
           </div>
           <div className="space-y-2">
             <h3 className="font-semibold">Price Range</h3>
-            <div className="flex items-center space-x-2">
+            <div className="flex md:flex-col lg:flex-row lg:items-center lg:space-x-2">
               <Input
                 type="number"
                 name="minPrice"

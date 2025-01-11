@@ -25,6 +25,7 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="dns-prefetch" href="http://res.cloudinary.com" />
       </head>
       <body className={`bg-gray-100 ${inter.className}`}>
         <Header>

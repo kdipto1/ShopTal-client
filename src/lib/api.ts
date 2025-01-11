@@ -40,6 +40,7 @@ export const searchProducts = (params: SearchParams) =>
     minPrice: params.minPrice?.toString() || "",
     maxPrice: params.maxPrice?.toString() || "",
     page: params.page?.toString() || "1",
+    limit: params.limit?.toString() || "10",
     categoryId: params.categoryId || "",
     subcategoryId: params.subcategoryId || "",
     brandId: params.brandId || "",
