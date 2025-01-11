@@ -12,7 +12,7 @@ export async function setCookie(data: AuthData, options?: RedirectOptions) {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
-    maxAge: 60 * 60 * 24, // 24 hours
+    maxAge: 60 * 60 * 8766, // 1 year
     path: "/",
   });
 
@@ -20,7 +20,7 @@ export async function setCookie(data: AuthData, options?: RedirectOptions) {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
-    maxAge: 60 * 60 * 24,
+    maxAge: 60 * 60 * 8766, // 1 year
     path: "/",
   });
 
