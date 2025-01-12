@@ -29,6 +29,11 @@ export function Pagination({
       ...(searchParams.maxPrice && {
         maxPrice: searchParams.maxPrice.toString(),
       }),
+      ...(searchParams.categoryId && { categoryId: searchParams.categoryId }),
+      ...(searchParams.subcategoryId && {
+        subcategoryId: searchParams.subcategoryId,
+      }),
+      ...(searchParams.brandId && { brandId: searchParams.brandId }),
       ...(searchParams.limit && { limit: searchParams.limit.toString() }),
       page: page.toString(),
     });
@@ -45,6 +50,11 @@ export function Pagination({
       ...(searchParams.maxPrice && {
         maxPrice: searchParams.maxPrice.toString(),
       }),
+      ...(searchParams.categoryId && { categoryId: searchParams.categoryId }),
+      ...(searchParams.subcategoryId && {
+        subcategoryId: searchParams.subcategoryId,
+      }),
+      ...(searchParams.brandId && { brandId: searchParams.brandId }),
       ...(searchParams.page && { page: searchParams.page.toString() }),
       limit: limit.toString(),
     });

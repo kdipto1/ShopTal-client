@@ -17,6 +17,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "../shadcn-ui/button";
 import Autoplay from "embla-carousel-autoplay";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../shadcn-ui/tooltip";
 
 type Product = {
   id: string;
@@ -32,7 +38,7 @@ export default function NewArrivalsCarousel(newArrivals: {
     <Carousel
       plugins={[
         Autoplay({
-          delay: 2000,
+          delay: 3000,
         }),
       ]}
       opts={{
@@ -64,7 +70,24 @@ export default function NewArrivalsCarousel(newArrivals: {
                 />
               </CardHeader>
               <CardContent className="flex-grow p-4">
-                <CardTitle className="text-lg mb-2">{product.name}</CardTitle>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <CardTitle className="text-lg mb-2">
+                        {product.name.length > 26
+                          ? product.name.slice(0, 26) + "..."
+                          : product.name}
+                      </CardTitle>
+                    </TooltipTrigger>
+                    <TooltipContent
+                      align="start"
+                      className="max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg"
+                    >
+                      {product.name}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+
                 <p className="text-xl font-bold">${product.price.toFixed(2)}</p>
               </CardContent>
               <CardFooter className="p-4">
