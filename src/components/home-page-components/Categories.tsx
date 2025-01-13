@@ -27,7 +27,7 @@ export default async function Categories() {
       </h2>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
         {categories.map((category) => (
-          <div key={category.id} className="group">
+          <div key={category.id} className="group mx-auto">
             {/* <Link
               key={category.id}
               href={`/search?categoryId=${category.id}`}
