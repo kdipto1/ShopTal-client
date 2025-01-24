@@ -148,7 +148,7 @@ export default function SearchProducts() {
     <div ref={searchContainerRef} className="relative">
       <div className="relative">
         <Link type="button" href={`/search?searchTerm=${searchTerm}`}>
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />
+          <Search className="absolute left-2 top-2.5 h-4 w-4 text-primary" />
         </Link>
         <input
           ref={inputRef}
@@ -158,7 +158,7 @@ export default function SearchProducts() {
           onChange={handleSearchChange}
           onFocus={handleFocus}
           onKeyDown={handleKeyDown}
-          className="w-full pl-8 pr-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent sm:w-[300px] md:w-[200px] lg:w-[300px]"
+          className="w-full pl-8 pr-4 py-2 rounded-md border border-primary placeholder:text-primary focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent sm:w-[300px] md:w-[200px] lg:w-[300px]"
           aria-label="Search products"
           aria-expanded={showDropdown}
           aria-controls="search-results"
