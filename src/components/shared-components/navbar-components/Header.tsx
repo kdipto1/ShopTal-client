@@ -31,7 +31,7 @@ export default function Header({ children }: { children: any }) {
           <div className="w-full flex-1 md:w-auto md:flex-none">
             <SearchProducts />
           </div>
-          <nav className="hidden  md:flex items-center space-x-2">
+          <nav className="hidden md:flex items-center space-x-2 text-primary">
             <Link
               href={"/cart"}
               className="p-2 rounded-md hover:bg-gray-100 transition-colors flex"

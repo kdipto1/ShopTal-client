@@ -50,7 +50,7 @@ export default function MobileNavbarMenu({
     <Sheet>
       <SheetTrigger asChild>
         <Button variant="ghost" size="icon" className="md:hidden">
-          <Menu className="h-5 w-5" />
+          <Menu className="h-5 w-5 text-primary" />
           <span className="sr-only">Toggle menu</span>
         </Button>
       </SheetTrigger>

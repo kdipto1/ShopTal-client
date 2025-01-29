@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 /* @layer base {
   :root {
     --background: 0 0% 100%;
@@ -93,6 +94,15 @@
     --chart-3: 240 4.8% 95.9%;
     --chart-4: 240 4.8% 105.9%;
     --chart-5: 346.8 77.2% 59.8%;
+
+    --sidebar-background: 0 0% 97%;
+    --sidebar-foreground: 240 10% 38%;
+    --sidebar-primary: 347 77% 47%;
+    --sidebar-primary-foreground: 355.7 100% 97.3%;
+    --sidebar-accent: 240 5% 75%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 240 6% 87%;
+    --sidebar-ring: 347 77% 47%;
   }
 
   .dark {
@@ -121,6 +131,15 @@
     --chart-3: 12 6.5% 15.1%;
     --chart-4: 12 6.5% 25.1%;
     --chart-5: 346.8 77.2% 59.8%;
+
+    --sidebar-background: 0 0% 0%;
+    --sidebar-foreground: 0 0% 50%;
+    --sidebar-primary: 347 77% 42%;
+    --sidebar-primary-foreground: 355.7 100% 97.3%;
+    --sidebar-accent: 12 7% 7%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 240 4% 8%;
+    --sidebar-ring: 347 77% 42%;
   }
 }
 
@@ -128,6 +147,7 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
     overflow-x: clip;
