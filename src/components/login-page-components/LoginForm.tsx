@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { PROTECTED_ROUTES } from "@/middleware";
+// import { PROTECTED_ROUTES } from "@/middleware";
 import { setCookie } from "@/lib/cookies";
 import { toast } from "sonner";
 import {
@@ -20,6 +20,7 @@ import { Input } from "../shadcn-ui/input";
 import { Button } from "../shadcn-ui/button";
 import { Switch } from "../shadcn-ui/switch";
 import { setCookie as setCookieNext } from "cookies-next";
+import { signIn } from "next-auth/react";
 
 // Form validation schema
 const loginSchema = z.object({
@@ -38,7 +39,7 @@ export default function LoginForm() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/";
+  // const callbackUrl = searchParams.get("callbackUrl") || "/";
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
@@ -63,61 +64,74 @@ export default function LoginForm() {
     return `${phone.slice(0, 3)}-${phone.slice(3, 6)}-${phone.slice(6, 10)}`;
   };
 
-  const checkRouteAccess = (route: string, userRole: string): boolean => {
-    const matchingRoute = Object.entries(PROTECTED_ROUTES).find(([path]) =>
-      route.startsWith(path)
-    );
-    return matchingRoute ? matchingRoute[1].includes(userRole) : true;
+  // const checkRouteAccess = (route: string, userRole: string): boolean => {
+  //   const matchingRoute = Object.entries(PROTECTED_ROUTES).find(([path]) =>
+  //     route.startsWith(path)
+  //   );
+  //   return matchingRoute
+  //     ? (matchingRoute[1] as string[]).includes(userRole)
+  //     : true;
+  // };
+  const credentialsAction = (formData: FormData) => {
+    let phone = formData.get("phone") as string;
+    const password = formData.get("password") as string;
+    phone = formatPhoneNumber(phone);
+    console.log(phone);
+    signIn("credentials", {
+      phone: phone,
+      password: password,
+      redirect: true,
+    });
   };
 
-  const handleLogin = async (values: LoginFormData) => {
-    setIsLoading(true);
-    setError("");
+  // const handleLogin = async (values: LoginFormData) => {
+  //   setIsLoading(true);
+  //   setError("");
 
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            phone: formatPhoneNumber(values.phone),
-            password: values.password,
-          }),
-        }
-      );
+  //   try {
+  //     const response = await fetch(
+  //       `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify({
+  //           phone: formatPhoneNumber(values.phone),
+  //           password: values.password,
+  //         }),
+  //       }
+  //     );
 
-      const data = await response.json();
+  //     const data = await response.json();
 
-      if (data.success) {
-        // Store auth data
-        localStorage.setItem("accessToken", data.data.accessToken);
-        localStorage.setItem("userRole", data.data.role);
-        setCookieNext("accessToken", data.data.accessToken);
-        setCookieNext("userRole", data.data.role);
+  //     if (data.success) {
+  //       // Store auth data
+  //       localStorage.setItem("accessToken", data.data.accessToken);
+  //       localStorage.setItem("userRole", data.data.role);
+  //       setCookieNext("accessToken", data.data.accessToken);
+  //       setCookieNext("userRole", data.data.role);
 
-        // Set cookies and handle redirect
-        await setCookie(data.data, {
-          redirect: checkRouteAccess(callbackUrl, data.data.role)
-            ? callbackUrl
-            : "/",
-        });
+  //       // Set cookies and handle redirect
+  //       // await setCookie(data.data, {
+  //       //   redirect: checkRouteAccess(callbackUrl, data.data.role)
+  //       //     ? callbackUrl
+  //       //     : "/",
+  //       // });
 
-        toast.success("Login successful");
-      } else {
-        setError(data.message);
-        toast.error(data.message);
-      }
-    } catch (error) {
-      const errorMessage = "An error occurred during login";
-      setError(errorMessage);
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  //       toast.success("Login successful");
+  //     } else {
+  //       setError(data.message);
+  //       toast.error(data.message);
+  //     }
+  //   } catch (error) {
+  //     const errorMessage = "An error occurred during login";
+  //     setError(errorMessage);
+  //     toast.error(errorMessage);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   const handleSwitchChange = (checked: boolean) => {
     setIsAdmin(checked);
@@ -140,7 +154,11 @@ export default function LoginForm() {
         </label>
       </div>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleLogin)} className="space-y-6">
+        <form
+          // onSubmit={form.handleSubmit(handleLogin)}
+          className="space-y-6"
+          action={credentialsAction}
+        >
           <FormField
             control={form.control}
             name="phone"
@@ -149,6 +167,7 @@ export default function LoginForm() {
                 <FormLabel>Phone</FormLabel>
                 <FormControl>
                   <Input
+                    id="credentials-phone"
                     type="tel"
                     placeholder="1234567890"
                     {...field}
@@ -168,6 +187,7 @@ export default function LoginForm() {
                 <FormLabel>Password</FormLabel>
                 <FormControl>
                   <Input
+                    id="credentials-password"
                     type="password"
                     placeholder="••••••"
                     {...field}

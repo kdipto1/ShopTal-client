@@ -29,6 +29,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
+import { auth } from "@/auth";
 
 // Define types
 interface UserProfile {
@@ -67,6 +68,9 @@ export default function ProfilePage() {
   const [error, setError] = useState<string>("");
   const [userRole, setUserRole] = useState<string | null>(null);
   const router = useRouter();
+
+  const session = auth();
+  if (!session) return <div>Not authenticated</div>;
 
   const {
     register,
