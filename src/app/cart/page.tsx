@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import { Minus, Plus, Trash2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -44,37 +45,42 @@ export default function CartPage() {
   const [error, setError] = useState<string | null>(null);
   const [updatingItems, setUpdatingItems] = useState<Set<string>>(new Set());
   const router = useRouter();
+  const { data: session, status } = useSession();
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-  const fetchCartItems = async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/cart-items/user-items`, {
-        headers: {
-          Authorization: `${localStorage.getItem("accessToken")}`,
-        },
-      });
-      if (!response.ok) {
-        throw new Error("Failed to fetch cart items");
+  const fetchCartItems = useCallback(
+    async (accessToken: string) => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/cart-items/user-items`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch cart items");
+        }
+        const data: ApiResponse = await response.json();
+        setCartItems(data.data);
+      } catch (error) {
+        setError("Failed to fetch cart items");
+        toast.error("Could not load your cart items. Please try again later.");
+        console.error("Error fetching cart items:", error);
+      } finally {
+        setIsLoading(false);
       }
-      const data: ApiResponse = await response.json();
-      setCartItems(data.data);
-    } catch (error) {
-      setError("Failed to fetch cart items");
-      toast.error("Could not load your cart items. Please try again later.");
-      console.error("Error fetching cart items:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    },
+    [API_BASE_URL]
+  );
 
   const updateQuantity = async (itemId: string, newQuantity: number) => {
+    if (!session?.user?.accessToken) return;
     setUpdatingItems((prev) => new Set(prev).add(itemId));
     try {
       const response = await fetch(`${API_BASE_URL}/cart-items/${itemId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `${localStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${session.user.accessToken}`,
         },
         body: JSON.stringify({ quantity: newQuantity }),
       });
@@ -89,9 +95,9 @@ export default function CartPage() {
         )
       );
 
-      toast.error("Cart quantity updated successfully");
+      toast.success("Cart quantity updated successfully");
     } catch (error) {
-      toast("Failed to update quantity. Please try again.");
+      toast.error("Failed to update quantity. Please try again.");
       console.error("Error updating quantity:", error);
     } finally {
       setUpdatingItems((prev) => {
@@ -103,12 +109,13 @@ export default function CartPage() {
   };
 
   const removeItem = async (itemId: string) => {
+    if (!session?.user?.accessToken) return;
     setUpdatingItems((prev) => new Set(prev).add(itemId));
     try {
       const response = await fetch(`${API_BASE_URL}/cart-items/${itemId}`, {
         method: "DELETE",
         headers: {
-          Authorization: `${localStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${session.user.accessToken}`,
         },
       });
 
@@ -119,9 +126,9 @@ export default function CartPage() {
       setCartItems((prevItems) =>
         prevItems.filter((item) => item.id !== itemId)
       );
-      toast("Item removed from cart");
+      toast.success("Item removed from cart");
     } catch (error) {
-      toast("Failed to remove item. Please try again.");
+      toast.error("Failed to remove item. Please try again.");
       console.error("Error removing item:", error);
     } finally {
       setUpdatingItems((prev) => {
@@ -133,14 +140,17 @@ export default function CartPage() {
   };
 
   useEffect(() => {
-    const isLoggedIn = localStorage.getItem("accessToken");
-    if (!isLoggedIn) {
+    if (status === "loading") return;
+
+    if (status === "unauthenticated") {
       toast.error("Please login first");
       router.push("/login");
       return;
     }
-    fetchCartItems();
-  }, []);
+    if (session?.user?.accessToken) {
+      fetchCartItems(session.user.accessToken);
+    }
+  }, [session, status, router, fetchCartItems]);
 
   const calculateTotal = () => {
     return cartItems.reduce((total, item) => {
@@ -197,7 +207,9 @@ export default function CartPage() {
               onClick={() => {
                 setError(null);
                 setIsLoading(true);
-                fetchCartItems();
+                if (session?.user?.accessToken) {
+                  fetchCartItems(session.user.accessToken);
+                }
               }}
               className="mt-4"
             >

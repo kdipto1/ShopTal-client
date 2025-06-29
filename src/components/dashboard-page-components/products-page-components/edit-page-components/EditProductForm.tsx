@@ -25,6 +25,7 @@ import { z } from "zod";
 import { EditProductFormSkeleton } from "./EditProductFormSkeleton";
 import Image from "next/image";
 import { Textarea } from "@/components/shadcn-ui/textarea";
+import { useSession } from "next-auth/react";
 
 const FormSchema = z.object({
   id: z.string().optional(),
@@ -67,6 +68,7 @@ export default function EditProductForm({ productId }: { productId: string }) {
   const [subcategories, setSubcategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+  const { data: session } = useSession();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -105,46 +107,49 @@ export default function EditProductForm({ productId }: { productId: string }) {
   );
 
   // Fetch product details for editing
-  const fetchProductDetails = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        },
-      });
-      const { data } = await response.json();
+  const fetchProductDetails = useCallback(
+    async (accessToken: string) => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        const { data } = await response.json();
 
-      // First fetch subcategories for the product's category
-      if (data.categoryId) {
-        await fetchSubcategories(data.categoryId);
+        // First fetch subcategories for the product's category
+        if (data.categoryId) {
+          await fetchSubcategories(data.categoryId);
+        }
+
+        // Then reset form with all data including subcategoryId
+        form.reset({
+          id: data.id,
+          name: data.name,
+          price: data.price,
+          quantity: data.quantity,
+          brandId: data.brandId,
+          categoryId: data.categoryId,
+          subcategoryId: data.subcategoryId || "null",
+          existingImage: data.image,
+          // features:
+          //   data.features.length > 0 ? data.features : [{ name: "", value: "" }],
+          description: data.description,
+        });
+
+        // Set image preview
+        if (data.image) {
+          setPreview(data.image);
+        }
+      } catch (error) {
+        toast.error("Failed to fetch product details");
+      } finally {
+        setIsLoading(false);
       }
-
-      // Then reset form with all data including subcategoryId
-      form.reset({
-        id: data.id,
-        name: data.name,
-        price: data.price,
-        quantity: data.quantity,
-        brandId: data.brandId,
-        categoryId: data.categoryId,
-        subcategoryId: data.subcategoryId || "null",
-        existingImage: data.image,
-        // features:
-        //   data.features.length > 0 ? data.features : [{ name: "", value: "" }],
-        description: data.description,
-      });
-
-      // Set image preview
-      if (data.image) {
-        setPreview(data.image);
-      }
-    } catch (error) {
-      toast.error("Failed to fetch product details");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [productId, API_BASE_URL]);
+    },
+    [productId, API_BASE_URL, fetchSubcategories, form]
+  );
 
   useEffect(() => {
     return () => {
@@ -185,22 +190,21 @@ export default function EditProductForm({ productId }: { productId: string }) {
 
   useEffect(() => {
     const initializeForm = async () => {
-      await Promise.all([
-        fetchBrands(),
-        fetchCategories(),
-        fetchProductDetails(),
-      ]);
+      await Promise.all([fetchBrands(), fetchCategories()]);
+      if (session?.user?.accessToken) {
+        fetchProductDetails(session.user.accessToken as string);
+      }
     };
     initializeForm();
-  }, []);
+  }, [session, fetchBrands, fetchCategories, fetchProductDetails]);
 
   // Handle category change
+  const categoryId = form.watch("categoryId");
   useEffect(() => {
-    const categoryId = form.watch("categoryId");
     if (categoryId) {
       fetchSubcategories(categoryId);
     }
-  }, [form.watch("categoryId")]);
+  }, [categoryId, fetchSubcategories, form]);
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     const formData = new FormData();
@@ -230,7 +234,7 @@ export default function EditProductForm({ productId }: { productId: string }) {
       const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
         method: "PATCH",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${session?.user?.accessToken}`,
         },
         body: formData,
       });

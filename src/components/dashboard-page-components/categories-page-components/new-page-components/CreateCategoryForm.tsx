@@ -14,6 +14,7 @@ import { Input } from "@/components/shadcn-ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { useSession } from "next-auth/react";
 
 import { z } from "zod";
 
@@ -31,6 +32,7 @@ export default function CreateCategoryForm() {
     },
   });
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+  const { data: session } = useSession();
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     try {
@@ -38,7 +40,7 @@ export default function CreateCategoryForm() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,
+          Authorization: `Bearer ${session?.user?.accessToken}`,
         },
         body: JSON.stringify(data),
       });

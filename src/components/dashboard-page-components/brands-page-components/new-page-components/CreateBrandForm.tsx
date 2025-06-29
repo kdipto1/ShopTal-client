@@ -18,7 +18,8 @@ import {
   SelectValue,
 } from "@/components/shadcn-ui/select";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -36,6 +37,7 @@ const FormSchema = z.object({
 
 export default function CreateBrandForm() {
   const [categories, setCategories] = useState([]);
+  const { data: session } = useSession();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -44,16 +46,16 @@ export default function CreateBrandForm() {
   });
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     const data = await fetch(`${API_BASE_URL}/categories`, {
       method: "GET",
     });
     const categories = await data.json();
     setCategories(categories?.data?.data);
-  };
+  }, [API_BASE_URL]);
   useEffect(() => {
     fetchCategories();
-  }, []);
+  }, [fetchCategories]);
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     try {
@@ -61,7 +63,7 @@ export default function CreateBrandForm() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,
+          Authorization: `Bearer ${session?.user?.accessToken}`,
         },
         body: JSON.stringify(data),
       });

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import {
@@ -29,7 +29,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { auth } from "@/auth";
+import { useSession } from "next-auth/react";
 
 // Define types
 interface UserProfile {
@@ -66,11 +66,9 @@ export default function ProfilePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError] = useState<string>("");
-  const [userRole, setUserRole] = useState<string | null>(null);
   const router = useRouter();
 
-  const session = auth();
-  if (!session) return <div>Not authenticated</div>;
+  const { data: session, status } = useSession();
 
   const {
     register,
@@ -79,92 +77,77 @@ export default function ProfilePage() {
     reset,
   } = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
-    defaultValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-    },
   });
 
-  useEffect(() => {
-    const isLoggedIn = localStorage.getItem("accessToken");
-    if (!isLoggedIn) {
-      toast.error("Please login first");
-      router.push("/login");
-      return;
-    }
-    getProfile();
-  }, []);
-
-  // Initialize user role from localStorage
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setUserRole(localStorage.getItem("userRole"));
-    }
-  }, []);
-
-  useEffect(() => {
-    reset({
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-    });
-  }, [user, reset]);
-
-  // const getAccessToken = () => {
-  //   if (typeof window === "undefined") return null;
-  //   return localStorage.getItem("accessToken");
-  // };
-
-  async function getProfile() {
-    try {
+  const getProfile = useCallback(
+    async (accessToken: string) => {
       setIsLoading(true);
-      setError("");
-      // const accessToken = getAccessToken();
+      try {
+        setError("");
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/profile`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/profile`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-          },
+        if (!response.ok) {
+          throw new Error("Failed to fetch profile");
         }
-      );
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch profile");
+        const data = (await response.json()) as ApiResponse;
+        const profileData = {
+          avatar: data?.data.name || "/avatar.webp",
+          email: data?.data.email || "",
+          firstName: data?.data.firstName || "",
+          lastName: data?.data.lastName || "",
+        };
+        setUser(profileData);
+        reset(profileData);
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Something went wrong";
+        setError(errorMessage);
+        toast.error(errorMessage);
+      } finally {
+        setIsLoading(false);
       }
+    },
+    [reset]
+  );
 
-      const data = (await response.json()) as ApiResponse;
-      setUser({
-        avatar: data?.data.name || "/avatar.webp",
-        email: data?.data.email || "",
-        firstName: data?.data.firstName || "",
-        lastName: data?.data.lastName || "",
-      });
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Something went wrong";
-      setError(errorMessage);
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
+  useEffect(() => {
+    if (status === "authenticated" && session?.user?.accessToken) {
+      getProfile(session.user.accessToken);
     }
+  }, [status, session, getProfile]);
+
+  if (status === "loading" || isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[70vh]">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  if (status === "unauthenticated") {
+    router.push("/login");
+    return null;
   }
 
   const onSubmit = async (formData: ProfileFormData) => {
+    if (!session?.user?.accessToken) {
+      toast.error("Authentication token not found. Please log in again.");
+      return;
+    }
+
     try {
       setIsUpdating(true);
       setError("");
-
-      // const accessToken = await getAccessToken();
-
-      // if (!accessToken) {
-      //   await signOut();
-      //   throw new Error("No access token found");
-      // }
 
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/profile`,
@@ -172,7 +155,7 @@ export default function ProfilePage() {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            Authorization: `Bearer ${session.user.accessToken}`,
           },
           body: JSON.stringify(formData),
         }
@@ -193,14 +176,6 @@ export default function ProfilePage() {
       setIsUpdating(false);
     }
   };
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[70vh]">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
 
   return (
     <div className="container min-h-[70vh] mx-auto py-10 px-4 sm:px-6">
@@ -224,7 +199,9 @@ export default function ProfilePage() {
                 alt={`${user.firstName} ${user.lastName}`}
               />
               <AvatarFallback>
-                {`${user.firstName.charAt(0)}${user.lastName.charAt(0)}`}
+                {user.firstName && user.lastName
+                  ? `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`
+                  : ""}
               </AvatarFallback>
             </Avatar>
             <h2 className="text-2xl font-semibold">
@@ -232,7 +209,7 @@ export default function ProfilePage() {
             </h2>
             <p className="text-muted-foreground">{user.email}</p>
 
-            {userRole === "admin" && (
+            {session?.user?.role === "admin" && (
               <Link className="mt-4" href="/dashboard">
                 <Button>Admin Dashboard</Button>
               </Link>

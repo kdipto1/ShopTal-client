@@ -40,7 +40,7 @@
 // const NavigationMenuItem = NavigationMenuPrimitive.Item;
 
 // const navigationMenuTriggerStyle = cva(
-//   "group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50"
+//   "group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-hidden disabled:pointer-events-none disabled:opacity-50 data-active:bg-accent/50 data-[state=open]:bg-accent/50"
 // );
 
 // const NavigationMenuTrigger = React.forwardRef<
@@ -85,7 +85,7 @@
 //   <div className={cn("absolute left-0 top-full flex justify-center")}>
 //     <NavigationMenuPrimitive.Viewport
 //       className={cn(
-//         "origin-top-center relative mt-1.5 h-[var(--radix-navigation-menu-viewport-height)] w-full overflow-hidden rounded-md border bg-popover text-popover-foreground shadow data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90 md:w-[var(--radix-navigation-menu-viewport-width)]",
+//         "origin-top-center relative mt-1.5 h-[var(--radix-navigation-menu-viewport-height)] w-full overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90 md:w-[var(--radix-navigation-menu-viewport-width)]",
 //         className
 //       )}
 //       ref={ref}
@@ -103,7 +103,7 @@
 //   <NavigationMenuPrimitive.Indicator
 //     ref={ref}
 //     className={cn(
-//       "top-full z-[1] flex h-1.5 items-end justify-center overflow-hidden data-[state=visible]:animate-in data-[state=hidden]:animate-out data-[state=hidden]:fade-out data-[state=visible]:fade-in",
+//       "top-full z-1 flex h-1.5 items-end justify-center overflow-hidden data-[state=visible]:animate-in data-[state=hidden]:animate-out data-[state=hidden]:fade-out data-[state=visible]:fade-in",
 //       className
 //     )}
 //     {...props}
@@ -219,22 +219,24 @@ interface NavigationMenuItemProps
 const NavigationMenuItem = React.forwardRef<
   React.ElementRef<typeof NavigationMenuPrimitive.Item>,
   NavigationMenuItemProps
->(({ className, children, hasSubmenu = false, ...props }, ref) => {
+>(({ className, children, hasSubmenu = false, ...props }, forwardedRef) => {
   const currentNavigationItemPositionContext = React.useContext(
     CurrentNavigationItemPositionContext
   );
-  const itemRef = React.useRef<HTMLLIElement>(null);
+  const internalRef = React.useRef<HTMLLIElement>(null);
+
+  React.useImperativeHandle(forwardedRef, () => internalRef.current!, []);
 
   React.useEffect(() => {
     const handlePointerEnter = () => {
       if (
-        itemRef.current &&
+        internalRef.current &&
         currentNavigationItemPositionContext != null &&
         hasSubmenu
       ) {
         const parentRect =
-          itemRef.current.parentElement?.getBoundingClientRect();
-        const rect = itemRef.current.getBoundingClientRect();
+          internalRef.current.parentElement?.getBoundingClientRect();
+        const rect = internalRef.current.getBoundingClientRect();
 
         if (
           parentRect &&
@@ -247,24 +249,17 @@ const NavigationMenuItem = React.forwardRef<
       }
     };
 
-    const hoverTrigger = itemRef.current;
+    const hoverTrigger = internalRef.current;
     hoverTrigger?.addEventListener("mouseenter", handlePointerEnter);
 
     return () => {
       hoverTrigger?.removeEventListener("mouseenter", handlePointerEnter);
     };
-  }, [itemRef, currentNavigationItemPositionContext, hasSubmenu]);
+  }, [internalRef, currentNavigationItemPositionContext, hasSubmenu]);
 
   return (
     <NavigationMenuPrimitive.Item
-      ref={(node) => {
-        itemRef.current = node;
-        if (typeof ref === "function") {
-          ref(node);
-        } else if (ref) {
-          (ref as React.RefObject<HTMLLIElement | null>).current = node;
-        }
-      }}
+      ref={internalRef}
       className={cn(className)}
       {...props}
     >
@@ -275,7 +270,7 @@ const NavigationMenuItem = React.forwardRef<
 NavigationMenuItem.displayName = NavigationMenuPrimitive.Item.displayName;
 
 const navigationMenuTriggerStyle = cva(
-  "group inline-flex h-10 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50"
+  "group inline-flex h-10 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-hidden disabled:pointer-events-none disabled:opacity-50 data-active:bg-accent/50 data-[state=open]:bg-accent/50"
 );
 
 const NavigationMenuTrigger = React.forwardRef<
@@ -360,7 +355,7 @@ const NavigationMenuIndicator = React.forwardRef<
   <NavigationMenuPrimitive.Indicator
     ref={ref}
     className={cn(
-      "top-full z-[1] flex h-1.5 items-end justify-center overflow-hidden data-[state=visible]:animate-in data-[state=hidden]:animate-out data-[state=hidden]:fade-out data-[state=visible]:fade-in",
+      "top-full z-1 flex h-1.5 items-end justify-center overflow-hidden data-[state=visible]:animate-in data-[state=hidden]:animate-out data-[state=hidden]:fade-out data-[state=visible]:fade-in",
       className
     )}
     {...props}

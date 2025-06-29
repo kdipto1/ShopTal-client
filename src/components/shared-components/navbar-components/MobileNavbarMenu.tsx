@@ -54,7 +54,7 @@ export default function MobileNavbarMenu({
           <span className="sr-only">Toggle menu</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="overflow-y-auto z-[70]">
+      <SheetContent side="left" className="overflow-y-auto z-70">
         <SheetHeader>
           <SheetTitle>
             <SheetClose asChild>

@@ -1,9 +1,10 @@
 "use client";
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { Search } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import useClickOutside from "@/hooks/useClickOutside";
+import Image from "next/image";
 
 // Types
 interface Product {
@@ -30,19 +31,26 @@ const MIN_SEARCH_LENGTH = 2;
 
 // Custom debounce hook
 const useDebounce = (callback: (...args: any[]) => void, delay: number) => {
-  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    // Cleanup on unmount or when callback/delay changes
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   return useCallback(
     (...args: any[]) => {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
       }
 
-      const newTimeoutId = setTimeout(() => {
+      timeoutRef.current = setTimeout(() => {
         callback(...args);
       }, delay);
-
-      setTimeoutId(newTimeoutId);
     },
     [callback, delay]
   );
@@ -55,9 +63,11 @@ const SearchResult = ({ product, onSelect }: SearchResultProps) => (
     className="flex items-center space-x-4 p-2 hover:bg-gray-100 rounded-md transition-colors"
     onClick={onSelect}
   >
-    <img
+    <Image
       src={product.image}
       alt={product.name}
+      width={48}
+      height={48}
       className="w-12 h-12 rounded-md object-cover"
     />
     <div>
@@ -158,7 +168,7 @@ export default function SearchProducts() {
           onChange={handleSearchChange}
           onFocus={handleFocus}
           onKeyDown={handleKeyDown}
-          className="w-full pl-8 pr-4 py-2 rounded-md border border-primary placeholder:text-primary focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent sm:w-[300px] md:w-[200px] lg:w-[300px]"
+          className="w-full pl-8 pr-4 py-2 rounded-md border border-primary placeholder:text-primary focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-transparent sm:w-[300px] md:w-[200px] lg:w-[300px]"
           aria-label="Search products"
           aria-expanded={showDropdown}
           aria-controls="search-results"

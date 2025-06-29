@@ -24,7 +24,7 @@ export default function LoginPage() {
             <LoginForm />
           </Suspense>
           <p className="mt-4">
-            Don't have an account?
+            Don&apos;t have an account?
             <Link className="text-[#6c63ff]" href={"/signup"}>
               {" "}
               Register now

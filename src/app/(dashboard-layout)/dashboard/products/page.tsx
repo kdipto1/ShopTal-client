@@ -26,6 +26,7 @@ import { ChevronRightIcon } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
+import { ProductActions } from "@/components/dashboard-page-components/products-page-components/ProductActions";
 
 export type Product = {
   id: string;
@@ -69,93 +70,7 @@ export default function ProductsPage() {
       id: "actions",
       cell: ({ row }) => {
         const product = row.original;
-        const handleDelete = async () => {
-          setIsLoading(true);
-          try {
-            const response = await fetch(
-              `${API_BASE_URL}/products/${product.id}`,
-              {
-                method: "DELETE",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${
-                    localStorage.getItem("accessToken") || ""
-                  }`,
-                },
-              }
-            );
-
-            if (!response.ok) {
-              throw new Error("Failed to delete product");
-            }
-
-            // Refresh the data after successful deletion
-            fetchData({
-              pageIndex: 0, // Reset to first page
-              pageSize: 10, // Default page size, adjust as needed
-              searchTerm: "",
-              sorting: [],
-            });
-
-            // Optional: Add a toast or notification for successful deletion
-            toast.success(
-              `Product "${product.name}" has been deleted successfully`
-            );
-          } catch (error) {
-            console.error("Error deleting product:", error);
-            toast.error("Failed to delete the product");
-          } finally {
-            setIsLoading(false);
-          }
-        };
-        return (
-          <div className="">
-            <Button variant="ghost" size="sm" asChild>
-              <Link href={`/dashboard/products/edit/${product.id}`}>
-                Edit
-                <ChevronRightIcon className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-            <Button variant="ghost" size="sm" asChild>
-              <Link href={`/product/${product.id}`}>
-                View
-                <ChevronRightIcon className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button
-                  variant={"default"}
-                  size={"sm"}
-                  className={"bg-red-500"}
-                  disabled={isLoading}
-                >
-                  Delete
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>
-                    Are you sure you want to delete product: {product.name}?
-                  </AlertDialogTitle>
-                  <AlertDialogDescription className="text-red-500">
-                    Warning: If this product is carted by any user, It will not
-                    be deleted.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={handleDelete}
-                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                  >
-                    {isLoading ? "Deleting..." : "Confirm"}
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div>
-        );
+        return <ProductActions product={product} fetchData={fetchData} />;
       },
     },
   ];
@@ -253,7 +168,7 @@ export default function ProductsPage() {
         setIsLoading(false);
       }
     },
-    []
+    [API_BASE_URL]
   );
 
   return (

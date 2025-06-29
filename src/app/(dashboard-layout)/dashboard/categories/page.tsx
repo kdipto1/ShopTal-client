@@ -27,6 +27,7 @@ import { ChevronRightIcon } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
+import { CategoryActions } from "@/components/dashboard-page-components/categories-page-components/CategoryActions";
 
 export type Category = {
   id: string;
@@ -58,87 +59,7 @@ export default function CategoriesPage() {
       id: "actions",
       cell: ({ row }) => {
         const category = row.original;
-        const handleDelete = async () => {
-          setIsLoading(true);
-          try {
-            const response = await fetch(
-              `${API_BASE_URL}/categories/${category.id}`,
-              {
-                method: "DELETE",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${
-                    localStorage.getItem("accessToken") || ""
-                  }`,
-                },
-              }
-            );
-
-            if (!response.ok) {
-              throw new Error("Failed to delete category");
-            }
-
-            // Refresh the data after successful deletion
-            fetchData({
-              pageIndex: 0, // Reset to first page
-              pageSize: 10, // Default page size, adjust as needed
-              searchTerm: "",
-              sorting: [],
-            });
-
-            // Optional: Add a toast or notification for successful deletion
-            toast.success(
-              `Category "${category.name}" has been deleted successfully`
-            );
-          } catch (error) {
-            console.error("Error deleting category:", error);
-            toast.error("Failed to delete the category");
-          } finally {
-            setIsLoading(false);
-          }
-        };
-        return (
-          <div className="">
-            <Button variant="ghost" size="sm" asChild>
-              <Link href={`/dashboard/categories/edit/${category.id}`}>
-                Edit
-                <ChevronRightIcon className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button
-                  variant={"default"}
-                  size={"sm"}
-                  className={"bg-red-500"}
-                  disabled={isLoading}
-                >
-                  Delete
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>
-                    Are you sure you want to delete category: {category.name}?
-                  </AlertDialogTitle>
-                  <AlertDialogDescription className="text-red-500">
-                    Warning: If this category is associated with any product,
-                    subcategory or brand, It will not be deleted.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={handleDelete}
-                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                  >
-                    {isLoading ? "Deleting..." : "Confirm"}
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div>
-        );
+        return <CategoryActions category={category} fetchData={fetchData} />;
       },
     },
   ];
@@ -188,7 +109,7 @@ export default function CategoriesPage() {
         setIsLoading(false);
       }
     },
-    []
+    [API_BASE_URL]
   );
   return (
     <ContentLayout title="Categories">

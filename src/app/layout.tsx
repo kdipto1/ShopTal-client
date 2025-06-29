@@ -8,6 +8,7 @@ import Footer from "@/components/shared-components/Footer";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import MobileNavbar from "@/components/shared-components/navbar-components/MobileNavbar";
+import { SessionProvider } from "next-auth/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -32,7 +33,9 @@ export default function RootLayout({
           <MobileNavbar />
         </Header>
         <Navbar />
-        <main>{children}</main>
+        <SessionProvider>
+          <main>{children}</main>
+        </SessionProvider>
         <Footer />
         <Toaster />
         <Analytics />

@@ -28,7 +28,7 @@ export function ProductCard({ product }: ProductCardProps) {
           priority={false}
         />
       </CardHeader>
-      <CardContent className="p-4 flex-grow">
+      <CardContent className="p-4 grow">
         <CardTitle className="text-lg line-clamp-2">{product.name}</CardTitle>
         <p className="text-xl font-bold mt-2">${product.price.toFixed(2)}</p>
       </CardContent>

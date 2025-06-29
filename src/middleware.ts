@@ -47,13 +47,42 @@
 //   matcher: ["/((?!api|_next/static|_next/image|.*\\.png$).*)"],
 // };
 
+import { NextResponse, NextRequest } from "next/server";
 import { auth } from "@/auth";
 
+export const PROTECTED_ROUTES = {
+  "/dashboard": ["admin"],
+  "/cart": ["user", "admin"],
+  "/profile": ["user", "admin"],
+};
+
+export const AUTH_ROUTES = {
+  LOGIN: "/login",
+};
+
 export default auth((req) => {
-  if (!req.auth && req.nextUrl.pathname !== "/login") {
-    const newUrl = new URL("/login", req.nextUrl.origin);
-    return Response.redirect(newUrl);
+  const pathname = req.nextUrl.pathname;
+
+  const matchingRoute = Object.entries(PROTECTED_ROUTES).find(([route]) =>
+    pathname.startsWith(route)
+  );
+
+  if (matchingRoute) {
+    const [route, allowedRoles] = matchingRoute;
+    const user = req.auth?.user as { role?: string };
+
+    if (!user) {
+      const loginUrl = new URL(AUTH_ROUTES.LOGIN, req.url);
+      loginUrl.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+
+    if (!allowedRoles.includes(user.role || "")) {
+      return NextResponse.redirect(new URL(AUTH_ROUTES.LOGIN, req.url));
+    }
   }
+
+  return NextResponse.next();
 });
 
 export const config = {

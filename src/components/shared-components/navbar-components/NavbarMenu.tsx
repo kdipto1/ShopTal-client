@@ -47,9 +47,9 @@
 //   }
 
 //   return (
-//     <section className="hidden md:block w-full border-b bg-white/95 backdrop-blur relative z-50">
+//     <section className="hidden md:block w-full border-b bg-white/95 backdrop-blur-sm relative z-50">
 //       <div className="flex min-h-14 items-center justify-center">
-//         <NavigationMenu className="max-w-screen-2xl">
+//         <NavigationMenu className="max-w-(--breakpoint-2xl)">
 //           <NavigationMenuList className="flex flex-wrap gap-1">
 //             {categories?.map((category) => (
 //               <NavigationMenuItem key={category.id} className="">
@@ -62,7 +62,7 @@
 //                     <div className="row-span-3">
 //                       <NavigationMenuLink asChild>
 //                         <Link
-//                           className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
+//                           className="flex h-full w-full select-none flex-col justify-end rounded-md bg-linear-to-b from-muted/50 to-muted p-6 no-underline outline-hidden focus:shadow-md"
 //                           href={`/search?categoryId=${category.id}`}
 //                         >
 //                           <div className="mb-2 mt-4 text-lg font-medium">
@@ -126,7 +126,7 @@
 //         <span
 //           ref={ref}
 //           className={cn(
-//             "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+//             "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-hidden transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
 //             className
 //           )}
 //           {...props}
@@ -208,9 +208,9 @@ export default function NavbarMenu({ categories }: { categories: Category[] }) {
   };
 
   return (
-    <section className="hidden md:block w-full border-b bg-white/95 backdrop-blur relative z-50">
+    <section className="hidden md:block w-full border-b bg-white/95 backdrop-blur-sm relative z-50">
       <nav className="px-4 min-h-14" onMouseLeave={handleMenuLeave}>
-        <ul className="flex flex-wrap gap-1 justify-center max-w-screen-2xl mx-auto">
+        <ul className="flex flex-wrap gap-1 justify-center max-w-(--breakpoint-2xl) mx-auto">
           {categories?.map((category, index) => (
             <li key={category.id} className="relative">
               <button
@@ -227,7 +227,7 @@ export default function NavbarMenu({ categories }: { categories: Category[] }) {
               </button>
               {activeCategory === category.id && (
                 <div
-                  className="absolute top-full bg-white rounded-lg shadow-lg ring-1 ring-slate-900/5 p-6 mt-0.5 z-[60] overflow-auto md:w-[250px] lg:w-[500px]"
+                  className="absolute top-full bg-white rounded-lg shadow-lg ring-1 ring-slate-900/5 p-6 mt-0.5 z-60 overflow-auto md:w-[250px] lg:w-[500px]"
                   style={dropdownStyles}
                   onMouseEnter={() => handleCategoryHover(category.id, index)}
                 >
@@ -235,7 +235,7 @@ export default function NavbarMenu({ categories }: { categories: Category[] }) {
                     <div>
                       <Link
                         href={`/search?categoryId=${category.id}`}
-                        className="flex h-full flex-col justify-end rounded-lg bg-gradient-to-b from-slate-50 to-slate-100 p-6 no-underline outline-none ring-slate-900/5 transition-shadow hover:shadow-md"
+                        className="flex h-full flex-col justify-end rounded-lg bg-linear-to-b from-slate-50 to-slate-100 p-6 no-underline outline-hidden ring-slate-900/5 transition-shadow hover:shadow-md"
                       >
                         <div className="mb-2 mt-4 text-lg font-medium text-slate-900">
                           {category.name}

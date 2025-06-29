@@ -47,7 +47,7 @@ export default async function RandomProducts() {
                 priority={false}
               />
             </CardHeader>
-            <CardContent className="p-4 flex-grow">
+            <CardContent className="p-4 grow">
               <CardTitle className="text-lg line-clamp-2">
                 {product.name}
               </CardTitle>

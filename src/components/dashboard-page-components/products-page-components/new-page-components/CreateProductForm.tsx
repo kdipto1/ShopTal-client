@@ -24,6 +24,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { useSession } from "next-auth/react";
 
 const FormSchema = z.object({
   name: z
@@ -57,6 +58,7 @@ export default function CreateProductForm() {
   const [brands, setBrands] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+  const { data: session } = useSession();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -89,33 +91,34 @@ export default function CreateProductForm() {
     const res = await fetch(`${API_BASE_URL}/categories?limit=100`);
     const data = await res.json();
     setCategories(data.data.data);
-  }, []);
+  }, [API_BASE_URL]);
 
-  const fetchSubcategories = useCallback(async (categoryId: string) => {
-    const res = await fetch(
-      `${API_BASE_URL}/subcategories?categoryId=${categoryId}&limit=100`
-    );
-    const data = await res.json();
-    setSubcategories(data.data.data);
-  }, []);
+  const fetchSubcategories = useCallback(
+    async (categoryId: string) => {
+      const res = await fetch(
+        `${API_BASE_URL}/subcategories?categoryId=${categoryId}&limit=100`
+      );
+      const data = await res.json();
+      setSubcategories(data.data.data);
+    },
+    [API_BASE_URL]
+  );
 
-  const fetchBrands = async () => {
+  const fetchBrands = useCallback(async () => {
     const res = await fetch(`${API_BASE_URL}/brands?limit=100`);
     const data = await res.json();
     setBrands(data.data.data);
-  };
+  }, [API_BASE_URL]);
 
   useEffect(() => {
     fetchBrands();
-  }, []);
-  useEffect(() => {
     fetchCategories();
-  }, [fetchCategories]);
+  }, [fetchBrands, fetchCategories]);
 
+  const categoryId = form.watch("categoryId");
   useEffect(() => {
-    const categoryId = form.getValues("categoryId");
     if (categoryId) fetchSubcategories(categoryId);
-  }, [form.watch("categoryId"), fetchSubcategories]);
+  }, [categoryId, fetchSubcategories, form]);
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     const formData = new FormData();
@@ -141,7 +144,7 @@ export default function CreateProductForm() {
       const response = await fetch(`${API_BASE_URL}/products`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${session?.user?.accessToken}`,
         },
         body: formData,
       });

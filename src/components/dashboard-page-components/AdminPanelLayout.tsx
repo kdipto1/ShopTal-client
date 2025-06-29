@@ -8,6 +8,7 @@ import DashboardFooter from "./DashboardFooter";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { useSession } from "next-auth/react";
 
 export default function AdminPanelLayout({
   children,
@@ -15,14 +16,16 @@ export default function AdminPanelLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  const { data: session, status } = useSession();
+
   useEffect(() => {
-    const isAdmin = localStorage.getItem("userRole") === "admin";
-    if (!isAdmin) {
+    if (status === "loading") return; // Do nothing while session is loading
+
+    if (status === "unauthenticated" || session?.user?.role !== "admin") {
       toast.info("You are not authorized to visit this page");
       router.push("/");
-      return;
     }
-  }, []);
+  }, [session, status, router]);
   const sidebar = useStore(useSidebarToggle, (state) => state);
 
   if (!sidebar) return null;

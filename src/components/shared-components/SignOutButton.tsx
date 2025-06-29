@@ -1,5 +1,5 @@
 "use client";
-import { signOut } from "@/lib/cookies";
+import { signOut } from "next-auth/react";
 import { LogOut } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";

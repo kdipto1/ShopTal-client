@@ -1,52 +1,83 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-// Your own logic for dealing with plaintext password strings; be careful!
-// import { saltAndHashPassword } from "@/utils/password";
+import { z } from "zod";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  trustHost: true,
   providers: [
     Credentials({
-      // You can specify which fields should be submitted, by adding keys to the `credentials` object.
-      // e.g. domain, username, password, 2FA token, etc.
       credentials: {
         phone: {},
         password: {},
       },
       authorize: async (credentials) => {
-        let user = null;
-        console.log(credentials, "auth");
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              phone: credentials.phone,
-              password: credentials.password,
-            }),
-          }
-        );
+        const validatedCredentials = z
+          .object({
+            phone: z.string(),
+            password: z.string().min(6),
+          })
+          .safeParse(credentials);
 
-        const data = await response.json();
-        user = data?.data;
-        console.log(user);
-        // logic to salt and hash password
-        // const pwHash = saltAndHashPassword(credentials.password);
-
-        // logic to verify if the user exists
-        // user = await getUserFromDb(credentials.email, pwHash);
-
-        if (!user) {
-          // No user found, so this is their first attempt to login
-          // Optionally, this is also the place you could do a user registration
-          throw new Error("Invalid credentials.");
+        if (!validatedCredentials.success) {
+          return null;
         }
 
-        // return user object with their profile data
-        return user;
+        const { phone, password } = validatedCredentials.data;
+
+        try {
+          const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ phone, password }),
+            }
+          );
+
+          if (!response.ok) {
+            return null;
+          }
+
+          const data = await response.json();
+
+          if (!data.success || !data.data) {
+            return null;
+          }
+
+          return data.data; // This should contain the user object with id, name, email, role, etc.
+        } catch (error) {
+          console.error("Login error:", error);
+          return null;
+        }
       },
     }),
   ],
+  callbacks: {
+    async jwt({ token, user }) {
+      // When the user signs in, the `user` object from the `authorize` callback is passed.
+      if (user) {
+        token.id = user.id;
+        token.role = user.role;
+        token.accessToken = user.accessToken;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      // The `token` object is from the `jwt` callback.
+      if (session.user) {
+        session.user.id = token.id as string;
+        session.user.role = token.role as string;
+        session.user.accessToken = token.accessToken as string;
+      }
+      return session;
+    },
+  },
+  pages: {
+    signIn: "/login",
+  },
+  session: {
+    strategy: "jwt",
+  },
 });

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import {
   Card,
   CardContent,
@@ -45,6 +46,8 @@ export default function AnalyticsDashboard() {
   const [error, setError] = useState<string | null>(null);
   const [screenWidth, setScreenWidth] = useState<number>(0);
 
+  const { data: session, status } = useSession();
+
   useEffect(() => {
     // Check screen size and update screenWidth state
     const checkScreenSize = () => {
@@ -57,8 +60,7 @@ export default function AnalyticsDashboard() {
     // Add event listener for resize
     window.addEventListener("resize", checkScreenSize);
 
-    // Simulating API call with mock data
-    const fetchData = async () => {
+    const fetchData = async (accessToken: string) => {
       try {
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/analytics/counts`,
@@ -66,9 +68,7 @@ export default function AnalyticsDashboard() {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${
-                localStorage.getItem("accessToken") || ""
-              }`,
+              Authorization: `Bearer ${accessToken}`,
             },
           }
         );
@@ -83,11 +83,16 @@ export default function AnalyticsDashboard() {
       }
     };
 
-    fetchData();
+    if (status === "authenticated" && session?.user?.accessTokensToken) {
+      fetchData(session.user.accessToken as string);
+    } else if (status === "unauthenticated") {
+      setIsLoading(false);
+      setError("Authentication required to load analytics data.");
+    }
 
     // Cleanup event listener
     return () => window.removeEventListener("resize", checkScreenSize);
-  }, []);
+  }, [session, status]);
 
   const cards = [
     {
@@ -137,6 +142,18 @@ export default function AnalyticsDashboard() {
       ]
     : [];
 
+  // Determine chart configuration based on screen width
+  const getChartHeight = () => {
+    if (screenWidth < 640) {
+      return "h-[250px]";
+    } else if (screenWidth < 1024) {
+      return "h-[300px]";
+    } else {
+      return "h-[350px]";
+    }
+  };
+
+  const chartHeightClass = getChartHeight();
   // Determine chart configuration based on screen width
   const getChartConfig = () => {
     if (screenWidth < 640) {
@@ -240,7 +257,7 @@ export default function AnalyticsDashboard() {
               </CardHeader>
               <CardContent className="pt-6">
                 {isLoading ? (
-                  <Skeleton className={`h-[${chartConfig.height}px] w-full`} />
+                  <Skeleton className={`${chartHeightClass} w-full`} />
                 ) : (
                   <ChartContainer
                     config={{
@@ -248,7 +265,7 @@ export default function AnalyticsDashboard() {
                         label: "Count",
                       },
                     }}
-                    className={`h-[${chartConfig.height}px] w-full md:w-1/2`}
+                    className={`${chartHeightClass} w-full md:w-1/2`}
                   >
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={chartData} margin={chartConfig.margin}>
@@ -282,7 +299,7 @@ export default function AnalyticsDashboard() {
                         <Bar
                           dataKey="value"
                           radius={[4, 4, 0, 0]}
-                          fill="hsl(var(--primary))"
+                          fill="var(--primary)"
                         />
                         <ChartTooltip content={<ChartTooltipContent />} />
                       </BarChart>

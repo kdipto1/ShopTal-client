@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-// import { PROTECTED_ROUTES } from "@/middleware";
-import { setCookie } from "@/lib/cookies";
 import { toast } from "sonner";
+import { signIn } from "next-auth/react";
+
 import {
   Form,
   FormControl,
@@ -19,8 +19,6 @@ import {
 import { Input } from "../shadcn-ui/input";
 import { Button } from "../shadcn-ui/button";
 import { Switch } from "../shadcn-ui/switch";
-import { setCookie as setCookieNext } from "cookies-next";
-import { signIn } from "next-auth/react";
 
 // Form validation schema
 const loginSchema = z.object({
@@ -38,19 +36,7 @@ export default function LoginForm() {
   const router = useRouter();
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const searchParams = useSearchParams();
-  // const callbackUrl = searchParams.get("callbackUrl") || "/";
   const [isAdmin, setIsAdmin] = useState(false);
-
-  useEffect(() => {
-    const isLoggedId = localStorage.getItem("accessToken");
-    if (!!isLoggedId) {
-      toast.info("You are already logged in");
-      // router.push("/profile");
-      router.back();
-      return;
-    }
-  }, []);
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -61,80 +47,43 @@ export default function LoginForm() {
   });
 
   const formatPhoneNumber = (phone: string): string => {
+    // Assuming the backend expects the format xxx-xxx-xxxx
     return `${phone.slice(0, 3)}-${phone.slice(3, 6)}-${phone.slice(6, 10)}`;
   };
 
-  // const checkRouteAccess = (route: string, userRole: string): boolean => {
-  //   const matchingRoute = Object.entries(PROTECTED_ROUTES).find(([path]) =>
-  //     route.startsWith(path)
-  //   );
-  //   return matchingRoute
-  //     ? (matchingRoute[1] as string[]).includes(userRole)
-  //     : true;
-  // };
-  const credentialsAction = (formData: FormData) => {
-    let phone = formData.get("phone") as string;
-    const password = formData.get("password") as string;
-    phone = formatPhoneNumber(phone);
-    console.log(phone);
-    signIn("credentials", {
-      phone: phone,
-      password: password,
-      redirect: true,
-    });
+  const onSubmit = async (data: LoginFormData) => {
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const result = await signIn("credentials", {
+        phone: formatPhoneNumber(data.phone),
+        password: data.password,
+        redirect: false, // We handle redirection manually
+      });
+
+      if (result?.error) {
+        const errorMessage = "Invalid phone number or password.";
+        setError(errorMessage);
+        toast.error(errorMessage);
+      } else {
+        toast.success("Login successful");
+        router.push("/profile"); // Redirect to a protected page
+        router.refresh(); // Refresh the page to update session state
+      }
+    } catch (err) {
+      const errorMessage = "An unexpected error occurred during login.";
+      setError(errorMessage);
+      toast.error(errorMessage);
+      console.error("Login error:", err);
+    } finally {
+      setIsLoading(false);
+    }
   };
-
-  // const handleLogin = async (values: LoginFormData) => {
-  //   setIsLoading(true);
-  //   setError("");
-
-  //   try {
-  //     const response = await fetch(
-  //       `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
-  //       {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify({
-  //           phone: formatPhoneNumber(values.phone),
-  //           password: values.password,
-  //         }),
-  //       }
-  //     );
-
-  //     const data = await response.json();
-
-  //     if (data.success) {
-  //       // Store auth data
-  //       localStorage.setItem("accessToken", data.data.accessToken);
-  //       localStorage.setItem("userRole", data.data.role);
-  //       setCookieNext("accessToken", data.data.accessToken);
-  //       setCookieNext("userRole", data.data.role);
-
-  //       // Set cookies and handle redirect
-  //       // await setCookie(data.data, {
-  //       //   redirect: checkRouteAccess(callbackUrl, data.data.role)
-  //       //     ? callbackUrl
-  //       //     : "/",
-  //       // });
-
-  //       toast.success("Login successful");
-  //     } else {
-  //       setError(data.message);
-  //       toast.error(data.message);
-  //     }
-  //   } catch (error) {
-  //     const errorMessage = "An error occurred during login";
-  //     setError(errorMessage);
-  //     toast.error(errorMessage);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
 
   const handleSwitchChange = (checked: boolean) => {
     setIsAdmin(checked);
+    // Pre-fill form with test credentials for convenience
     form.reset({
       phone: checked ? "1234567890" : "9876543210",
       password: checked ? "test@123" : "123456",
@@ -154,11 +103,7 @@ export default function LoginForm() {
         </label>
       </div>
       <Form {...form}>
-        <form
-          // onSubmit={form.handleSubmit(handleLogin)}
-          className="space-y-6"
-          action={credentialsAction}
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormField
             control={form.control}
             name="phone"
@@ -167,7 +112,6 @@ export default function LoginForm() {
                 <FormLabel>Phone</FormLabel>
                 <FormControl>
                   <Input
-                    id="credentials-phone"
                     type="tel"
                     placeholder="1234567890"
                     {...field}
@@ -187,7 +131,6 @@ export default function LoginForm() {
                 <FormLabel>Password</FormLabel>
                 <FormControl>
                   <Input
-                    id="credentials-password"
                     type="password"
                     placeholder="••••••"
                     {...field}
@@ -199,7 +142,7 @@ export default function LoginForm() {
             )}
           />
 
-          {error && <div className="text-red-500 text-sm">{error}</div>}
+          {error && <p className="text-sm text-red-500">{error}</p>}
 
           <Button type="submit" disabled={isLoading} className="w-full">
             {isLoading ? "Logging in..." : "Login"}

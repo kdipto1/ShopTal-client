@@ -15,7 +15,7 @@ export default function Header({ children }: { children: any }) {
   }
 
   return (
-    <header className="w-full bg-white bg-opacity-95 backdrop-blur relative z-[60]">
+    <header className="w-full bg-white bg-opacity-95 backdrop-blur-sm relative z-60">
       <div className="max-w-7xl mx-auto px-4 flex h-14 items-center">
         <div className="mr-4 flex">
           {/* <MobileNavbar /> */}

@@ -18,7 +18,8 @@ import {
   SelectValue,
 } from "@/components/shadcn-ui/select";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -39,6 +40,7 @@ export default function SubcategoryForm({
 }) {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(!!subcategoryId);
+  const { data: session, status } = useSession();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -50,7 +52,7 @@ export default function SubcategoryForm({
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     try {
       const data = await fetch(`${API_BASE_URL}/categories`, {
         method: "GET",
@@ -61,45 +63,48 @@ export default function SubcategoryForm({
       console.error("Error fetching categories:", error);
       toast("Failed to fetch categories.");
     }
-  };
+  }, [API_BASE_URL]);
 
-  const fetchSubcategory = async () => {
-    if (!subcategoryId) return;
+  const fetchSubcategory = useCallback(
+    async (accessToken: string) => {
+      if (!subcategoryId) return;
 
-    try {
-      const response = await fetch(
-        `${API_BASE_URL}/subcategories/${subcategoryId}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${
-              localStorage.getItem("accessToken") || ""
-            }`,
-          },
+      try {
+        const response = await fetch(
+          `${API_BASE_URL}/subcategories/${subcategoryId}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch subcategory data");
         }
-      );
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch subcategory data");
+        const subcategoryData = await response.json();
+        form.reset({
+          categoryId: subcategoryData.data.categoryId,
+          name: subcategoryData.data.name,
+        });
+      } catch (error: any) {
+        console.error("Error fetching subcategory:", error);
+        toast.error(error.message);
+      } finally {
+        setLoading(false);
       }
-
-      const subcategoryData = await response.json();
-      form.reset({
-        categoryId: subcategoryData.data.categoryId,
-        name: subcategoryData.data.name,
-      });
-    } catch (error: any) {
-      console.error("Error fetching subcategory:", error);
-      toast.error(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+    [subcategoryId, API_BASE_URL, form]
+  );
 
   useEffect(() => {
     fetchCategories();
-    if (subcategoryId) fetchSubcategory();
-  }, [subcategoryId]);
+    if (subcategoryId && session?.user?.accessToken) {
+      fetchSubcategory(session?.user?.accessToken as string);
+    }
+  }, [subcategoryId, session, fetchCategories, fetchSubcategory]);
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     try {
@@ -112,7 +117,7 @@ export default function SubcategoryForm({
         method,
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,
+          Authorization: `Bearer ${session?.user?.accessToken}`,
         },
         body: JSON.stringify(data),
       });

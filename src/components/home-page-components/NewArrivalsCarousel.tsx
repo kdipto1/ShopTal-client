@@ -69,7 +69,7 @@ export default function NewArrivalsCarousel(newArrivals: {
                   className="w-full h-48 object-contain rounded-md duration-300 transition-transform group-hover:scale-110"
                 />
               </CardHeader>
-              <CardContent className="flex-grow p-4">
+              <CardContent className="grow p-4">
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger>
