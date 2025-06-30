@@ -33,9 +33,9 @@ export default function RootLayout({
           <MobileNavbar />
         </Header>
         <Navbar />
-        <SessionProvider>
-          <main>{children}</main>
-        </SessionProvider>
+        <main>
+          <SessionProvider>{children}</SessionProvider>
+        </main>
         <Footer />
         <Toaster />
         <Analytics />

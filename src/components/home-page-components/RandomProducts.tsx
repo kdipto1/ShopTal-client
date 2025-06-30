@@ -71,7 +71,7 @@ export default async function RandomProducts() {
                 ${product.price.toFixed(2)}
               </p>
             </CardContent>
-            <CardFooter className="p-3 z-20">
+            <CardFooter className="p-3 z-20 hidden md:block">
               <Button
                 asChild
                 className="w-full bg-pink-50 hover:bg-pink-100 text-pink-600 font-semibold rounded-md shadow-none border border-pink-100 hover:border-pink-400 transition-colors duration-150 text-sm py-2"
