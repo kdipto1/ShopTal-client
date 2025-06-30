@@ -58,13 +58,13 @@ async function getProduct(id: string): Promise<{ data: Product }> {
 
 // Subcomponents
 const ProductImage = ({ src, alt }: { src: string; alt: string }) => (
-  <div className="relative aspect-square w-full">
+  <div className="relative aspect-square w-full bg-gradient-to-br from-pink-50 to-white rounded-lg shadow-md flex items-center justify-center overflow-hidden">
     <Image
       src={src}
       alt={alt}
       width={600}
       height={600}
-      className="rounded-lg"
+      className="rounded-lg object-contain w-full h-full"
     />
   </div>
 );
@@ -76,7 +76,9 @@ const StarRating = ({ rating = 4 }: { rating?: number }) => (
         <Star
           key={i}
           className={`w-5 h-5 ${
-            i < Math.floor(rating) ? "fill-black" : "fill-gray-200"
+            i < Math.floor(rating)
+              ? "fill-pink-600 text-pink-600"
+              : "fill-gray-200 text-gray-200"
           }`}
         />
       ))}
@@ -85,22 +87,16 @@ const StarRating = ({ rating = 4 }: { rating?: number }) => (
   </div>
 );
 
-// const FeaturesList = ({ product }: { product: Product }) => (
-//   <div className="bg-white rounded-lg border p-4">
-//     <h3 className="font-semibold mb-2">Features:</h3>
-//     {/* <ul className="list-disc list-inside space-y-1">
-//       {features.map((feature, index) => (
-//         <li key={index}>
-//           <span className="font-medium">{feature.name}:</span> {feature.value}
-//         </li>
-//       ))}
-//     </ul> */}
-//     <pre className=" mt-2">{product.description}</pre>
-//   </div>
-// );
-
-const Badge = ({ children }: { children: React.ReactNode }) => (
-  <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2">
+const Badge = ({
+  children,
+  color = "border-pink-200 bg-pink-50 text-pink-600",
+}: {
+  children: React.ReactNode;
+  color?: string;
+}) => (
+  <span
+    className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 ${color}`}
+  >
     {children}
   </span>
 );
@@ -140,16 +136,44 @@ export default async function ProductPage({
       );
     }
 
+    // Check if product is new (added within last 14 days)
+    const isNew =
+      Date.now() - new Date(product.createdAt).getTime() <
+      14 * 24 * 60 * 60 * 1000;
+
     return (
       <div className="container mx-auto px-4 py-8 ">
         <div className="grid md:grid-cols-2 gap-8 mb-4 md:mb-0">
-          <ProductImage src={product?.image} alt={product?.name} />
+          <div className="relative">
+            {isNew && (
+              <span className="absolute top-2 left-2 z-10">
+                <Badge color="border-pink-600 bg-pink-600 text-white">
+                  New
+                </Badge>
+              </span>
+            )}
+            <ProductImage src={product?.image} alt={product?.name} />
+          </div>
 
           <div className="space-y-4">
-            <h1 className="text-3xl font-bold">{product?.name}</h1>
+            <h1 className="text-3xl font-bold flex items-center gap-2">
+              {product?.name}
+              {isNew && (
+                <Badge color="border-pink-600 bg-pink-600 text-white">
+                  New
+                </Badge>
+              )}
+            </h1>
             <StarRating />
-            <p className="text-2xl font-bold">${product.price.toFixed(2)}</p>
-            <p className="text-gray-500">In stock: {product.quantity}</p>
+            <p className="text-2xl font-bold text-pink-600">
+              ${product.price.toFixed(2)}
+            </p>
+            <p className="text-gray-500">
+              In stock:{" "}
+              <span className="font-semibold text-green-600">
+                {product.quantity}
+              </span>
+            </p>
 
             <AddToCartButton productId={product?.id} />
             <ProductDetails product={product} />

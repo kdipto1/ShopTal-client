@@ -54,80 +54,90 @@ export default function MobileNavbarMenu({
           <span className="sr-only">Toggle menu</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="overflow-y-auto z-70">
-        <SheetHeader>
+      <SheetContent
+        side="left"
+        className="overflow-y-auto z-70 p-0 bg-white border-r border-pink-100 min-w-[220px] max-w-xs"
+      >
+        <SheetHeader className="px-4 pt-4 pb-2">
           <SheetTitle>
             <SheetClose asChild>
-              <Link href="/" className="mr-6 flex items-center space-x-2">
-                <span className="font-bold text-2xl">ShopTal</span>
+              <Link href="/" className="flex items-center space-x-2">
+                <span className="font-bold text-lg text-primary">ShopTal</span>
               </Link>
             </SheetClose>
           </SheetTitle>
-          <SheetDescription className="text-left">Main Menu</SheetDescription>
+          <SheetDescription className="text-left text-xs text-gray-500">
+            Main Menu
+          </SheetDescription>
         </SheetHeader>
         <SheetClose asChild>
           <Link
             href="/login"
-            className="rounded-md hover:bg-gray-100 transition-colors flex mt-4 font-semibold"
+            className="rounded hover:bg-pink-50 transition-colors flex mt-2 font-medium text-sm px-4 py-2"
             aria-label="User Account"
           >
-            <LogIn className="h-5 w-5" /> &nbsp; Login
+            <LogIn className="h-5 w-5" />
+            <span className="ml-2">Login</span>
           </Link>
         </SheetClose>
         <SheetClose asChild>
           <Link
             href="/profile"
-            className="rounded-md hover:bg-gray-100 transition-colors flex mt-4 font-semibold"
+            className="rounded hover:bg-pink-50 transition-colors flex mt-2 font-medium text-sm px-4 py-2"
             aria-label="User Account"
           >
-            <User className="h-5 w-5" /> &nbsp; Profile
+            <User className="h-5 w-5" />
+            <span className="ml-2">Profile</span>
           </Link>
         </SheetClose>
         <SheetClose asChild>
           <Link
             href={"/cart"}
-            className="rounded-md hover:bg-gray-100 transition-colors flex mt-4 font-semibold"
+            className="rounded hover:bg-pink-50 transition-colors flex mt-2 font-medium text-sm px-4 py-2"
             aria-label="Shopping Cart"
           >
-            <ShoppingCart className="h-5 w-5" /> &nbsp; Cart
+            <ShoppingCart className="h-5 w-5" />
+            <span className="ml-2">Cart</span>
           </Link>
         </SheetClose>
-
-        <SheetDescription className="text-left mt-4">
+        <SheetDescription className="text-left mt-3 px-4 text-xs text-gray-500">
           Browse Categories
         </SheetDescription>
-        <Accordion type="single" collapsible className="w-full">
+        <Accordion type="single" collapsible className="w-full px-2">
           {categories.map((category: Category) => (
-            <AccordionItem key={category.id} value={`category-${category.id}`}>
-              <AccordionTrigger>
+            <AccordionItem
+              key={category.id}
+              value={`category-${category.id}`}
+              className="border-b border-pink-50"
+            >
+              <AccordionTrigger className="text-sm font-semibold text-primary hover:text-pink-600 px-2 py-2">
                 <SheetClose asChild>
                   <Link
                     href={`/search?categoryId=${category.id}`}
-                    className="w-full text-left hover:underline"
+                    className="w-full text-left"
                   >
                     {category.name}
                   </Link>
                 </SheetClose>
               </AccordionTrigger>
-              <AccordionContent>
-                <Accordion
-                  type="multiple"
-                  defaultValue={["subcategories", "brands"]}
-                >
-                  {/* Subcategories Section */}
+              <AccordionContent className="pl-4 pb-2">
+                <Accordion type="multiple" defaultValue={[]}>
                   {category.productSubcategory.length > 0 && (
-                    <AccordionItem value="subcategories">
-                      <AccordionTrigger className="ml-2">
+                    <AccordionItem
+                      value="subcategories"
+                      className="border-none"
+                    >
+                      <AccordionTrigger className="ml-2 text-xs font-medium text-gray-700 hover:text-pink-600 px-0 py-1">
                         Subcategories
                       </AccordionTrigger>
                       <AccordionContent>
-                        <ul className="space-y-2">
+                        <ul className="space-y-1">
                           {category.productSubcategory.map((subcategory) => (
                             <li key={subcategory.id}>
                               <SheetClose asChild>
                                 <Link
                                   href={`/search?categoryId=${category.id}&subcategoryId=${subcategory.id}`}
-                                  className="block px-4 py-2 hover:bg-accent hover:text-accent-foreground rounded"
+                                  className="block px-3 py-1 hover:bg-pink-50 rounded text-xs"
                                 >
                                   {subcategory.name}
                                 </Link>
@@ -138,21 +148,19 @@ export default function MobileNavbarMenu({
                       </AccordionContent>
                     </AccordionItem>
                   )}
-
-                  {/* Brands Section */}
                   {category.brands.length > 0 && (
-                    <AccordionItem value="brands">
-                      <AccordionTrigger className="ml-2">
+                    <AccordionItem value="brands" className="border-none">
+                      <AccordionTrigger className="ml-2 text-xs font-medium text-gray-700 hover:text-pink-600 px-0 py-1">
                         Brands
                       </AccordionTrigger>
                       <AccordionContent>
-                        <ul className="space-y-2">
+                        <ul className="space-y-1">
                           {category.brands.map((brandItem) => (
                             <li key={brandItem.brand.id}>
                               <SheetClose asChild>
                                 <Link
                                   href={`/search?categoryId=${brandItem.categoryId}&brandId=${brandItem.brand.id}`}
-                                  className="block px-4 py-2 hover:bg-accent hover:text-accent-foreground rounded"
+                                  className="block px-3 py-1 hover:bg-pink-50 rounded text-xs"
                                 >
                                   {brandItem.brand.name}
                                 </Link>

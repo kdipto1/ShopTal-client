@@ -222,18 +222,21 @@ export default function CartPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 min-h-[70vh]">
-      <h1 className="text-2xl font-bold mb-8">Shopping Cart</h1>
-
-      <div className="grid lg:grid-cols-12 gap-8">
+    <div className="container mx-auto px-2 py-8 min-h-[70vh]">
+      <h1 className="text-xl font-bold mb-6 tracking-tight text-primary">
+        Shopping Cart
+      </h1>
+      <div className="grid lg:grid-cols-12 gap-6">
         {/* Cart Items */}
-        <div className="lg:col-span-8 space-y-4">
+        <div className="lg:col-span-8 space-y-3">
           {cartItems.length === 0 ? (
-            <Card>
+            <Card className="border border-pink-100 shadow-none">
               <CardContent className="p-8 text-center">
-                <p className="text-muted-foreground">Your cart is empty</p>
+                <p className="text-muted-foreground text-sm">
+                  Your cart is empty
+                </p>
                 <Link href={"/search"}>
-                  <Button className="mt-4" variant="outline">
+                  <Button className="mt-4 text-sm" variant="outline">
                     Continue Shopping
                   </Button>
                 </Link>
@@ -241,43 +244,49 @@ export default function CartPage() {
             </Card>
           ) : (
             cartItems.map((item) => (
-              <Card key={item.id}>
-                <CardContent className="p-6">
-                  <div className="flex gap-4">
+              <Card
+                key={item.id}
+                className="border border-pink-100 shadow-none rounded-xl"
+              >
+                <CardContent className="p-4">
+                  <div className="flex gap-3 items-center">
                     {/* Product Image */}
-                    <div className="relative w-24 h-24">
+                    <Link
+                      href={`/product/${item.product.id}`}
+                      className="relative w-16 h-16 block"
+                    >
                       <Image
                         src={item?.product.image}
                         alt={item?.product.name}
                         fill
-                        className="rounded-md object-cover"
-                        sizes="(max-width: 96px) 100vw, 96px"
+                        className="rounded object-cover border border-pink-50"
+                        sizes="(max-width: 64px) 100vw, 64px"
                       />
-                    </div>
-
+                    </Link>
                     {/* Product Details */}
-                    <div className="flex-1 space-y-2">
-                      <div className="flex justify-between">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex justify-between items-center">
                         <Link href={`/product/${item.product.id}`}>
-                          <h3 className="font-medium">{item.product.name}</h3>
+                          <h3 className="font-medium text-sm truncate text-primary hover:text-pink-600 transition-colors">
+                            {item.product.name}
+                          </h3>
                         </Link>
                         <Button
                           onClick={() => removeItem(item.id)}
                           variant="ghost"
                           size="icon"
-                          className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                          className="text-red-400 hover:text-red-600 hover:bg-red-50"
                           disabled={updatingItems.has(item.id)}
                         >
                           {updatingItems.has(item.id) ? (
-                            <Loader2 className="h-5 w-5 animate-spin" />
+                            <Loader2 className="h-4 w-4 animate-spin" />
                           ) : (
-                            <Trash2 className="h-5 w-5" />
+                            <Trash2 className="h-4 w-4" />
                           )}
                         </Button>
                       </div>
-
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
+                      <div className="flex items-center justify-between mt-2">
+                        <div className="flex items-center gap-1">
                           <Button
                             onClick={() =>
                               item.quantity > 1 &&
@@ -285,14 +294,14 @@ export default function CartPage() {
                             }
                             variant="outline"
                             size="icon"
-                            className="h-8 w-8"
+                            className="h-7 w-7 text-xs"
                             disabled={
                               item.quantity <= 1 || updatingItems.has(item.id)
                             }
                           >
-                            <Minus className="h-4 w-4" />
+                            <Minus className="h-3 w-3" />
                           </Button>
-                          <span className="w-8 text-center">
+                          <span className="w-6 text-center text-xs">
                             {item.quantity}
                           </span>
                           <Button
@@ -301,13 +310,13 @@ export default function CartPage() {
                             }
                             variant="outline"
                             size="icon"
-                            className="h-8 w-8"
+                            className="h-7 w-7 text-xs"
                             disabled={updatingItems.has(item.id)}
                           >
-                            <Plus className="h-4 w-4" />
+                            <Plus className="h-3 w-3" />
                           </Button>
                         </div>
-                        <p className="font-medium">
+                        <p className="font-semibold text-xs text-pink-600">
                           ${(item.product.price * item.quantity).toFixed(2)}
                         </p>
                       </div>
@@ -318,44 +327,39 @@ export default function CartPage() {
             ))
           )}
         </div>
-
         {/* Cart Summary */}
         <div className="lg:col-span-4">
-          <Card>
+          <Card className="border border-pink-100 shadow-none rounded-xl">
             <CardHeader>
-              <CardTitle>Order Summary</CardTitle>
+              <CardTitle className="text-base font-semibold text-primary">
+                Order Summary
+              </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Subtotal</span>
+            <CardContent className="space-y-3">
+              <div className="flex justify-between text-xs">
+                <span className="text-muted-foreground">Subtotal</span>
+                <span>${calculateTotal().toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-xs">
+                <span className="text-muted-foreground">Shipping</span>
+                <span className="text-muted-foreground">
+                  Calculated at checkout
+                </span>
+              </div>
+              <div className="border-t pt-2 mt-2">
+                <div className="flex justify-between font-bold text-sm">
+                  <span>Total</span>
                   <span>${calculateTotal().toFixed(2)}</span>
-                </div>
-
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Shipping</span>
-                  <span className="text-muted-foreground">
-                    Calculated at checkout
-                  </span>
-                </div>
-
-                <div className="border-t pt-2 mt-2">
-                  <div className="flex justify-between font-bold">
-                    <span>Total</span>
-                    <span>${calculateTotal().toFixed(2)}</span>
-                  </div>
                 </div>
               </div>
             </CardContent>
             <CardFooter>
               <Button
-                className="w-full"
+                className="w-full text-sm bg-pink-600 hover:bg-pink-700 text-white font-semibold rounded-md shadow-none transition-colors duration-150"
                 size="lg"
                 onClick={() => {
-                  // Add checkout functionality here
                   toast("Proceeding to checkout...");
                 }}
-                // disabled={cartItems.length === 0}
                 disabled
               >
                 Proceed to Checkout

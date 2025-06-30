@@ -62,29 +62,39 @@ export function Pagination({
   };
 
   return (
-    <div className="flex justify-center gap-2 flex-wrap">
+    <div className="flex justify-center gap-1 flex-wrap mt-2">
       {currentPage > 1 && (
-        <Button variant="outline" asChild>
+        <Button
+          variant="outline"
+          asChild
+          className="rounded-full px-3 py-1 text-xs border border-gray-200 dark:border-gray-800"
+        >
           <Link href={generatePageUrl(currentPage - 1)}>Previous</Link>
         </Button>
       )}
-
       {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
         <Button
           key={pageNum}
           variant={pageNum === currentPage ? "default" : "outline"}
           asChild
+          className={`rounded-full px-3 py-1 text-xs border ${
+            pageNum === currentPage
+              ? "border-pink-400 bg-pink-50 text-pink-600"
+              : "border-gray-200 dark:border-gray-800"
+          }`}
         >
           <Link href={generatePageUrl(pageNum)}>{pageNum}</Link>
         </Button>
       ))}
-
       {currentPage < totalPages && (
-        <Button variant="outline" asChild>
+        <Button
+          variant="outline"
+          asChild
+          className="rounded-full px-3 py-1 text-xs border border-gray-200 dark:border-gray-800"
+        >
           <Link href={generatePageUrl(currentPage + 1)}>Next</Link>
         </Button>
       )}
-
       <select
         id="quantity"
         value={pageLimit}
@@ -93,7 +103,7 @@ export function Pagination({
           const newLimit = Number(e.target.value);
           router.push(generatePageLimitUrl(newLimit));
         }}
-        className="rounded-md border border-gray-300 px-2 py-1"
+        className="rounded-full border border-gray-200 dark:border-gray-800 px-2 py-1 text-xs ml-2 bg-white dark:bg-gray-950"
       >
         {[5, 10, 20, 30, 40, 50].map((num) => (
           <option key={num} value={num}>
