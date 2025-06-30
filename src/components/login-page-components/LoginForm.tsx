@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -34,6 +34,8 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -68,8 +70,9 @@ export default function LoginForm() {
         toast.error(errorMessage);
       } else {
         toast.success("Login successful");
-        router.push("/profile"); // Redirect to a protected page
-        router.refresh(); // Refresh the page to update session state
+        const destination = callbackUrl || (isAdmin ? "/dashboard" : "/profile");
+        router.push(destination);
+        router.refresh();
       }
     } catch (err) {
       const errorMessage = "An unexpected error occurred during login.";
@@ -174,3 +177,4 @@ export default function LoginForm() {
     </div>
   );
 }
+
