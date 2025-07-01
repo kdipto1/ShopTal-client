@@ -59,25 +59,19 @@ export default function LoginForm() {
     setIsLoading(true);
     setError("");
 
-    console.log(callbackUrl);
     try {
       const result = await signIn("credentials", {
         phone: formatPhoneNumber(data.phone),
         password: data.password,
-        redirect: false, // We handle redirection manually
+        callbackUrl: destination,
       });
 
-      if (result?.ok) {
-        toast.success("Login successful");
-
-        router.push(destination);
-        router.refresh();
-      } else if (result?.error) {
+      if (result?.error) {
         const errorMessage = "Invalid phone number or password.";
         setError(errorMessage);
         toast.error(errorMessage);
-      } else {
-        toast.error("Failed to login, try again!");
+      } else if (result?.ok) {
+        toast.success("Login successful!");
       }
     } catch (err) {
       const errorMessage = "An unexpected error occurred during login.";

@@ -1,5 +1,3 @@
-"use client";
-
 import SignupForm from "@/components/signup-page-components/SignupForm";
 import Image from "next/image";
 import { Card } from "@/components/shadcn-ui/card";
@@ -18,7 +16,7 @@ export default function SignupPage() {
           className="opacity-90"
         />
       </div>
-      <div className="max-w-md w-full animate-fadein">
+      <div className="max-w-md w-full ">
         <Card className="mx-auto p-5 border border-gray-100 dark:border-gray-800 shadow-none rounded-xl bg-white dark:bg-gray-950">
           <div className="grid gap-1 text-center mb-2">
             <h1 className="text-2xl font-semibold text-gray-900 dark:text-white tracking-tight">
@@ -42,21 +40,6 @@ export default function SignupPage() {
           </p>
         </Card>
       </div>
-      <style jsx global>{`
-        .animate-fadein {
-          animation: fadein 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        @keyframes fadein {
-          from {
-            opacity: 0;
-            transform: translateY(16px);
-          }
-          to {
-            opacity: 1;
-            transform: none;
-          }
-        }
-      `}</style>
     </div>
   );
 }
