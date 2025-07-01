@@ -40,6 +40,8 @@ export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
+  const destination = callbackUrl || (isAdmin ? "/dashboard" : "/profile");
+
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -57,6 +59,7 @@ export default function LoginForm() {
     setIsLoading(true);
     setError("");
 
+    console.log(callbackUrl);
     try {
       const result = await signIn("credentials", {
         phone: formatPhoneNumber(data.phone),
@@ -64,15 +67,17 @@ export default function LoginForm() {
         redirect: false, // We handle redirection manually
       });
 
-      if (result?.error) {
+      if (result?.ok) {
+        toast.success("Login successful");
+
+        router.push(destination);
+        router.refresh();
+      } else if (result?.error) {
         const errorMessage = "Invalid phone number or password.";
         setError(errorMessage);
         toast.error(errorMessage);
       } else {
-        toast.success("Login successful");
-        const destination = callbackUrl || (isAdmin ? "/dashboard" : "/profile");
-        router.push(destination);
-        router.refresh();
+        toast.error("Failed to login, try again!");
       }
     } catch (err) {
       const errorMessage = "An unexpected error occurred during login.";
@@ -177,4 +182,3 @@ export default function LoginForm() {
     </div>
   );
 }
-

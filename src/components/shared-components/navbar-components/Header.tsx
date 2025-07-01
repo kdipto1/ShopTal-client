@@ -3,9 +3,12 @@ import { LogIn, ShoppingCart, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import SearchProducts from "./HeaderSearchProducts";
+import { useSession } from "next-auth/react";
+import SignOutButton from "../SignOutButton";
 
 export default function Header({ children }: { children: any }) {
   const router = usePathname();
+  const { data: session, status } = useSession();
 
   // Check if the current route is in the hideOnRoutes array
   const shouldHide = router.includes("/dashboard");
@@ -15,7 +18,7 @@ export default function Header({ children }: { children: any }) {
   }
 
   return (
-    <header className="sticky top-0 w-full bg-white/90 backdrop-blur-sm shadow-sm z-60 transition-all duration-200">
+    <header className="sticky top-0 w-full bg-white/90 backdrop-blur-sm shadow-sm z-50 transition-all duration-200">
       <div className="max-w-7xl mx-auto px-4 flex h-14 items-center">
         <div className="mr-2 flex items-center">
           {children}
@@ -47,13 +50,17 @@ export default function Header({ children }: { children: any }) {
             >
               <User className="h-5 w-5" />
             </Link>
-            <Link
-              href="/login"
-              className="p-2 rounded hover:bg-pink-50 transition-colors flex text-sm"
-              aria-label="User Account"
-            >
-              <LogIn className="h-5 w-5" />
-            </Link>
+            {status === "authenticated" ? (
+              <SignOutButton variant="ghost" size="icon" />
+            ) : (
+              <Link
+                href="/login"
+                className="p-2 rounded hover:bg-pink-50 transition-colors flex text-sm"
+                aria-label="Login"
+              >
+                <LogIn className="h-5 w-5" />
+              </Link>
+            )}
           </nav>
         </div>
       </div>
