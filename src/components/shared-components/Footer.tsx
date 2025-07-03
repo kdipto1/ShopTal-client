@@ -150,7 +150,7 @@ export default function Footer() {
         <Separator className="my-6" />
         <div className="flex flex-col items-center justify-between space-y-2 md:flex-row md:space-y-0">
           <div className="text-xs">
-            &copy; 2024 Dipto Karmaker. All rights reserved.
+            &copy; 2025 Dipto Karmaker. All rights reserved.
           </div>
           <div className="flex space-x-2">
             <CreditCard className="h-5 w-5" />

@@ -18,6 +18,7 @@ import {
   AccordionTrigger,
 } from "@/components/shadcn-ui/accordion";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 interface Brand {
   brandId: string;
@@ -46,6 +47,7 @@ export default function MobileNavbarMenu({
 }: {
   categories: Category[];
 }) {
+  const { data: session, status } = useSession();
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -71,14 +73,16 @@ export default function MobileNavbarMenu({
           </SheetDescription>
         </SheetHeader>
         <SheetClose asChild>
-          <Link
-            href="/login"
-            className="rounded hover:bg-pink-50 transition-colors flex mt-2 font-medium text-sm px-4 py-2"
-            aria-label="User Account"
-          >
-            <LogIn className="h-5 w-5" />
-            <span className="ml-2">Login</span>
-          </Link>
+          {status === "unauthenticated" && (
+            <Link
+              href="/login"
+              className="rounded hover:bg-pink-50 transition-colors flex mt-2 font-medium text-sm px-4 py-2"
+              aria-label="User Account"
+            >
+              <LogIn className="h-5 w-5" />
+              <span className="ml-2">Login</span>
+            </Link>
+          )}
         </SheetClose>
         <SheetClose asChild>
           <Link
