@@ -11,7 +11,7 @@ export const FeaturesList = ({ product }: { product: any }) => {
   }, []);
 
   const hasFeatures =
-    Array.isArray(product.features) && product.features.length > 0;
+    Array.isArray(product?.features) && product?.features.length > 0;
 
   return (
     <div className="bg-white rounded-lg border p-6 mt-8 shadow-sm">
@@ -25,8 +25,10 @@ export const FeaturesList = ({ product }: { product: any }) => {
         <ul className="list-disc list-inside space-y-2 ml-2">
           {product.features.map((feature: any, index: number) => (
             <li key={index} className="flex items-start gap-2">
-              <span className="font-medium text-pink-600">{feature.name}:</span>
-              <span className="text-gray-700">{feature.value}</span>
+              <span className="font-medium text-pink-600">
+                {feature?.name}:
+              </span>
+              <span className="text-gray-700">{feature?.value}</span>
             </li>
           ))}
         </ul>
@@ -34,7 +36,7 @@ export const FeaturesList = ({ product }: { product: any }) => {
         <div className="flex items-start gap-2 mt-2 text-gray-700">
           <Info className="w-4 h-4 mt-1 text-gray-400" />
           <span className="whitespace-pre-wrap font-sans leading-relaxed">
-            {isClient ? product.description : ""}
+            {isClient ? product?.description : ""}
           </span>
         </div>
       )}

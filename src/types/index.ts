@@ -1,14 +1,55 @@
+export interface Coupon {
+  id: string;
+  code: string;
+  discountType: "PERCENTAGE" | "FIXED_AMOUNT";
+  discountValue: number;
+  expirationDate: string;
+  usageLimit: number;
+  used: number;
+}
+
+export interface Review {
+  id: string;
+  rating: number;
+  comment: string;
+  user: {
+    firstName: string;
+    lastName: string;
+  };
+  createdAt: string;
+}
+
 export interface Product {
   id: string;
   name: string;
   price: number;
   image?: string;
   category: string;
+  reviews: Review[];
+  averageRating: number;
 }
 
 export interface Category {
   id: string;
   name: string;
+}
+
+export interface OrderItem {
+  id: string;
+  productId: string;
+  quantity: number;
+  price: number;
+  product: Product;
+}
+
+export interface Order {
+  id: string;
+  userId: string;
+  totalAmount: number;
+  shippingAddress: string;
+  status: "PENDING" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELED";
+  orderItems: OrderItem[];
+  createdAt: string;
 }
 
 export interface PaginatedResponse<T> {
