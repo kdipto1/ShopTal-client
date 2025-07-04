@@ -12,6 +12,34 @@ import {
 } from "@/components/shadcn-ui/card";
 import { Badge } from "@/components/shadcn-ui/badge";
 import Image from "next/image";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/shadcn-ui/accordion";
+import { Skeleton } from "@/components/shadcn-ui/skeleton";
+import { ShoppingBag } from "lucide-react";
+
+function OrderCardSkeleton() {
+  return (
+    <Card>
+      <CardHeader className="flex flex-row justify-between items-start">
+        <div className="space-y-2">
+          <Skeleton className="h-6 w-48" />
+          <Skeleton className="h-4 w-24" />
+        </div>
+        <div className="text-right space-y-2">
+          <Skeleton className="h-6 w-20 ml-auto" />
+          <Skeleton className="h-5 w-28 ml-auto" />
+        </div>
+      </CardHeader>
+      <CardContent>
+        <Skeleton className="h-10 w-full" />
+      </CardContent>
+    </Card>
+  );
+}
 
 export default function UserOrdersPage() {
   const { data: session } = useSession();
@@ -26,7 +54,6 @@ export default function UserOrdersPage() {
           const res = (await getOrders(session.user.accessToken)) as {
             data: Order[];
           };
-
           setOrders(res.data);
         } catch (error) {
           console.error("Failed to fetch orders", error);
@@ -40,60 +67,107 @@ export default function UserOrdersPage() {
   }, [session]);
 
   return (
-    <div className="container mx-auto py-10">
-      <h1 className="text-3xl font-bold mb-6">Your Orders</h1>
+    <div className="container mx-auto py-10 px-4 md:px-6">
+      <h1 className="text-3xl font-bold mb-8">Your Orders</h1>
       {loading ? (
-        <p>Loading your orders...</p>
+        <div className="space-y-6">
+          <OrderCardSkeleton />
+          <OrderCardSkeleton />
+          <OrderCardSkeleton />
+        </div>
       ) : orders?.length === 0 ? (
-        <p>You have not placed any orders yet.</p>
+        <div className="flex flex-col items-center justify-center text-center py-20 border-2 border-dashed rounded-lg">
+          <ShoppingBag className="h-12 w-12 text-gray-400 mb-4" />
+          <p className="text-lg font-medium text-gray-500">
+            You have no orders yet.
+          </p>
+          <p className="text-sm text-gray-400 mt-2">
+            When you place an order, it will appear here.
+          </p>
+        </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-6">
           {orders?.map((order) => (
-            <Card key={order.id}>
-              <CardHeader>
-                <CardTitle className="flex justify-between items-center">
-                  <span>Order ID: {order.id}</span>
-                  <Badge>{order.status}</Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p>
-                  <strong>Date:</strong>{" "}
-                  {new Date(order.createdAt).toLocaleDateString()}
-                </p>
-                <p>
-                  <strong>Total:</strong> ${order.totalAmount.toFixed(2)}
-                </p>
-                <p>
-                  <strong>Shipping Address:</strong> {order.shippingAddress}
-                </p>
-                <div className="mt-4">
-                  <h4 className="font-semibold">Items:</h4>
-                  <ul>
-                    {order.orderItems.map((item) => (
-                      <li
-                        key={item.id}
-                        className="flex items-center gap-2 mb-2"
-                      >
-                        {item.product?.image && (
-                          <Image
-                            src={item.product.image}
-                            alt={item.product?.name || "Product"}
-                            width={40}
-                            height={40}
-                            className="w-10 h-10 object-cover rounded border"
-                          />
-                        )}
-                        <span className="font-medium">
-                          {item.product?.name || item.productId}
-                        </span>
-                        <span className="ml-2">
-                          x {item.quantity} @ ${item.price.toFixed(2)}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
+            <Card key={order.id} className="overflow-hidden">
+              <CardHeader className="flex flex-row justify-between items-start bg-gray-50 dark:bg-gray-800/50 p-4 md:p-6">
+                <div>
+                  <CardTitle className="text-lg">
+                    Order #{order.id.substring(0, 8)}...
+                  </CardTitle>
+                  <p className="text-sm text-gray-500 mt-1">
+                    {new Date(order.createdAt).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </p>
                 </div>
+                <div className="text-right">
+                  <Badge
+                    variant={
+                      order.status === "PENDING" ? "default" : "secondary"
+                    }
+                  >
+                    {order.status}
+                  </Badge>
+                  <p className="text-lg font-semibold mt-1">
+                    ${order.totalAmount.toFixed(2)}
+                  </p>
+                </div>
+              </CardHeader>
+              <CardContent className="p-0">
+                <Accordion type="single" collapsible>
+                  <AccordionItem value={order.id} className="border-none">
+                    <AccordionTrigger className="p-4 md:p-6 text-sm font-medium">
+                      View Details
+                    </AccordionTrigger>
+                    <AccordionContent className="p-4 md:p-6 pt-0">
+                      <div className="space-y-4">
+                        <div>
+                          <h4 className="font-semibold mb-2">Items</h4>
+                          <ul className="space-y-3">
+                            {order.orderItems.map((item) => (
+                              <li
+                                key={item.id}
+                                className="flex items-center gap-4"
+                              >
+                                {item.product?.image && (
+                                  <Image
+                                    src={item.product.image}
+                                    alt={item.product?.name || "Product"}
+                                    width={64}
+                                    height={64}
+                                    className="w-16 h-16 object-cover rounded-md border"
+                                  />
+                                )}
+                                <div className="flex-grow">
+                                  <p className="font-medium">
+                                    {item.product?.name || item.productId}
+                                  </p>
+                                  <p className="text-sm text-gray-500">
+                                    {item.quantity} x ${item.price.toFixed(2)}
+                                  </p>
+                                </div>
+                                <p className="font-semibold">
+                                  $
+                                  {(item.quantity * item.price).toFixed(2)}
+                                </p>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div>
+                          <h4 className="font-semibold mb-2">
+                            Shipping Address
+                          </h4>
+                          <p className="text-sm text-gray-500">
+                            {order.shippingAddress}
+                          </p>
+                        </div>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
               </CardContent>
             </Card>
           ))}
