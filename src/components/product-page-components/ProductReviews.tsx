@@ -12,16 +12,20 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/shadcn-ui/form";
-import { Input } from "@/components/shadcn-ui/input";
 import { Textarea } from "@/components/shadcn-ui/textarea";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
 import { createReview } from "@/lib/api";
 import { Review } from "@/types";
-import { Star } from "lucide-react";
+import { Star, User } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "../shadcn-ui/avatar";
+import { Separator } from "../shadcn-ui/separator";
 
 const reviewSchema = z.object({
-  rating: z.coerce.number().min(1).max(5),
+  rating: z.coerce
+    .number()
+    .min(1, "Rating is required")
+    .max(5, "Rating must be 5 or less"),
   comment: z.string().min(10, "Comment must be at least 10 characters long"),
 });
 
@@ -40,6 +44,9 @@ export function ProductReviews({
 }: ProductReviewsProps) {
   const { data: session } = useSession();
   const [reviews, setReviews] = useState<Review[]>(initialReviews);
+  const [hoveredRating, setHoveredRating] = useState(0);
+  const [selectedRating, setSelectedRating] = useState(0);
+
   const form = useForm<ReviewFormData>({
     resolver: zodResolver(reviewSchema),
     defaultValues: {
@@ -61,102 +68,151 @@ export function ProductReviews({
           rating: data.rating,
           comment: data.comment,
         },
-        session?.user.accessToken
+        session.user.accessToken
       );
-      // setReviews([newReview, ...reviews]);
+      setReviews([newReview, ...reviews]);
       toast.success("Review submitted successfully!");
       form.reset();
+      setSelectedRating(0);
     } catch (error) {
       toast.error("Failed to submit review.");
     }
   };
 
   return (
-    <div className="mt-10">
-      <h2 className="text-2xl font-bold">
-        Customer Reviews ({reviews?.length})
-      </h2>
-      <div className="flex items-center my-2">
-        <div className="flex items-center">
-          {[...Array(5)].map((_, i) => (
-            <Star
-              key={i}
-              className={`h-5 w-5 ${
-                i < Math.round(averageRating)
-                  ? "text-yellow-400"
-                  : "text-gray-300"
-              }`}
-              fill="currentColor"
-            />
-          ))}
-        </div>
-        <p className="ml-2 text-sm text-muted-foreground">
-          {averageRating.toFixed(1)} out of 5
-        </p>
-      </div>
-      <div className="space-y-6 mt-6">
-        {reviews?.map((review) => (
-          <div key={review.id} className="border-b pb-4">
-            <div className="flex items-center mb-1">
-              <p className="font-semibold">
-                {review.user.firstName} {review.user.lastName}
-              </p>
-              <div className="flex items-center ml-4">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className={`h-4 w-4 ${
-                      i < review.rating ? "text-yellow-400" : "text-gray-300"
-                    }`}
-                    fill="currentColor"
-                  />
-                ))}
-              </div>
+    <div className="mt-16">
+      <Separator className="my-12" />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+        <div className="md:col-span-1">
+          <h2 className="text-2xl font-bold mb-2">Customer Reviews</h2>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center">
+              {[...Array(5)].map((_, i) => (
+                <Star
+                  key={i}
+                  className={`h-5 w-5 ${
+                    i < Math.round(averageRating)
+                      ? "text-primary"
+                      : "text-muted-foreground/30"
+                  }`}
+                  fill="currentColor"
+                />
+              ))}
             </div>
             <p className="text-sm text-muted-foreground">
-              {new Date(review.createdAt).toLocaleDateString()}
+              {averageRating.toFixed(1)} out of 5 ({reviews?.length} reviews)
             </p>
-            <p className="mt-2">{review.comment}</p>
           </div>
-        ))}
-      </div>
-
-      {session?.user && (
-        <div className="mt-8">
-          <h3 className="text-xl font-bold">Write a review</h3>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="rating"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Rating</FormLabel>
-                    <FormControl>
-                      <Input type="number" min="1" max="5" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="comment"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Comment</FormLabel>
-                    <FormControl>
-                      <Textarea {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit">Submit Review</Button>
-            </form>
-          </Form>
         </div>
-      )}
+        <div className="md:col-span-2">
+          {session?.user && (
+            <div className="mb-12">
+              <h3 className="text-xl font-bold mb-4">Write a review</h3>
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-6"
+                >
+                  <FormField
+                    control={form.control}
+                    name="rating"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Your Rating</FormLabel>
+                        <FormControl>
+                          <div className="flex items-center gap-1">
+                            {[...Array(5)].map((_, i) => (
+                              <Star
+                                key={i}
+                                className={`h-7 w-7 cursor-pointer transition-colors ${
+                                  (hoveredRating || selectedRating) > i
+                                    ? "text-primary"
+                                    : "text-muted-foreground/30"
+                                }`}
+                                fill="currentColor"
+                                onMouseEnter={() => setHoveredRating(i + 1)}
+                                onMouseLeave={() => setHoveredRating(0)}
+                                onClick={() => {
+                                  setSelectedRating(i + 1);
+                                  field.onChange(i + 1);
+                                }}
+                              />
+                            ))}
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="comment"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Your Review</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Share your thoughts on the product..."
+                            className="min-h-[120px]"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Button type="submit" className="w-full md:w-auto">
+                    Submit Review
+                  </Button>
+                </form>
+              </Form>
+            </div>
+          )}
+          <div className="space-y-8">
+            {reviews?.map((review) => (
+              <div key={review.id} className="flex gap-4">
+                <Avatar className="h-10 w-10">
+                  <AvatarImage
+                    src={review.user.image || ""}
+                    alt={`${review.user.firstName} ${review.user.lastName}`}
+                  />
+                  <AvatarFallback>
+                    <User className="h-5 w-5" />
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-semibold">
+                        {review.user.firstName} {review.user.lastName}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {new Date(review.createdAt).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <div className="flex items-center">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`h-4 w-4 ${
+                            i < review.rating
+                              ? "text-primary"
+                              : "text-muted-foreground/30"
+                          }`}
+                          fill="currentColor"
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
+                    {review.comment}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

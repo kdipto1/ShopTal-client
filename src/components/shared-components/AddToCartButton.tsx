@@ -6,99 +6,100 @@ import { toast } from "sonner";
 import { Button } from "../shadcn-ui/button";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../shadcn-ui/select";
 
 interface AddToCartButtonProps {
   productId: string;
-  initialQuantity?: number;
 }
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-export const AddToCartButton = ({
-  productId,
-  initialQuantity = 1,
-}: AddToCartButtonProps) => {
+
+export const AddToCartButton = ({ productId }: AddToCartButtonProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [quantity, setQuantity] = useState(initialQuantity);
+  const [quantity, setQuantity] = useState(1);
   const router = useRouter();
   const { data: session } = useSession();
 
-  const addToCart = async () => {
+  const handleAddToCart = async () => {
     if (!session) {
-      toast.info("Login to add product to cart", {
-        closeButton: true,
-        position: "top-right",
-        richColors: true,
+      toast.info("Please log in to add items to your cart.", {
+        action: {
+          label: "Login",
+          onClick: () =>
+            router.push(`/login?callbackUrl=/product/${productId}`),
+        },
       });
-      router.push(`/login?callbackUrl=%2Fproduct/${productId}`);
       return;
     }
-    try {
-      setIsLoading(true);
 
+    setIsLoading(true);
+    try {
       const response = await fetch(`${API_BASE_URL}/cart-items`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${session?.user?.accessToken}`,
+          Authorization: `Bearer ${session.user.accessToken}`,
         },
-        body: JSON.stringify({
-          productId,
-          quantity,
-        }),
+        body: JSON.stringify({ productId, quantity }),
       });
-
-      if (!response.ok) {
-        throw new Error("Failed to add item to cart");
-      }
 
       const data = await response.json();
 
-      if (data.success) {
-        toast(data.message);
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to add item to cart");
       }
-    } catch (error) {
-      console.error("Error adding item to cart:", error);
+
+      toast.success("Product added to cart!");
+    } catch (error: any) {
+      toast.error(error.message || "An unexpected error occurred.");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center space-x-2">
-        <label htmlFor="quantity" className="text-sm font-medium">
-          Quantity:
-        </label>
-        <select
-          id="quantity"
-          value={quantity}
-          onChange={(e) => setQuantity(Number(e.target.value))}
-          className="rounded-md border border-gray-300 px-2 py-1"
+    <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2">
+        <span className="text-sm font-medium text-muted-foreground">
+          Quantity
+        </span>
+        <Select
+          value={String(quantity)}
+          onValueChange={(value) => setQuantity(Number(value))}
           disabled={isLoading}
         >
-          {[1, 2, 3, 4, 5].map((num) => (
-            <option key={num} value={num}>
-              {num}
-            </option>
-          ))}
-        </select>
+          <SelectTrigger className="w-20">
+            <SelectValue placeholder="1" />
+          </SelectTrigger>
+          <SelectContent>
+            {[...Array(10)].map((_, i) => (
+              <SelectItem key={i + 1} value={String(i + 1)}>
+                {i + 1}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
-
-      {/* <button
-        onClick={addToCart}
-        disabled={isLoading}
-        className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        <ShoppingCart className="mr-2 h-4 w-4" />
-        {isLoading ? "Adding..." : "Add to Cart"}
-      </button> */}
       <Button
-        onClick={addToCart}
+        size="lg"
+        className="flex-grow"
+        onClick={handleAddToCart}
         disabled={isLoading}
-        // className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        <ShoppingCart className="mr-2 h-4 w-4" />
-        {isLoading ? "Adding..." : "Add to Cart"}
+        {isLoading ? (
+          "Adding..."
+        ) : (
+          <>
+            <ShoppingCart className="mr-2 h-5 w-5" />
+            Add to Cart
+          </>
+        )}
       </Button>
     </div>
   );

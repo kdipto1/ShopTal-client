@@ -15,6 +15,7 @@ export interface Review {
   user: {
     firstName: string;
     lastName: string;
+    image?: string;
   };
   createdAt: string;
 }
@@ -24,6 +25,8 @@ export interface Product {
   name: string;
   price: number;
   image?: string;
+  description: string;
+  features: { name: string; value: string }[];
   category: string;
   reviews: Review[];
   averageRating: number;
