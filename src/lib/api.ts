@@ -4,7 +4,6 @@ import {
   Category,
   PaginatedResponse,
   SearchParams,
-  Order,
   Coupon,
   Review,
 } from "@/types";
@@ -188,7 +187,10 @@ export async function createCoupon<T>(
 }
 
 export const getOrders = (accessToken: string) =>
-  fetchAPI("/orders", {}, accessToken);
+  fetchAPI("/orders/my", {}, accessToken);
+
+export const getOrderById = (orderId: string, accessToken: string) =>
+  fetchAPI(`/orders/${orderId}`, {}, accessToken);
 
 export async function updateOrderStatus<T>(
   orderId: string,

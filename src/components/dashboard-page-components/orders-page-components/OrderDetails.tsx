@@ -23,7 +23,7 @@ import {
   XCircle,
   Clock,
 } from "lucide-react";
-import { getOrders, updateOrderStatus } from "@/lib/api";
+import { getOrderById, getOrders, updateOrderStatus } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import {
   Select,
@@ -77,8 +77,9 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
     if (!session?.user?.accessToken) return;
     setIsLoading(true);
     try {
-      const res: any = await getOrders(session.user.accessToken);
-      const foundOrder = res.data.find((o: Order) => o.id === orderId);
+      const res: any = await getOrderById(orderId, session.user.accessToken);
+      // const foundOrder = res.data.find((o: Order) => o.id === orderId);
+      const foundOrder = res.data;
       if (foundOrder) {
         setOrder(foundOrder);
         setSelectedStatus(foundOrder.status);
@@ -150,9 +151,7 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
           </p>
         </div>
         <div className="flex items-center gap-2 mt-4 md:mt-0">
-          <Badge
-            className={`text-white text-xs ${statusColors[order.status]}`}
-          >
+          <Badge className={`text-white text-xs ${statusColors[order.status]}`}>
             <StatusIcon className="h-3 w-3 mr-1.5" />
             {order.status}
           </Badge>
