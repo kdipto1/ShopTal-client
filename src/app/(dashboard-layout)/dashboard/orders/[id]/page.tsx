@@ -44,8 +44,6 @@ export default function OrderDetailsPage({
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      {/* <PlaceholderContent /> */}
-      {/* <CreateCategoryForm /> */}
       <OrderDetails orderId={params.id} />
     </ContentLayout>
   );
