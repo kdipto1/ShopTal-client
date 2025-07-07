@@ -166,6 +166,34 @@ export async function createReview(
   return responseData.data;
 }
 
+export async function updateReview(
+  reviewId: string,
+  payload: {
+    rating?: number;
+    comment?: string;
+  },
+  accessToken: string
+): Promise<Review> {
+  const url = new URL(`${API_BASE_URL}/reviews/${reviewId}`);
+
+  const res = await fetch(url.toString(), {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData.message || `API Error: ${res?.statusText || ""}`);
+  }
+
+  const responseData = await res.json();
+  return responseData.data;
+}
+
 export async function createCoupon<T>(
   payload: {
     code: string;

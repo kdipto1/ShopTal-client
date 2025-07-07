@@ -12,10 +12,12 @@ export interface Review {
   id: string;
   rating: number;
   comment: string;
+  userId: string;
   user: {
     firstName: string;
     lastName: string;
     image?: string;
+    id: string;
   };
   createdAt: string;
 }
