@@ -35,17 +35,20 @@ interface ProductReviewsProps {
   productId: string;
   reviews: Review[];
   averageRating: number;
+  canReview: boolean;
 }
 
 export function ProductReviews({
   productId,
   reviews: initialReviews,
   averageRating,
+  canReview,
 }: ProductReviewsProps) {
   const { data: session } = useSession();
-  const [reviews, setReviews] = useState<Review[]>(initialReviews);
+  const [reviews, setReviews] = useState<Review[]>(initialReviews || []);
   const [hoveredRating, setHoveredRating] = useState(0);
   const [selectedRating, setSelectedRating] = useState(0);
+  console.log(reviews);
 
   const form = useForm<ReviewFormData>({
     resolver: zodResolver(reviewSchema),
@@ -60,6 +63,10 @@ export function ProductReviews({
       toast.error("You must be logged in to submit a review.");
       return;
     }
+    if (!canReview) {
+      toast.error("You can only review products that you have purchased.");
+      return;
+    }
 
     try {
       const newReview = await createReview(
@@ -70,12 +77,12 @@ export function ProductReviews({
         },
         session.user.accessToken
       );
-      setReviews([newReview, ...reviews]);
+      setReviews((prevReviews) => [newReview, ...prevReviews]);
       toast.success("Review submitted successfully!");
       form.reset();
       setSelectedRating(0);
     } catch (error) {
-      toast.error("Failed to submit review.");
+      toast.error((error as Error).message || "Failed to submit review.");
     }
   };
 
@@ -105,77 +112,96 @@ export function ProductReviews({
           </div>
         </div>
         <div className="md:col-span-2">
-          {session?.user && (
-            <div className="mb-12">
-              <h3 className="text-xl font-bold mb-4">Write a review</h3>
-              <Form {...form}>
-                <form
-                  onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-6"
-                >
-                  <FormField
-                    control={form.control}
-                    name="rating"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Your Rating</FormLabel>
-                        <FormControl>
-                          <div className="flex items-center gap-1">
-                            {[...Array(5)].map((_, i) => (
-                              <Star
-                                key={i}
-                                className={`h-7 w-7 cursor-pointer transition-colors ${
-                                  (hoveredRating || selectedRating) > i
-                                    ? "text-primary"
-                                    : "text-muted-foreground/30"
-                                }`}
-                                fill="currentColor"
-                                onMouseEnter={() => setHoveredRating(i + 1)}
-                                onMouseLeave={() => setHoveredRating(0)}
-                                onClick={() => {
-                                  setSelectedRating(i + 1);
-                                  field.onChange(i + 1);
-                                }}
-                              />
-                            ))}
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="comment"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Your Review</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="Share your thoughts on the product..."
-                            className="min-h-[120px]"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <Button type="submit" className="w-full md:w-auto">
-                    Submit Review
-                  </Button>
-                </form>
-              </Form>
+          {session?.user ? (
+            canReview ? (
+              <div className="mb-12">
+                <h3 className="text-xl font-bold mb-4">Write a review</h3>
+                <Form {...form}>
+                  <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className="space-y-6"
+                  >
+                    <FormField
+                      control={form.control}
+                      name="rating"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Your Rating</FormLabel>
+                          <FormControl>
+                            <div className="flex items-center gap-1">
+                              {[...Array(5)].map((_, i) => (
+                                <Star
+                                  key={i}
+                                  className={`h-7 w-7 cursor-pointer transition-colors ${
+                                    (hoveredRating || selectedRating) > i
+                                      ? "text-primary"
+                                      : "text-muted-foreground/30"
+                                  }`}
+                                  fill="currentColor"
+                                  onMouseEnter={() => setHoveredRating(i + 1)}
+                                  onMouseLeave={() => setHoveredRating(0)}
+                                  onClick={() => {
+                                    setSelectedRating(i + 1);
+                                    field.onChange(i + 1);
+                                  }}
+                                />
+                              ))}
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="comment"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Your Review</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              placeholder="Share your thoughts on the product..."
+                              className="min-h-[120px]"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button type="submit" className="w-full md:w-auto">
+                      Submit Review
+                    </Button>
+                  </form>
+                </Form>
+              </div>
+            ) : (
+              <div className="mb-12 p-6 bg-muted/50 rounded-lg">
+                <p className="text-center text-muted-foreground">
+                  You can only review products that you have purchased and that
+                  have been delivered.
+                </p>
+              </div>
+            )
+          ) : (
+            <div className="mb-12 p-6 bg-muted/50 rounded-lg">
+              <p className="text-center text-muted-foreground">
+                Please{" "}
+                <a href="/login" className="text-primary hover:underline">
+                  log in
+                </a>{" "}
+                to submit a review.
+              </p>
             </div>
           )}
           <div className="space-y-8">
             {reviews?.map((review) => (
               <div key={review.id} className="flex gap-4">
                 <Avatar className="h-10 w-10">
-                  <AvatarImage
-                    src={review.user.image || ""}
+                  {/* <AvatarImage
+                    src={review?.user.image || ""}
                     alt={`${review.user.firstName} ${review.user.lastName}`}
-                  />
+                  /> */}
                   <AvatarFallback>
                     <User className="h-5 w-5" />
                   </AvatarFallback>

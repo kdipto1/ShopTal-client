@@ -1,8 +1,8 @@
 import { AddToCartButton } from "@/components/shared-components/AddToCartButton";
-import { fetchAPI } from "@/lib/api";
-import { Product } from "@/types";
+import { fetchAPI, getMyOrders } from "@/lib/api";
+import { Order, Product } from "@/types";
 import Image from "next/image";
-import { Star, CheckCircle, MessageSquare } from "lucide-react";
+import { Star } from "lucide-react";
 import { FeaturesList } from "@/components/product-page-components/FeaturesList";
 import { ProductReviews } from "@/components/product-page-components/ProductReviews";
 import {
@@ -12,7 +12,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/shadcn-ui/card";
-import { Badge } from "@/components/shadcn-ui/badge";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -21,6 +20,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/shadcn-ui/breadcrumb";
+import { auth } from "@/auth";
 
 interface ProductPageProps {
   params: {
@@ -33,8 +33,28 @@ async function getProduct(id: string): Promise<Product> {
   return product.data;
 }
 
+async function checkReviewEligibility(productId: string): Promise<boolean> {
+  const session = await auth();
+  if (!session?.user?.accessToken) {
+    return false;
+  }
+
+  try {
+    const orders = await getMyOrders(session.user.accessToken);
+    return orders.some(
+      (order: Order) =>
+        order.status === "DELIVERED" &&
+        order.orderItems.some((item) => item.productId === productId)
+    );
+  } catch (error) {
+    console.error("Failed to fetch orders:", error);
+    return false;
+  }
+}
+
 export default async function ProductPage({ params }: ProductPageProps) {
   const product = await getProduct(params.id);
+  const canReview = await checkReviewEligibility(params.id);
 
   if (!product) {
     return (
@@ -121,6 +141,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           productId={product.id}
           reviews={product.reviews}
           averageRating={product.averageRating}
+          canReview={canReview}
         />
       </div>
     </div>

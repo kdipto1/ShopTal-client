@@ -137,7 +137,7 @@ export async function createReview(
     comment?: string;
   },
   accessToken: string
-): Promise<any> {
+): Promise<Review> {
   const url = new URL(`${API_BASE_URL}/reviews`);
 
   const res = await fetch(url.toString(), {
@@ -154,7 +154,8 @@ export async function createReview(
     throw new Error(errorData.message || `API Error: ${res?.statusText || ""}`);
   }
 
-  return res.json();
+  const responseData = await res.json();
+  return responseData.data;
 }
 
 export async function createCoupon<T>(
@@ -188,6 +189,11 @@ export async function createCoupon<T>(
 
 export const getOrders = (accessToken: string) =>
   fetchAPI("/orders/my", {}, accessToken);
+
+export const getMyOrders = async (accessToken: string): Promise<any[]> => {
+  const response = await fetchAPI<any>("/orders/my", {}, accessToken);
+  return response.data;
+};
 
 export const getOrderById = (orderId: string, accessToken: string) =>
   fetchAPI(`/orders/${orderId}`, {}, accessToken);
