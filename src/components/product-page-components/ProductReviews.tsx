@@ -71,9 +71,11 @@ export function ProductReviews({
       setIsLoading(true);
       try {
         const response = await getProductReviews(productId, currentPage);
-        setReviews(response.data);
-        setTotalReviews(response.meta.total);
-        setTotalPages(Math.ceil(response.meta.total / response.meta.limit));
+        setReviews(response.data.data);
+        setTotalReviews(response.data.meta.total);
+        setTotalPages(
+          Math.ceil(response.data.meta.total / response.data.meta.limit)
+        );
       } catch (error) {
         toast.error("Failed to load reviews.");
       } finally {

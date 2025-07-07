@@ -20,6 +20,7 @@ import {
 } from "@/components/shadcn-ui/accordion";
 import { Skeleton } from "@/components/shadcn-ui/skeleton";
 import { ShoppingBag } from "lucide-react";
+import Link from "next/link";
 
 function OrderCardSkeleton() {
   return (
@@ -141,16 +142,17 @@ export default function UserOrdersPage() {
                                   />
                                 )}
                                 <div className="flex-grow">
-                                  <p className="font-medium">
-                                    {item.product?.name || item.productId}
-                                  </p>
+                                  <Link href={`/product/${item.productId}`}>
+                                    <p className="font-medium">
+                                      {item.product?.name || item.productId}
+                                    </p>
+                                  </Link>
                                   <p className="text-sm text-gray-500">
                                     {item.quantity} x ${item.price.toFixed(2)}
                                   </p>
                                 </div>
                                 <p className="font-semibold">
-                                  $
-                                  {(item.quantity * item.price).toFixed(2)}
+                                  ${(item.quantity * item.price).toFixed(2)}
                                 </p>
                               </li>
                             ))}

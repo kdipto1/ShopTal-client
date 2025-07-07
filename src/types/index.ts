@@ -55,15 +55,15 @@ export interface Order {
   createdAt: string;
 }
 
-
-
 export interface PaginatedResponse<T> {
-  meta: {
-    page: number;
-    limit: number;
-    total: number;
+  data: {
+    meta: {
+      page: number;
+      limit: number;
+      total: number;
+    };
+    data: T[];
   };
-  data: T[];
 }
 
 export interface SearchParams {

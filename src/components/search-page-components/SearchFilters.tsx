@@ -179,7 +179,7 @@ export function SearchFilters({
               Categories
             </h3>
             <div className="space-y-1">
-              {categories.map((cat) => (
+              {categories?.map((cat) => (
                 <div key={cat.id} className="flex items-center space-x-2">
                   <Checkbox
                     id={`category-${cat.id}`}
