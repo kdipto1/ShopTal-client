@@ -117,12 +117,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
                     ))}
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    {product?.averageRating.toFixed(1)} (
-                    {product?.reviews?.length} reviews)
+                    {product?.averageRating ? product.averageRating.toFixed(1) : "N/A"}
                   </p>
                 </div>
                 <p className="text-4xl font-extrabold mb-6">
-                  ${product.price.toFixed(2)}
+                  ${(product.price || 0).toFixed(2)}
                 </p>
                 <p className="text-muted-foreground mb-8 leading-relaxed">
                   {product.description}
@@ -139,8 +138,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
         <ProductReviews
           productId={product.id}
-          reviews={product.reviews}
-          averageRating={product.averageRating}
+          initialAverageRating={product.averageRating}
           canReview={canReview}
         />
       </div>

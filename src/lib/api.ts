@@ -6,6 +6,7 @@ import {
   SearchParams,
   Coupon,
   Review,
+  Order,
 } from "@/types";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -127,8 +128,15 @@ export async function applyCouponAPI<T>(
   return res.json();
 }
 
-export const getReviews = (productId: string) =>
-  fetchAPI<Review[]>(`/reviews/${productId}`);
+export const getProductReviews = (
+  productId: string,
+  page: number = 1,
+  limit: number = 5
+) =>
+  fetchAPI<PaginatedResponse<Review>>(`/reviews/${productId}`, {
+    page: String(page),
+    limit: String(limit),
+  });
 
 export async function createReview(
   payload: {
@@ -190,8 +198,12 @@ export async function createCoupon<T>(
 export const getOrders = (accessToken: string) =>
   fetchAPI("/orders/my", {}, accessToken);
 
-export const getMyOrders = async (accessToken: string): Promise<any[]> => {
-  const response = await fetchAPI<any>("/orders/my", {}, accessToken);
+export const getMyOrders = async (accessToken: string): Promise<Order[]> => {
+  const response = await fetchAPI<{ data: Order[] }>(
+    "/orders/my",
+    {},
+    accessToken
+  );
   return response.data;
 };
 
