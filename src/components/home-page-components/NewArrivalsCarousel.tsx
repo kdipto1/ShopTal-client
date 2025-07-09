@@ -17,12 +17,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "../shadcn-ui/button";
 import Autoplay from "embla-carousel-autoplay";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../shadcn-ui/tooltip";
 
 type Product = {
   id: string;
@@ -30,16 +24,6 @@ type Product = {
   price: number;
   image: string;
 };
-
-// Utility to generate a color from a string
-function stringToColor(str: string) {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash = str.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  const color = `hsl(${hash % 360}, 70%, 70%)`;
-  return color;
-}
 
 export default function NewArrivalsCarousel(newArrivals: {
   newArrivals: Product[];

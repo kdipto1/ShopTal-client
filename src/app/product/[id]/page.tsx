@@ -21,6 +21,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/shadcn-ui/breadcrumb";
 import { auth } from "@/auth";
+import Link from "next/link";
 
 interface ProductPageProps {
   params: {
@@ -70,11 +71,15 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <Breadcrumb className="mb-8">
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/">Home</BreadcrumbLink>
+              <BreadcrumbLink>
+                <Link href={"/"}>Home</Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href="/search">Products</BreadcrumbLink>
+              <BreadcrumbLink>
+                <Link href={"/search"}>Products</Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
@@ -117,7 +122,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
                     ))}
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    {product?.averageRating ? product.averageRating.toFixed(1) : "N/A"}
+                    {product?.averageRating
+                      ? product.averageRating.toFixed(1)
+                      : "N/A"}
                   </p>
                 </div>
                 <p className="text-4xl font-extrabold mb-6">

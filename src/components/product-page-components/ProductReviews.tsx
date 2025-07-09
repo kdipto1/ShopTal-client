@@ -17,7 +17,7 @@ import { Star, User } from "lucide-react";
 import { Avatar, AvatarFallback } from "../shadcn-ui/avatar";
 import { Separator } from "../shadcn-ui/separator";
 import { Skeleton } from "../shadcn-ui/skeleton";
-import { ReviewForm, ReviewFormData } from "./ReviewForm"; // Import the new ReviewForm
+import { ReviewForm, ReviewFormData } from "./ReviewForm";
 
 interface ProductReviewsProps {
   productId: string;

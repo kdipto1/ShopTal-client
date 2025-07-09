@@ -7,7 +7,6 @@ import { Button } from "@/components/shadcn-ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -18,12 +17,11 @@ import {
   Loader2,
   Package,
   Truck,
-  User,
   CheckCircle,
   XCircle,
   Clock,
 } from "lucide-react";
-import { getOrderById, getOrders, updateOrderStatus } from "@/lib/api";
+import { getOrderById, updateOrderStatus } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import {
   Select,

@@ -6,7 +6,6 @@ import { toast } from "sonner";
 import {
   Card,
   CardContent,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/shadcn-ui/card";

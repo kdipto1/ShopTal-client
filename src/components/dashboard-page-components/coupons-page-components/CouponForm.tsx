@@ -13,16 +13,24 @@ import {
   FormMessage,
 } from "@/components/shadcn-ui/form";
 import { Input } from "@/components/shadcn-ui/input";
-import { toast } from "sonner";
-import { useSession } from "next-auth/react";
 import { Loader2 } from "lucide-react";
 import { Coupon } from "@/types";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/shadcn-ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/shadcn-ui/select";
 
 const couponFormSchema = z.object({
   code: z.string().min(1, "Coupon code is required"),
-  discountType: z.enum(["PERCENTAGE", "FIXED_AMOUNT"], { required_error: "Discount type is required" }),
-  discountValue: z.coerce.number().min(0, "Discount value must be non-negative"),
+  discountType: z.enum(["PERCENTAGE", "FIXED_AMOUNT"], {
+    required_error: "Discount type is required",
+  }),
+  discountValue: z.coerce
+    .number()
+    .min(0, "Discount value must be non-negative"),
   expirationDate: z.string().min(1, "Expiration date is required"),
   usageLimit: z.coerce.number().min(1, "Usage limit must be at least 1"),
 });
@@ -35,14 +43,20 @@ interface CouponFormProps {
   isLoading: boolean;
 }
 
-export function CouponForm({ initialData, onSubmit, isLoading }: CouponFormProps) {
+export function CouponForm({
+  initialData,
+  onSubmit,
+  isLoading,
+}: CouponFormProps) {
   const form = useForm<CouponFormData>({
     resolver: zodResolver(couponFormSchema),
     defaultValues: {
       code: initialData?.code || "",
       discountType: initialData?.discountType || "PERCENTAGE",
       discountValue: initialData?.discountValue || 0,
-      expirationDate: initialData?.expirationDate ? new Date(initialData.expirationDate).toISOString().split('T')[0] : "",
+      expirationDate: initialData?.expirationDate
+        ? new Date(initialData.expirationDate).toISOString().split("T")[0]
+        : "",
       usageLimit: initialData?.usageLimit || 1,
     },
   });
@@ -91,7 +105,11 @@ export function CouponForm({ initialData, onSubmit, isLoading }: CouponFormProps
             <FormItem>
               <FormLabel>Discount Value</FormLabel>
               <FormControl>
-                <Input type="number" placeholder="e.g., 10 for 10% or $10" {...field} />
+                <Input
+                  type="number"
+                  placeholder="e.g., 10 for 10% or $10"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -124,9 +142,7 @@ export function CouponForm({ initialData, onSubmit, isLoading }: CouponFormProps
           )}
         />
         <Button type="submit" disabled={isLoading}>
-          {isLoading ? (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          ) : null}
+          {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
           {initialData ? "Update Coupon" : "Create Coupon"}
         </Button>
       </form>

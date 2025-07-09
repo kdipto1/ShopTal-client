@@ -4,17 +4,6 @@ import ContentLayout from "@/components/dashboard-page-components/ContentLayout"
 import { DataTable } from "@/components/dashboard-page-components/data-table";
 import { DataTableColumnHeader } from "@/components/dashboard-page-components/DataTableColumnHeader";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/shadcn-ui/alert-dialog";
-import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
@@ -24,10 +13,8 @@ import {
 } from "@/components/shadcn-ui/breadcrumb";
 import { Button } from "@/components/shadcn-ui/button";
 import { ColumnDef } from "@tanstack/react-table";
-import { ChevronRightIcon } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useState } from "react";
-import { toast } from "sonner";
 import { SubcategoryActions } from "@/components/dashboard-page-components/subcategories-page-components/SubcategoryActions";
 
 export type Subcategory = {
@@ -101,7 +88,9 @@ export default function SubcategoriesPage() {
       id: "actions",
       cell: ({ row }) => {
         const subcategory = row.original;
-        return <SubcategoryActions subcategory={subcategory} fetchData={fetchData} />;
+        return (
+          <SubcategoryActions subcategory={subcategory} fetchData={fetchData} />
+        );
       },
     },
   ];

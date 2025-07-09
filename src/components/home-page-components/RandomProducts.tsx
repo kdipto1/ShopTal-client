@@ -8,7 +8,6 @@ import {
 } from "../shadcn-ui/card";
 import { Button } from "../shadcn-ui/button";
 import Link from "next/link";
-import { ProductCard } from "../search-page-components/ProductCard";
 
 type Product = {
   id: string;

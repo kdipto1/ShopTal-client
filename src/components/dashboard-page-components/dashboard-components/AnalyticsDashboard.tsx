@@ -17,7 +17,6 @@ import {
   Layers,
   Award,
   TrendingUp,
-  ShoppingCart,
   Percent,
 } from "lucide-react";
 import {
@@ -33,7 +32,10 @@ import {
   YAxis,
   CartesianGrid,
 } from "recharts";
-import { getCartsAbandonmentRateAPI, getProductPerformanceAPI } from "@/lib/api";
+import {
+  getCartsAbandonmentRateAPI,
+  getProductPerformanceAPI,
+} from "@/lib/api";
 
 interface AnalyticsData {
   userCounts: number;
@@ -52,7 +54,9 @@ interface ProductPerformance {
 
 export default function AnalyticsDashboard() {
   const [data, setData] = useState<AnalyticsData | null>(null);
-  const [productPerformance, setProductPerformance] = useState<ProductPerformance[]>([]);
+  const [productPerformance, setProductPerformance] = useState<
+    ProductPerformance[]
+  >([]);
   const [abandonmentRate, setAbandonmentRate] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -69,17 +73,18 @@ export default function AnalyticsDashboard() {
 
     const fetchData = async (accessToken: string) => {
       try {
-        const [countsRes, productPerfRes, abandonmentRateRes] = await Promise.all([
-          fetch(`${process.env.NEXT_PUBLIC_API_URL}/analytics/counts`, {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }),
-          getProductPerformanceAPI(accessToken),
-          getCartsAbandonmentRateAPI(accessToken),
-        ]);
+        const [countsRes, productPerfRes, abandonmentRateRes] =
+          await Promise.all([
+            fetch(`${process.env.NEXT_PUBLIC_API_URL}/analytics/counts`, {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${accessToken}`,
+              },
+            }),
+            getProductPerformanceAPI(accessToken),
+            getCartsAbandonmentRateAPI(accessToken),
+          ]);
 
         if (!countsRes.ok) throw new Error("Failed to fetch counts data");
         const countsJson = await countsRes.json();
@@ -87,7 +92,6 @@ export default function AnalyticsDashboard() {
 
         setProductPerformance(productPerfRes.data);
         setAbandonmentRate(abandonmentRateRes.data);
-
       } catch (err) {
         setError("Failed to load analytics data");
         console.error("Error fetching analytics data:", err);
@@ -148,7 +152,8 @@ export default function AnalyticsDashboard() {
     },
     {
       title: "Cart Abandonment Rate",
-      value: abandonmentRate !== null ? `${abandonmentRate.toFixed(2)}%` : "N/A",
+      value:
+        abandonmentRate !== null ? `${abandonmentRate.toFixed(2)}%` : "N/A",
       icon: Percent,
       description: "Percentage of abandoned carts",
       color:
@@ -166,10 +171,10 @@ export default function AnalyticsDashboard() {
       ]
     : [];
 
-  const productPerformanceChartData = productPerformance.map(p => ({
+  const productPerformanceChartData = productPerformance.map((p) => ({
     name: p.name,
     "Cart Items": p.cartItemsCount,
-    "Quantity": p.quantity,
+    Quantity: p.quantity,
   }));
 
   const getChartHeight = () => {
@@ -347,13 +352,22 @@ export default function AnalyticsDashboard() {
                   ) : (
                     <ChartContainer
                       config={{
-                        "Cart Items": { label: "Cart Items", color: "hsl(var(--chart-1))" },
-                        "Quantity": { label: "Quantity", color: "hsl(var(--chart-2))" },
+                        "Cart Items": {
+                          label: "Cart Items",
+                          color: "hsl(var(--chart-1))",
+                        },
+                        Quantity: {
+                          label: "Quantity",
+                          color: "hsl(var(--chart-2))",
+                        },
                       }}
                       className={`w-full h-full`}
                     >
                       <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={productPerformanceChartData} margin={chartConfig.margin}>
+                        <BarChart
+                          data={productPerformanceChartData}
+                          margin={chartConfig.margin}
+                        >
                           <CartesianGrid
                             vertical={false}
                             stroke="#f3f4f6"
@@ -382,8 +396,16 @@ export default function AnalyticsDashboard() {
                             }}
                           />
                           <ChartTooltip content={<ChartTooltipContent />} />
-                          <Bar dataKey="Cart Items" fill="var(--color-Cart-Items)" radius={[3, 3, 0, 0]} />
-                          <Bar dataKey="Quantity" fill="var(--color-Quantity)" radius={[3, 3, 0, 0]} />
+                          <Bar
+                            dataKey="Cart Items"
+                            fill="var(--color-Cart-Items)"
+                            radius={[3, 3, 0, 0]}
+                          />
+                          <Bar
+                            dataKey="Quantity"
+                            fill="var(--color-Quantity)"
+                            radius={[3, 3, 0, 0]}
+                          />
                         </BarChart>
                       </ResponsiveContainer>
                     </ChartContainer>

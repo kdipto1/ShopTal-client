@@ -2,17 +2,7 @@
 
 import ContentLayout from "@/components/dashboard-page-components/ContentLayout";
 import { DataTable } from "@/components/dashboard-page-components/data-table";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/shadcn-ui/alert-dialog";
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -23,10 +13,8 @@ import {
 } from "@/components/shadcn-ui/breadcrumb";
 import { Button } from "@/components/shadcn-ui/button";
 import { ColumnDef } from "@tanstack/react-table";
-import { ChevronRightIcon } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useState } from "react";
-import { toast } from "sonner";
 import { CategoryActions } from "@/components/dashboard-page-components/categories-page-components/CategoryActions";
 
 export type Category = {

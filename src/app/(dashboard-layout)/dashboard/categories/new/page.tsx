@@ -38,8 +38,7 @@ export default function CreateCategoryPage() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      {/* <PlaceholderContent /> */}
-      {/* <CreateCategoryForm /> */}
+
       <CategoryForm />
     </ContentLayout>
   );
