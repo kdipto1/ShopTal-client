@@ -1,14 +1,11 @@
 "use client";
 import Link from "next/link";
-
 import {
   Facebook,
   Instagram,
   Twitter,
   Youtube,
   CreditCard,
-  // ApplePay,
-  // GooglePay,
 } from "lucide-react";
 import { Input } from "../shadcn-ui/input";
 import { Button } from "../shadcn-ui/button";
@@ -17,50 +14,55 @@ import { usePathname } from "next/navigation";
 
 export default function Footer() {
   const router = usePathname();
-
-  // Define the routes where you want to hide the component
-  const hideOnRoutes = ["/dashboard", "/another-route"];
-
-  // Check if the current route is in the hideOnRoutes array
   const shouldHide = router.includes("/dashboard");
-
-  if (shouldHide) {
-    return null; // Don't render the component if on a specific route
-  }
+  if (shouldHide) return null;
   return (
-    <footer className="bg-muted text-muted-foreground">
-      <div className="container mx-auto px-4 py-8 md:py-12">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
+    <footer className="bg-white dark:bg-gray-950 border-t border-gray-100 dark:border-gray-800 text-gray-500 dark:text-gray-400 text-xs">
+      <div className="container mx-auto px-4 py-8 md:py-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
           {/* Company Info */}
-          <div className="space-y-4">
-            <h2 className="text-2xl font-bold text-primary">ShopTal</h2>
-            <p className="text-sm">
+          <div className="space-y-2">
+            <h2 className="text-lg font-bold text-primary mb-1">ShopTal</h2>
+            <p className="text-xs leading-relaxed">
               Your Trusted Hub for Cutting-Edge Electronics
             </p>
-            <div className="flex space-x-4">
-              <Link href="#" className="hover:text-primary">
-                <Facebook className="h-5 w-5" />
-                <span className="sr-only">Facebook</span>
+            <div className="flex space-x-2 mt-2">
+              <Link
+                href="#"
+                className="hover:text-pink-600 transition-colors"
+                aria-label="Facebook"
+              >
+                <Facebook className="h-4 w-4" />
               </Link>
-              <Link href="#" className="hover:text-primary">
-                <Instagram className="h-5 w-5" />
-                <span className="sr-only">Instagram</span>
+              <Link
+                href="#"
+                className="hover:text-pink-600 transition-colors"
+                aria-label="Instagram"
+              >
+                <Instagram className="h-4 w-4" />
               </Link>
-              <Link href="#" className="hover:text-primary">
-                <Twitter className="h-5 w-5" />
-                <span className="sr-only">Twitter</span>
+              <Link
+                href="#"
+                className="hover:text-pink-600 transition-colors"
+                aria-label="Twitter"
+              >
+                <Twitter className="h-4 w-4" />
               </Link>
-              <Link href="#" className="hover:text-primary">
-                <Youtube className="h-5 w-5" />
-                <span className="sr-only">YouTube</span>
+              <Link
+                href="#"
+                className="hover:text-pink-600 transition-colors"
+                aria-label="YouTube"
+              >
+                <Youtube className="h-4 w-4" />
               </Link>
             </div>
           </div>
-
           {/* Quick Links */}
           <div>
-            <h3 className="mb-4 text-lg font-semibold">Quick Links</h3>
-            <ul className="space-y-2 text-sm">
+            <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-400">
+              Quick Links
+            </h3>
+            <ul className="space-y-1">
               <li>
                 <Link href="#" className="hover:underline">
                   All Products
@@ -88,11 +90,12 @@ export default function Footer() {
               </li>
             </ul>
           </div>
-
           {/* Customer Service */}
           <div>
-            <h3 className="mb-4 text-lg font-semibold">Customer Service</h3>
-            <ul className="space-y-2 text-sm">
+            <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-400">
+              Customer Service
+            </h3>
+            <ul className="space-y-1">
               <li>
                 <Link href="#" className="hover:underline">
                   Contact Us
@@ -120,37 +123,37 @@ export default function Footer() {
               </li>
             </ul>
           </div>
-
           {/* Newsletter SignUp */}
           <div>
-            <h3 className="mb-4 text-lg font-semibold">Stay Updated</h3>
-            <p className="mb-4 text-sm">
-              Subscribe to our newsletter for exclusive deals and updates.
+            <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-400">
+              Stay Updated
+            </h3>
+            <p className="mb-2 text-xs">
+              Subscribe for exclusive deals and updates.
             </p>
-            <form className="space-y-2">
+            <form className="flex space-x-2">
               <Input
                 type="email"
-                placeholder="Your email address"
-                className="bg-background"
+                placeholder="Email address"
+                className="bg-background text-xs px-2 py-1 rounded-md border border-gray-200 dark:border-gray-800"
               />
-              <Button type="submit" className="w-full" disabled>
+              <Button
+                type="submit"
+                className="text-xs px-3 py-1 rounded-md bg-pink-50 text-pink-600 border border-pink-100 hover:bg-pink-100"
+                disabled
+              >
                 Subscribe
               </Button>
             </form>
           </div>
         </div>
-
-        <Separator className="my-8" />
-
-        <div className="flex flex-col items-center justify-between space-y-4 md:flex-row md:space-y-0">
-          <div className="text-sm">
-            &copy; 2024 Dipto Karmaker. All rights reserved.
+        <Separator className="my-6" />
+        <div className="flex flex-col items-center justify-between space-y-2 md:flex-row md:space-y-0">
+          <div className="text-xs">
+            &copy; 2025 Dipto Karmaker. All rights reserved.
           </div>
-          <div className="flex space-x-4">
-            <CreditCard className="h-6 w-6" />
-            {/* <PaypalIcon className="h-6 w-6" /> */}
-            {/* <ApplePay className="h-6 w-6" />
-            <GooglePay className="h-6 w-6" /> */}
+          <div className="flex space-x-2">
+            <CreditCard className="h-5 w-5" />
           </div>
         </div>
       </div>

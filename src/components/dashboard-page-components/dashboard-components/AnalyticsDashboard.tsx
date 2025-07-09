@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import {
   Card,
   CardContent,
@@ -45,20 +46,16 @@ export default function AnalyticsDashboard() {
   const [error, setError] = useState<string | null>(null);
   const [screenWidth, setScreenWidth] = useState<number>(0);
 
+  const { data: session, status } = useSession();
+
   useEffect(() => {
     // Check screen size and update screenWidth state
     const checkScreenSize = () => {
       setScreenWidth(window.innerWidth);
     };
-
-    // Check initial screen size
     checkScreenSize();
-
-    // Add event listener for resize
     window.addEventListener("resize", checkScreenSize);
-
-    // Simulating API call with mock data
-    const fetchData = async () => {
+    const fetchData = async (accessToken: string) => {
       try {
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/analytics/counts`,
@@ -66,9 +63,7 @@ export default function AnalyticsDashboard() {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${
-                localStorage.getItem("accessToken") || ""
-              }`,
+              Authorization: `Bearer ${accessToken}`,
             },
           }
         );
@@ -82,12 +77,14 @@ export default function AnalyticsDashboard() {
         setIsLoading(false);
       }
     };
-
-    fetchData();
-
-    // Cleanup event listener
+    if (status === "authenticated" && session?.user?.accessToken) {
+      fetchData(session.user.accessToken as string);
+    } else if (status === "unauthenticated") {
+      setIsLoading(false);
+      setError("Authentication required to load analytics data.");
+    }
     return () => window.removeEventListener("resize", checkScreenSize);
-  }, []);
+  }, [session, status]);
 
   const cards = [
     {
@@ -95,35 +92,40 @@ export default function AnalyticsDashboard() {
       value: data?.userCounts,
       icon: Users,
       description: "Active users in the platform",
-      color: "bg-blue-50 dark:bg-blue-950",
+      color:
+        "bg-gradient-to-tr from-blue-50/80 to-white dark:from-blue-950/60 dark:to-gray-900/80",
     },
     {
       title: "Total Products",
       value: data?.productCounts,
       icon: ShoppingBag,
       description: "Products listed in store",
-      color: "bg-green-50 dark:bg-green-950",
+      color:
+        "bg-gradient-to-tr from-green-50/80 to-white dark:from-green-950/60 dark:to-gray-900/80",
     },
     {
       title: "Categories",
       value: data?.categoryCounts,
       icon: Tags,
       description: "Main product categories",
-      color: "bg-purple-50 dark:bg-purple-950",
+      color:
+        "bg-gradient-to-tr from-purple-50/80 to-white dark:from-purple-950/60 dark:to-gray-900/80",
     },
     {
       title: "Subcategories",
       value: data?.subcategoryCounts,
       icon: Layers,
       description: "Product subcategories",
-      color: "bg-orange-50 dark:bg-orange-950",
+      color:
+        "bg-gradient-to-tr from-orange-50/80 to-white dark:from-orange-950/60 dark:to-gray-900/80",
     },
     {
       title: "Brands",
       value: data?.brandCounts,
       icon: Award,
       description: "Registered brands",
-      color: "bg-pink-50 dark:bg-pink-950",
+      color:
+        "bg-gradient-to-tr from-pink-50/80 to-white dark:from-pink-950/60 dark:to-gray-900/80",
     },
   ];
 
@@ -138,88 +140,92 @@ export default function AnalyticsDashboard() {
     : [];
 
   // Determine chart configuration based on screen width
+  const getChartHeight = () => {
+    if (screenWidth < 640) {
+      return "h-[220px]";
+    } else if (screenWidth < 1024) {
+      return "h-[260px]";
+    } else {
+      return "h-[300px]";
+    }
+  };
+  const chartHeightClass = getChartHeight();
   const getChartConfig = () => {
     if (screenWidth < 640) {
-      // Mobile
       return {
-        height: 250,
-        margin: { top: 10, right: 10, left: 10, bottom: 40 },
+        height: 220,
+        margin: { top: 8, right: 8, left: 8, bottom: 32 },
         xAxisAngle: -90,
-        xAxisHeight: 40,
+        xAxisHeight: 32,
         xAxisFontSize: 8,
         yAxisFontSize: 8,
       };
     } else if (screenWidth < 1024) {
-      // Tablet
       return {
-        height: 300,
-        margin: { top: 20, right: 20, left: 20, bottom: 60 },
+        height: 260,
+        margin: { top: 12, right: 12, left: 12, bottom: 40 },
         xAxisAngle: -45,
-        xAxisHeight: 60,
+        xAxisHeight: 40,
         xAxisFontSize: 10,
         yAxisFontSize: 10,
       };
     } else {
-      // Desktop
       return {
-        height: 350,
-        margin: { top: 20, right: 30, left: 20, bottom: 60 },
+        height: 300,
+        margin: { top: 16, right: 16, left: 16, bottom: 48 },
         xAxisAngle: -45,
-        xAxisHeight: 60,
+        xAxisHeight: 48,
         xAxisFontSize: 12,
         yAxisFontSize: 12,
       };
     }
   };
-
   const chartConfig = getChartConfig();
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8">
-          <div className="mb-4 sm:mb-0">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
+    <div className="min-h-screen bg-white dark:bg-gray-950">
+      <div className="container mx-auto px-2 py-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4">
+          <div className="mb-2 sm:mb-0">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white tracking-tight">
               Analytics Dashboard
             </h1>
-            <p className="mt-2 text-sm sm:text-base text-gray-600 dark:text-gray-400">
-              Overview of key metrics and performance indicators
+            <p className="mt-1 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+              Key metrics at a glance
             </p>
           </div>
-          <TrendingUp className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+          <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 text-primary/70" />
         </div>
-
+        <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-primary/20 to-transparent mb-6" />
         {error ? (
-          <div className="rounded-lg bg-red-50 dark:bg-red-900/20 p-4 text-center text-red-600 dark:text-red-400">
+          <div className="rounded-md bg-red-50 dark:bg-red-900/10 p-2 text-center text-xs text-red-600 dark:text-red-400 border border-red-100 dark:border-red-900/20 max-w-md mx-auto">
             <p>{error}</p>
           </div>
         ) : (
-          <div className="space-y-8">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-6">
+          <div className="space-y-6 animate-fadein">
+            <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-2 sm:gap-4">
               {cards.map((card, index) => (
                 <Card
                   key={index}
-                  className={`transition-all duration-300 hover:shadow-lg ${card.color}`}
+                  className={`border border-gray-100 dark:border-gray-800 shadow-none hover:shadow-md transition-all duration-200 ${card.color} rounded-lg p-2 sm:p-3 min-h-[90px] flex flex-col justify-between animate-fadein`}
                 >
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-xs sm:text-sm font-medium">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 px-0">
+                    <CardTitle className="text-[11px] sm:text-xs font-medium text-gray-700 dark:text-gray-200">
                       {card.title}
                     </CardTitle>
-                    <div
-                      className={`p-1 sm:p-2 rounded-full bg-white/80 dark:bg-gray-800/80`}
-                    >
-                      <card.icon className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
+                    <div className="p-1 rounded-full bg-white/70 dark:bg-gray-900/60">
+                      <card.icon className="h-3 w-3 sm:h-4 sm:w-4 text-primary/60" />
                     </div>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="px-0 pb-0">
                     {isLoading ? (
-                      <Skeleton className="h-6 sm:h-8 w-16 sm:w-20" />
+                      <Skeleton className="h-5 sm:h-6 w-12 sm:w-16" />
                     ) : (
                       <>
-                        <div className="text-xl sm:text-2xl font-bold">
+                        <div className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">
                           {card.value?.toLocaleString()}
                         </div>
-                        <p className="text-xs text-muted-foreground mt-1">
+                        <p className="text-[10px] text-gray-400 mt-0.5">
                           {card.description}
                         </p>
                       </>
@@ -228,34 +234,32 @@ export default function AnalyticsDashboard() {
                 </Card>
               ))}
             </div>
-
-            <Card className="w-full">
-              <CardHeader>
-                <CardTitle className="text-lg sm:text-xl md:text-2xl">
+            <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-primary/10 to-transparent" />
+            <Card className="w-full border border-gray-100 dark:border-gray-800 shadow-none bg-gradient-to-tr from-gray-50/80 to-white dark:from-gray-900/60 dark:to-gray-950/80 animate-fadein">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
                   Analytics Overview
                 </CardTitle>
-                <CardDescription className="text-xs sm:text-sm">
+                <CardDescription className="text-xs text-gray-400">
                   Comparative view of all metrics
                 </CardDescription>
               </CardHeader>
-              <CardContent className="pt-6">
+              <CardContent className={`pt-2 ${chartHeightClass}`}>
                 {isLoading ? (
-                  <Skeleton className={`h-[${chartConfig.height}px] w-full`} />
+                  <Skeleton
+                    className={`${chartHeightClass} w-full rounded-md`}
+                  />
                 ) : (
                   <ChartContainer
-                    config={{
-                      value: {
-                        label: "Count",
-                      },
-                    }}
-                    className={`h-[${chartConfig.height}px] w-full md:w-1/2`}
+                    config={{ value: { label: "Count" } }}
+                    className={`w-full h-full`}
                   >
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={chartData} margin={chartConfig.margin}>
                         <CartesianGrid
                           vertical={false}
                           stroke="#f3f4f6"
-                          strokeDasharray="3 3"
+                          strokeDasharray="2 2"
                         />
                         <XAxis
                           dataKey="name"
@@ -265,24 +269,24 @@ export default function AnalyticsDashboard() {
                           interval={0}
                           tick={{
                             fontSize: chartConfig.xAxisFontSize,
-                            fill: "currentColor",
+                            fill: "#888",
                             opacity: 0.7,
                           }}
-                          strokeOpacity={0.5}
+                          strokeOpacity={0.3}
                         />
                         <YAxis
-                          stroke="currentColor"
-                          strokeOpacity={0.5}
+                          stroke="#888"
+                          strokeOpacity={0.3}
                           tick={{
                             fontSize: chartConfig.yAxisFontSize,
-                            fill: "currentColor",
+                            fill: "#888",
                             opacity: 0.7,
                           }}
                         />
                         <Bar
                           dataKey="value"
-                          radius={[4, 4, 0, 0]}
-                          fill="hsl(var(--primary))"
+                          radius={[3, 3, 0, 0]}
+                          fill="var(--primary)"
                         />
                         <ChartTooltip content={<ChartTooltipContent />} />
                       </BarChart>
@@ -294,6 +298,21 @@ export default function AnalyticsDashboard() {
           </div>
         )}
       </div>
+      <style jsx global>{`
+        .animate-fadein {
+          animation: fadein 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        @keyframes fadein {
+          from {
+            opacity: 0;
+            transform: translateY(12px);
+          }
+          to {
+            opacity: 1;
+            transform: none;
+          }
+        }
+      `}</style>
     </div>
   );
 }

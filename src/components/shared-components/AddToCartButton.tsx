@@ -5,6 +5,7 @@ import { ShoppingCart } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "../shadcn-ui/button";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 interface AddToCartButtonProps {
   productId: string;
@@ -19,9 +20,10 @@ export const AddToCartButton = ({
   const [isLoading, setIsLoading] = useState(false);
   const [quantity, setQuantity] = useState(initialQuantity);
   const router = useRouter();
+  const { data: session } = useSession();
 
   const addToCart = async () => {
-    if (localStorage.getItem("accessToken") === null) {
+    if (!session) {
       toast.info("Login to add product to cart", {
         closeButton: true,
         position: "top-right",
@@ -37,7 +39,7 @@ export const AddToCartButton = ({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${session?.user?.accessToken}`,
         },
         body: JSON.stringify({
           productId,

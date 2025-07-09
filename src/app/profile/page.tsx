@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import {
@@ -29,6 +29,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 // Define types
 interface UserProfile {
@@ -65,8 +66,9 @@ export default function ProfilePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError] = useState<string>("");
-  const [userRole, setUserRole] = useState<string | null>(null);
   const router = useRouter();
+
+  const { data: session, status } = useSession();
 
   const {
     register,
@@ -75,92 +77,77 @@ export default function ProfilePage() {
     reset,
   } = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
-    defaultValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-    },
   });
 
-  useEffect(() => {
-    const isLoggedIn = localStorage.getItem("accessToken");
-    if (!isLoggedIn) {
-      toast.error("Please login first");
-      router.push("/login");
-      return;
-    }
-    getProfile();
-  }, []);
-
-  // Initialize user role from localStorage
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setUserRole(localStorage.getItem("userRole"));
-    }
-  }, []);
-
-  useEffect(() => {
-    reset({
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-    });
-  }, [user, reset]);
-
-  // const getAccessToken = () => {
-  //   if (typeof window === "undefined") return null;
-  //   return localStorage.getItem("accessToken");
-  // };
-
-  async function getProfile() {
-    try {
+  const getProfile = useCallback(
+    async (accessToken: string) => {
       setIsLoading(true);
-      setError("");
-      // const accessToken = getAccessToken();
+      try {
+        setError("");
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/profile`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/profile`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-          },
+        if (!response.ok) {
+          throw new Error("Failed to fetch profile");
         }
-      );
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch profile");
+        const data = (await response.json()) as ApiResponse;
+        const profileData = {
+          avatar: data?.data.name || "/avatar.webp",
+          email: data?.data.email || "",
+          firstName: data?.data.firstName || "",
+          lastName: data?.data.lastName || "",
+        };
+        setUser(profileData);
+        reset(profileData);
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Something went wrong";
+        setError(errorMessage);
+        toast.error(errorMessage);
+      } finally {
+        setIsLoading(false);
       }
+    },
+    [reset]
+  );
 
-      const data = (await response.json()) as ApiResponse;
-      setUser({
-        avatar: data?.data.name || "/avatar.webp",
-        email: data?.data.email || "",
-        firstName: data?.data.firstName || "",
-        lastName: data?.data.lastName || "",
-      });
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Something went wrong";
-      setError(errorMessage);
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
+  useEffect(() => {
+    if (status === "authenticated" && session?.user?.accessToken) {
+      getProfile(session.user.accessToken);
     }
+  }, [status, session, getProfile]);
+
+  if (status === "loading" || isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[70vh]">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  if (status === "unauthenticated") {
+    router.push("/login");
+    return null;
   }
 
   const onSubmit = async (formData: ProfileFormData) => {
+    if (!session?.user?.accessToken) {
+      toast.error("Authentication token not found. Please log in again.");
+      return;
+    }
+
     try {
       setIsUpdating(true);
       setError("");
-
-      // const accessToken = await getAccessToken();
-
-      // if (!accessToken) {
-      //   await signOut();
-      //   throw new Error("No access token found");
-      // }
 
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/profile`,
@@ -168,7 +155,7 @@ export default function ProfilePage() {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            Authorization: `Bearer ${session.user.accessToken}`,
           },
           body: JSON.stringify(formData),
         }
@@ -190,63 +177,63 @@ export default function ProfilePage() {
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[70vh]">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
-
   return (
-    <div className="container min-h-[70vh] mx-auto py-10 px-4 sm:px-6">
-      <h1 className="text-3xl font-bold mb-6">My Profile</h1>
+    <div className="container min-h-[70vh] mx-auto py-8 px-2">
+      <h1 className="text-xl font-bold mb-5 tracking-tight text-primary">
+        My Profile
+      </h1>
 
       {error && (
-        <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-lg">
+        <div className="mb-5 p-3 bg-red-50 text-red-600 rounded text-sm">
           {error}
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="col-span-1">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card className="col-span-1 border border-pink-100 shadow-none rounded-xl">
           <CardHeader>
-            <CardTitle>User Information</CardTitle>
+            <CardTitle className="text-base font-semibold text-primary">
+              User Info
+            </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col items-center">
-            <Avatar className="w-24 h-24 mb-4">
+            <Avatar className="w-20 h-20 mb-3">
               <AvatarImage
                 src={user.avatar}
                 alt={`${user.firstName} ${user.lastName}`}
               />
               <AvatarFallback>
-                {`${user.firstName.charAt(0)}${user.lastName.charAt(0)}`}
+                {user.firstName && user.lastName
+                  ? `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`
+                  : ""}
               </AvatarFallback>
             </Avatar>
-            <h2 className="text-2xl font-semibold">
+            <h2 className="text-lg font-semibold text-primary mb-1">
               {`${user.firstName} ${user.lastName}`}
             </h2>
-            <p className="text-muted-foreground">{user.email}</p>
+            <p className="text-xs text-muted-foreground mb-2">{user.email}</p>
 
-            {userRole === "admin" && (
-              <Link className="mt-4" href="/dashboard">
-                <Button>Admin Dashboard</Button>
+            {session?.user?.role === "admin" && (
+              <Link className="mt-2" href="/dashboard">
+                <Button size="sm" variant="outline">
+                  Admin Dashboard
+                </Button>
               </Link>
             )}
 
-            <SignOutButton className="mt-4" />
+            <SignOutButton className="mt-2 w-full" />
           </CardContent>
         </Card>
 
-        <Card className="col-span-1 md:col-span-2">
+        <Card className="col-span-1 md:col-span-2 border border-pink-100 shadow-none rounded-xl">
           <Tabs defaultValue="details">
             <CardHeader>
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="details">
+                <TabsTrigger value="details" className="text-sm">
                   <User className="mr-2 h-4 w-4" />
                   Details
                 </TabsTrigger>
-                <TabsTrigger value="settings">
+                <TabsTrigger value="settings" className="text-sm">
                   <Settings className="mr-2 h-4 w-4" />
                   Settings
                 </TabsTrigger>
@@ -254,46 +241,55 @@ export default function ProfilePage() {
             </CardHeader>
             <CardContent>
               <TabsContent value="details">
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
                   <div>
-                    <Label htmlFor="firstName">First Name</Label>
+                    <Label htmlFor="firstName" className="text-xs">
+                      First Name
+                    </Label>
                     <Input
                       id="firstName"
                       {...register("firstName")}
                       disabled={isUpdating}
                       aria-invalid={!!errors.firstName}
+                      className="text-sm"
                     />
                     {errors.firstName && (
-                      <p className="text-sm text-red-500 mt-1">
+                      <p className="text-xs text-red-500 mt-1">
                         {errors.firstName.message}
                       </p>
                     )}
                   </div>
                   <div>
-                    <Label htmlFor="lastName">Last Name</Label>
+                    <Label htmlFor="lastName" className="text-xs">
+                      Last Name
+                    </Label>
                     <Input
                       id="lastName"
                       {...register("lastName")}
                       disabled={isUpdating}
                       aria-invalid={!!errors.lastName}
+                      className="text-sm"
                     />
                     {errors.lastName && (
-                      <p className="text-sm text-red-500 mt-1">
+                      <p className="text-xs text-red-500 mt-1">
                         {errors.lastName.message}
                       </p>
                     )}
                   </div>
                   <div>
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="email" className="text-xs">
+                      Email
+                    </Label>
                     <Input
                       id="email"
                       type="email"
                       {...register("email")}
                       disabled={isUpdating}
                       aria-invalid={!!errors.email}
+                      className="text-sm"
                     />
                     {errors.email && (
-                      <p className="text-sm text-red-500 mt-1">
+                      <p className="text-xs text-red-500 mt-1">
                         {errors.email.message}
                       </p>
                     )}
@@ -301,7 +297,7 @@ export default function ProfilePage() {
                   <Button
                     type="submit"
                     disabled={isUpdating}
-                    className="w-full"
+                    className="w-full text-sm"
                   >
                     {isUpdating && (
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -312,37 +308,41 @@ export default function ProfilePage() {
               </TabsContent>
 
               <TabsContent value="settings">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
                     <div>
-                      <h3 className="font-medium">Email Notifications</h3>
-                      <p className="text-sm text-muted-foreground">
+                      <h3 className="font-medium text-sm">
+                        Email Notifications
+                      </h3>
+                      <p className="text-xs text-muted-foreground">
                         Receive emails about your account activity
                       </p>
                     </div>
-                    <Button variant="outline" disabled>
+                    <Button variant="outline" size="sm" disabled>
                       Manage
                     </Button>
                   </div>
-                  <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
+                  <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
                     <div>
-                      <h3 className="font-medium">Password</h3>
-                      <p className="text-sm text-muted-foreground">
+                      <h3 className="font-medium text-sm">Password</h3>
+                      <p className="text-xs text-muted-foreground">
                         Change your password
                       </p>
                     </div>
-                    <Button variant="outline" disabled>
+                    <Button variant="outline" size="sm" disabled>
                       Update
                     </Button>
                   </div>
-                  <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
+                  <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
                     <div>
-                      <h3 className="font-medium">Two-Factor Authentication</h3>
-                      <p className="text-sm text-muted-foreground">
+                      <h3 className="font-medium text-sm">
+                        Two-Factor Authentication
+                      </h3>
+                      <p className="text-xs text-muted-foreground">
                         Add an extra layer of security to your account
                       </p>
                     </div>
-                    <Button variant="outline" disabled>
+                    <Button variant="outline" size="sm" disabled>
                       Enable
                     </Button>
                   </div>

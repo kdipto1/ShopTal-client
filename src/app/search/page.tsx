@@ -26,24 +26,24 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   } = await getCategories({ limit: 20 });
 
   return (
-    <div className="container mx-auto px-4 py-8 min-h-[70vh]">
-      <h1 className="text-3xl font-bold mb-6">Search Products</h1>
-
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="md:col-span-1">
+    <div className="container mx-auto px-2 py-6 min-h-[70vh] bg-white dark:bg-gray-950">
+      <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900 dark:text-white mb-4 tracking-tight">
+        Search Products
+      </h1>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6">
+        <div className="md:col-span-1 md:sticky md:top-24 h-fit">
           <SearchFilters
             categories={categories}
             currentFilters={parsedParams}
           />
         </div>
-
         <div className="md:col-span-3">
           <Suspense
             fallback={
               <div className="flex items-center justify-center min-h-[400px]">
                 <div className="text-center">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
-                  <p className="mt-2">Loading products...</p>
+                  <p className="mt-2 text-gray-500">Loading products...</p>
                 </div>
               </div>
             }

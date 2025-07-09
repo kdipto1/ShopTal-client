@@ -47,9 +47,9 @@
 //   }
 
 //   return (
-//     <section className="hidden md:block w-full border-b bg-white/95 backdrop-blur relative z-50">
+//     <section className="hidden md:block w-full border-b bg-white/95 backdrop-blur-sm relative z-50">
 //       <div className="flex min-h-14 items-center justify-center">
-//         <NavigationMenu className="max-w-screen-2xl">
+//         <NavigationMenu className="max-w-(--breakpoint-2xl)">
 //           <NavigationMenuList className="flex flex-wrap gap-1">
 //             {categories?.map((category) => (
 //               <NavigationMenuItem key={category.id} className="">
@@ -62,7 +62,7 @@
 //                     <div className="row-span-3">
 //                       <NavigationMenuLink asChild>
 //                         <Link
-//                           className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
+//                           className="flex h-full w-full select-none flex-col justify-end rounded-md bg-linear-to-b from-muted/50 to-muted p-6 no-underline outline-hidden focus:shadow-md"
 //                           href={`/search?categoryId=${category.id}`}
 //                         >
 //                           <div className="mb-2 mt-4 text-lg font-medium">
@@ -126,7 +126,7 @@
 //         <span
 //           ref={ref}
 //           className={cn(
-//             "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+//             "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-hidden transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
 //             className
 //           )}
 //           {...props}
@@ -191,15 +191,13 @@ export default function NavbarMenu({ categories }: { categories: Category[] }) {
     const screenWidth = window.innerWidth;
     const midpoint = Math.floor(categories.length / 2);
     const isLeft = index < midpoint;
-    const width = screenWidth < 768 ? screenWidth - 20 : 400;
-
+    const width = screenWidth < 768 ? screenWidth - 20 : 340;
     setDropdownStyles({
       left: isLeft ? "10px" : "auto",
       right: !isLeft ? "10px" : "auto",
       maxWidth: width,
       transform: "none",
     });
-
     setActiveCategory(categoryId);
   };
 
@@ -208,15 +206,15 @@ export default function NavbarMenu({ categories }: { categories: Category[] }) {
   };
 
   return (
-    <section className="hidden md:block w-full border-b bg-white/95 backdrop-blur relative z-50">
-      <nav className="px-4 min-h-14" onMouseLeave={handleMenuLeave}>
-        <ul className="flex flex-wrap gap-1 justify-center max-w-screen-2xl mx-auto">
+    <section className="hidden md:block w-full border-b bg-white/90 backdrop-blur-sm relative z-50">
+      <nav className="px-2 min-h-12" onMouseLeave={handleMenuLeave}>
+        <ul className="flex flex-wrap gap-1 justify-center max-w-screen-xl mx-auto">
           {categories?.map((category, index) => (
             <li key={category.id} className="relative">
               <button
                 onClick={() => handleCategoryClick(category.id)}
                 onMouseEnter={() => handleCategoryHover(category.id, index)}
-                className="flex items-center gap-1.5 px-3 py-4 text-sm font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-md transition-colors"
+                className="flex items-center gap-1 px-2 py-2 text-sm font-medium text-slate-700 hover:text-pink-600 hover:bg-pink-50 rounded transition-colors"
               >
                 {category.name}
                 <ChevronDown
@@ -227,58 +225,45 @@ export default function NavbarMenu({ categories }: { categories: Category[] }) {
               </button>
               {activeCategory === category.id && (
                 <div
-                  className="absolute top-full bg-white rounded-lg shadow-lg ring-1 ring-slate-900/5 p-6 mt-0.5 z-[60] overflow-auto md:w-[250px] lg:w-[500px]"
+                  className="absolute top-full bg-white rounded shadow ring-1 ring-pink-100 p-3 mt-1 z-60 overflow-auto md:w-[200px] lg:w-[340px]"
                   style={dropdownStyles}
                   onMouseEnter={() => handleCategoryHover(category.id, index)}
                 >
-                  <div className="grid gap-6 w-full lg:grid-cols-[1fr_1.5fr]">
-                    <div>
-                      <Link
-                        href={`/search?categoryId=${category.id}`}
-                        className="flex h-full flex-col justify-end rounded-lg bg-gradient-to-b from-slate-50 to-slate-100 p-6 no-underline outline-none ring-slate-900/5 transition-shadow hover:shadow-md"
-                      >
-                        <div className="mb-2 mt-4 text-lg font-medium text-slate-900">
-                          {category.name}
-                        </div>
-                        <p className="text-sm leading-tight text-slate-600">
-                          Explore all {category.name.toLowerCase()} products
-                        </p>
-                      </Link>
-                    </div>
-                    <div className="grid gap-6">
-                      {category.productSubcategory.length > 0 && (
-                        <div>
-                          <ul className="grid gap-2 sm:grid-cols-2">
-                            {category.productSubcategory.map((subcategory) => (
-                              <li key={subcategory.id}>
-                                <Link
-                                  href={`/search?categoryId=${category.id}&subcategoryId=${subcategory.id}`}
-                                  className="block rounded-md px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-                                >
-                                  {subcategory.name}
-                                </Link>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                      {category.brands.length > 0 && (
-                        <div>
-                          <ul className="grid gap-2 sm:grid-cols-2">
-                            {category.brands.map((brandItem) => (
-                              <li key={brandItem.brand.id}>
-                                <Link
-                                  href={`/search?categoryId=${brandItem.categoryId}&brandId=${brandItem.brand.id}`}
-                                  className="block rounded-md px-3 py-2 text-sm text-black hover:bg-slate-50 hover:text-slate-900"
-                                >
-                                  {brandItem.brand.name}
-                                </Link>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
+                  <div className="grid gap-3 w-full">
+                    <Link
+                      href={`/search?categoryId=${category.id}`}
+                      className="block rounded px-2 py-2 text-sm font-semibold text-pink-600 hover:bg-pink-50 transition-colors"
+                    >
+                      All {category.name}
+                    </Link>
+                    {category.productSubcategory.length > 0 && (
+                      <ul className="grid gap-1">
+                        {category.productSubcategory.map((subcategory) => (
+                          <li key={subcategory.id}>
+                            <Link
+                              href={`/search?categoryId=${category.id}&subcategoryId=${subcategory.id}`}
+                              className="block rounded px-2 py-1 text-xs text-slate-600 hover:bg-pink-50 hover:text-pink-600 transition-colors"
+                            >
+                              {subcategory.name}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    {category.brands.length > 0 && (
+                      <ul className="grid gap-1 border-t border-pink-50 pt-2 mt-2">
+                        {category.brands.map((brandItem) => (
+                          <li key={brandItem.brand.id}>
+                            <Link
+                              href={`/search?categoryId=${brandItem.categoryId}&brandId=${brandItem.brand.id}`}
+                              className="block rounded px-2 py-1 text-xs text-slate-600 hover:bg-pink-50 hover:text-pink-600 transition-colors"
+                            >
+                              {brandItem.brand.name}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
                 </div>
               )}
@@ -286,7 +271,7 @@ export default function NavbarMenu({ categories }: { categories: Category[] }) {
           ))}
         </ul>
       </nav>
-      <div className="h-px bg-slate-200" />
+      <div className="h-px bg-pink-100" />
     </section>
   );
 }

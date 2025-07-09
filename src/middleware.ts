@@ -1,48 +1,50 @@
-import { NextResponse, NextRequest } from "next/server";
+import { NextResponse } from "next/server";
+import { auth } from "@/auth";
 import { RouteConfig } from "./types";
 
+// Define protected routes and their required roles
 export const PROTECTED_ROUTES: RouteConfig = {
   "/dashboard": ["admin"],
   "/cart": ["user", "admin"],
   "/profile": ["user", "admin"],
 };
 
+// Define authentication-related routes
 export const AUTH_ROUTES = {
   LOGIN: "/login",
-  // UNAUTHORIZED: "/unauthorized",
-  // CHANGE_PASSWORD: "/dashboard/change-password",
+  UNAUTHORIZED: "/unauthorized", // A dedicated page for authorization errors
 };
 
-export async function middleware(request: NextRequest) {
-  const pathname = request.nextUrl.pathname;
+export default auth((req) => {
+  const { pathname } = req.nextUrl;
+  const user = req.auth?.user;
+  const userRole = user?.role ?? "";
 
-  // Check if current path matches any protected routes
-  const matchingRoute = Object.entries(PROTECTED_ROUTES).find(([route]) =>
+  const protectedRoute = Object.keys(PROTECTED_ROUTES).find((route) =>
     pathname.startsWith(route)
   );
 
-  if (matchingRoute) {
-    const [route, allowedRoles] = matchingRoute;
-    const token = request.cookies.get("accessToken")?.value;
-    const role = request.cookies.get("userRole")?.value;
-
-    // Redirect to login if no auth credentials
-    if (!token || !role) {
-      const loginUrl = new URL(AUTH_ROUTES.LOGIN, request.url);
+  if (protectedRoute) {
+    // If the user is not authenticated, redirect to the login page
+    if (!user) {
+      const loginUrl = new URL(AUTH_ROUTES.LOGIN, req.url);
       loginUrl.searchParams.set("callbackUrl", pathname);
-
       return NextResponse.redirect(loginUrl);
     }
 
-    // Redirect to unauthorized if role doesn't match
-    if (!allowedRoles.includes(role)) {
-      return NextResponse.redirect(new URL(AUTH_ROUTES.LOGIN, request.url));
+    // Check if the user has the required role for the route
+    const allowedRoles = PROTECTED_ROUTES[protectedRoute];
+    if (!allowedRoles.includes(userRole)) {
+      // Redirect to the login page if the role does not match
+      return NextResponse.redirect(new URL(AUTH_ROUTES.LOGIN, req.url));
     }
   }
 
+  // Allow the request to proceed
   return NextResponse.next();
-}
-// Routes Middleware should not run on
+});
+
+// Configure the middleware to run on specific paths
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|.*\\.png$).*)"],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };

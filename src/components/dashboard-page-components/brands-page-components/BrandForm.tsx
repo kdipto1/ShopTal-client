@@ -185,11 +185,12 @@ import {
 } from "@/components/shadcn-ui/form";
 import { Input } from "@/components/shadcn-ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import Select from "react-select";
+import { useSession } from "next-auth/react";
 
 // Define the schema for form validation
 const FormSchema = z.object({
@@ -204,13 +205,10 @@ const FormSchema = z.object({
   ),
 });
 
-export default function MultipleCategoryBrandForm({
-  brandId,
-}: {
-  brandId?: string;
-}) {
+export default function BrandForm({ brandId }: { brandId?: string }) {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(!!brandId);
+  const { data: session, status } = useSession();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -222,15 +220,13 @@ export default function MultipleCategoryBrandForm({
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
-  // Fetch categories
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     try {
       const data = await fetch(`${API_BASE_URL}/categories?limit=100`, {
         method: "GET",
       });
       const categoriesResponse = await data.json();
 
-      // Transform categories for react-select
       const selectCategories = categoriesResponse?.data?.data.map(
         (category: { id: string; name: string }) => ({
           value: category.id,
@@ -241,52 +237,70 @@ export default function MultipleCategoryBrandForm({
       setCategories(selectCategories);
     } catch (error) {
       console.error("Error fetching categories:", error);
-      toast("Failed to fetch categories. Please try again.");
+      toast.error("Failed to fetch categories. Please try again.");
     }
-  };
+  }, [API_BASE_URL]);
 
-  // Fetch brand data if in edit mode
-  const fetchBrand = async () => {
-    if (!brandId) return;
-    try {
-      const response = await fetch(`${API_BASE_URL}/brands/${brandId}`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,
-        },
-      });
+  const fetchBrand = useCallback(
+    async (accessToken: string) => {
+      if (!brandId) return;
+      try {
+        const response = await fetch(`${API_BASE_URL}/brands/${brandId}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch brand data");
+        if (!response.ok) {
+          throw new Error("Failed to fetch brand data");
+        }
+
+        const brandData = await response.json();
+
+        const selectedCategories =
+          brandData.data.categories?.map(
+            (cat: { category: { id: string; name: string } }) => ({
+              value: cat.category.id,
+              label: cat.category.name,
+            })
+          ) || [];
+
+        form.reset({
+          name: brandData.data.name,
+          categories: selectedCategories,
+        });
+      } catch (error) {
+        console.error("Error fetching brand:", error);
+        toast.error("Failed to fetch brand data. Please try again.");
+      } finally {
+        setLoading(false);
       }
-
-      const brandData = await response.json();
-
-      // Transform brand categories for react-select
-      const selectedCategories =
-        brandData.data.categories?.map(
-          (cat: { category: { id: string; name: string } }) => ({
-            value: cat.category.id,
-            label: cat.category.name,
-          })
-        ) || [];
-
-      form.reset({
-        name: brandData.data.name,
-        categories: selectedCategories,
-      });
-    } catch (error) {
-      console.error("Error fetching brand:", error);
-      toast("Failed to fetch brand data. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+    [brandId, API_BASE_URL, form]
+  );
 
   useEffect(() => {
+    if (status === "loading") return;
+
+    if (status === "unauthenticated") {
+      toast.error("Please login to access this page.");
+      return;
+    }
+
     fetchCategories();
-    if (brandId) fetchBrand();
-  }, [brandId]);
+    if (brandId && session?.user?.accessToken) {
+      fetchBrand(session.user.accessToken as string);
+    }
+  }, [brandId, session, status, fetchBrand, fetchCategories]);
+
+  if (status === "loading") {
+    return <p>Loading session...</p>;
+  }
+
+  if (status === "unauthenticated") {
+    return null;
+  }
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     try {
@@ -304,7 +318,7 @@ export default function MultipleCategoryBrandForm({
         method,
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,
+          Authorization: `Bearer ${session?.user?.accessToken || ""}`,
         },
         body: JSON.stringify(payload),
       });

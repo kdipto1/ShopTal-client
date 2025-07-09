@@ -3,9 +3,12 @@ import { LogIn, ShoppingCart, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import SearchProducts from "./HeaderSearchProducts";
+import { useSession } from "next-auth/react";
+import SignOutButton from "../SignOutButton";
 
 export default function Header({ children }: { children: any }) {
   const router = usePathname();
+  const { data: session, status } = useSession();
 
   // Check if the current route is in the hideOnRoutes array
   const shouldHide = router.includes("/dashboard");
@@ -15,45 +18,49 @@ export default function Header({ children }: { children: any }) {
   }
 
   return (
-    <header className="w-full bg-white bg-opacity-95 backdrop-blur relative z-[60]">
+    <header className="sticky top-0 w-full bg-white/90 backdrop-blur-sm shadow-sm z-50 transition-all duration-200">
       <div className="max-w-7xl mx-auto px-4 flex h-14 items-center">
-        <div className="mr-4 flex">
-          {/* <MobileNavbar /> */}
+        <div className="mr-2 flex items-center">
           {children}
           <Link
             href="/"
-            className="ml-2 md:ml-0 mr-6 flex items-center space-x-2 text-2xl"
+            className="ml-2 md:ml-0 mr-4 flex items-center space-x-2 text-xl font-bold text-primary hover:text-pink-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-pink-400 rounded"
+            tabIndex={0}
+            aria-label="Home"
           >
-            <span className="font-bold text-primary">ShopTal</span>
+            <span>ShopTal</span>
           </Link>
         </div>
-        <div className="flex flex-1 items-center justify-end space-x-2 sm:justify-between sm:space-x-4 md:justify-end">
+        <div className="flex flex-1 items-center justify-end space-x-2 md:space-x-4">
           <div className="w-full flex-1 md:w-auto md:flex-none">
             <SearchProducts />
           </div>
-          <nav className="hidden md:flex items-center space-x-2 text-primary">
+          <nav className="hidden md:flex items-center space-x-1 text-primary">
             <Link
               href={"/cart"}
-              className="p-2 rounded-md hover:bg-gray-100 transition-colors flex"
+              className="p-2 rounded hover:bg-pink-50 transition-colors flex text-sm"
               aria-label="Shopping Cart"
             >
-              <ShoppingCart className="h-5 w-5" /> &nbsp; Cart
+              <ShoppingCart className="h-5 w-5" />
             </Link>
             <Link
               href="/profile"
-              className="p-2 rounded-md hover:bg-gray-100 transition-colors flex"
+              className="p-2 rounded hover:bg-pink-50 transition-colors flex text-sm"
               aria-label="User Account"
             >
-              <User className="h-5 w-5" /> &nbsp; Profile
+              <User className="h-5 w-5" />
             </Link>
-
-            <Link
-              href="/login"
-              className="p-2 rounded-md hover:bg-gray-100 transition-colors flex"
-              aria-label="User Account"
-            >
-              <LogIn className="h-5 w-5" /> &nbsp; Login
-            </Link>
+            {status === "authenticated" ? (
+              <SignOutButton variant="ghost" size="icon" />
+            ) : (
+              <Link
+                href="/login"
+                className="p-2 rounded hover:bg-pink-50 transition-colors flex text-sm"
+                aria-label="Login"
+              >
+                <LogIn className="h-5 w-5" />
+              </Link>
+            )}
           </nav>
         </div>
       </div>

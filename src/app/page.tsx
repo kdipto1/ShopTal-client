@@ -1,4 +1,4 @@
-import { Suspense, lazy } from "react";
+import { Suspense } from "react";
 import Banner from "@/components/home-page-components/Banner";
 import Categories from "@/components/home-page-components/Categories";
 import CategoriesSkeleton from "@/components/home-page-components/CategoriesSkeleton";

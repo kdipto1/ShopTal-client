@@ -1,10 +1,10 @@
 "use client";
-import { signOut } from "@/lib/cookies";
+import { signOut } from "next-auth/react";
 import { LogOut } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "../shadcn-ui/button";
-import { deleteCookie } from "cookies-next";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,7 +16,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../shadcn-ui/alert-dialog";
-import { useRouter } from "next/navigation";
 
 interface SignOutButtonProps {
   variant?:
@@ -36,53 +35,25 @@ export default function SignOutButton({
   className,
 }: SignOutButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
-
-  // const handleSignOut = async () => {
-  //   try {
-  //     setIsLoading(true);
-  //     // Clear client-side storage
-  //     localStorage.removeItem("accessToken");
-  //     localStorage.removeItem("userRole");
-  //     deleteCookie("accessToken");
-  //     deleteCookie("userRole");
-  //     document.cookie = `accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-  //     document.cookie = `userRole=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-  //     // Call server action to clear cookies and redirect
-  //     await signOut();
-
-  //     toast.success("Signed out successfully");
-  //     router.push("/");
-  //   } catch (error) {
-  //     toast.error("Error signing out");
-  //     console.error("Sign out error:", error);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
 
   const handleSignOut = async () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("userRole");
-    deleteCookie("accessToken");
-    deleteCookie("userRole");
-    document.cookie = `accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-    document.cookie = `userRole=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-    // Call server action to clear cookies and redirect
-    await signOut();
-    toast.success("Signed out successfully");
-    router.push("/");
+    try {
+      setIsLoading(true);
+
+      toast.success("Signed out successfully", { duration: 600 });
+      await signOut({ callbackUrl: "/" });
+    } catch (error) {
+      toast.error("Error signing out");
+      console.error("Sign out error:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button
-          variant={variant}
-          size={size}
-          className={className}
-          disabled={isLoading}
-        >
+        <Button variant={variant} size={size} className={className}>
           {size === "icon" ? (
             <LogOut className="h-4 w-4" />
           ) : (
@@ -107,6 +78,7 @@ export default function SignOutButton({
           <AlertDialogAction
             onClick={handleSignOut}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            disabled={isLoading}
           >
             {isLoading ? "Signing out..." : "Sign out"}
           </AlertDialogAction>

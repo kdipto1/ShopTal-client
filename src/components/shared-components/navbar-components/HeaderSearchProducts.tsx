@@ -1,9 +1,10 @@
 "use client";
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { Search } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import useClickOutside from "@/hooks/useClickOutside";
+import Image from "next/image";
 
 // Types
 interface Product {
@@ -30,19 +31,26 @@ const MIN_SEARCH_LENGTH = 2;
 
 // Custom debounce hook
 const useDebounce = (callback: (...args: any[]) => void, delay: number) => {
-  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    // Cleanup on unmount or when callback/delay changes
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   return useCallback(
     (...args: any[]) => {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
       }
 
-      const newTimeoutId = setTimeout(() => {
+      timeoutRef.current = setTimeout(() => {
         callback(...args);
       }, delay);
-
-      setTimeoutId(newTimeoutId);
     },
     [callback, delay]
   );
@@ -52,22 +60,41 @@ const useDebounce = (callback: (...args: any[]) => void, delay: number) => {
 const SearchResult = ({ product, onSelect }: SearchResultProps) => (
   <Link
     href={`/product/${product.id}`}
-    className="flex items-center space-x-4 p-2 hover:bg-gray-100 rounded-md transition-colors"
+    className="flex items-center gap-3 p-2 hover:bg-pink-50 rounded transition-colors"
     onClick={onSelect}
   >
-    <img
-      src={product.image}
-      alt={product.name}
-      className="w-12 h-12 rounded-md object-cover"
-    />
-    <div>
-      <p className="text-sm font-medium overflow-hidden text-ellipsis whitespace-nowrap">
-        {product.name}
-      </p>
-      <p className="text-sm text-gray-500">${product.price.toFixed(2)}</p>
+    {product.image ? (
+      <Image
+        src={product.image}
+        alt={product.name}
+        width={40}
+        height={40}
+        className="w-10 h-10 rounded object-cover"
+      />
+    ) : (
+      <div
+        className="w-10 h-10 rounded flex items-center justify-center text-white text-base font-bold"
+        style={{ background: stringToColor(product.name) }}
+      >
+        {product.name.charAt(0).toUpperCase()}
+      </div>
+    )}
+    <div className="flex-1 min-w-0">
+      <p className="text-xs font-medium truncate">{product.name}</p>
+      <p className="text-xs text-gray-500">${product.price.toFixed(2)}</p>
     </div>
   </Link>
 );
+
+// Utility to generate a color from a string
+function stringToColor(str: string) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const color = `hsl(${hash % 360}, 70%, 60%)`;
+  return color;
+}
 
 // Search Results List Component
 const SearchResultsList = ({ results, onSelect }: SearchResultsListProps) => (
@@ -147,8 +174,14 @@ export default function SearchProducts() {
   return (
     <div ref={searchContainerRef} className="relative">
       <div className="relative">
-        <Link type="button" href={`/search?searchTerm=${searchTerm}`}>
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-primary" />
+        <Link
+          type="button"
+          href={`/search?searchTerm=${searchTerm}`}
+          className="absolute left-2 top-2 h-4 w-4 text-primary focus:outline-none focus:ring-2 focus:ring-pink-400 rounded"
+          tabIndex={0}
+          aria-label="Search"
+        >
+          <Search className="h-4 w-4" />
         </Link>
         <input
           ref={inputRef}
@@ -158,27 +191,45 @@ export default function SearchProducts() {
           onChange={handleSearchChange}
           onFocus={handleFocus}
           onKeyDown={handleKeyDown}
-          className="w-full pl-8 pr-4 py-2 rounded-md border border-primary placeholder:text-primary focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent sm:w-[300px] md:w-[200px] lg:w-[300px]"
+          className="w-full pl-8 pr-2 py-2 rounded border border-pink-200 placeholder:text-primary focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-transparent text-sm bg-white"
           aria-label="Search products"
           aria-expanded={showDropdown}
           aria-controls="search-results"
           role="combobox"
         />
       </div>
-
-      {/* Custom Dropdown */}
       {showDropdown && (
         <div
           id="search-results"
-          className="absolute z-50 w-full mt-1 bg-white rounded-md shadow-lg border border-gray-200 max-h-[400px] overflow-y-auto"
+          className="absolute z-50 w-full mt-1 bg-white rounded shadow border border-pink-100 max-h-72 overflow-y-auto animate-fade-in-up"
           role="listbox"
         >
           {isLoading ? (
             <div
-              className="p-4 text-center text-gray-500"
+              className="p-3 text-center text-gray-400 flex items-center justify-center gap-2 text-xs"
               role="status"
               aria-live="polite"
             >
+              <svg
+                className="animate-spin h-4 w-4 text-pink-400"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v8z"
+                ></path>
+              </svg>
               Loading...
             </div>
           ) : searchResults.length > 0 ? (
@@ -188,7 +239,7 @@ export default function SearchProducts() {
             />
           ) : (
             <div
-              className="p-4 text-center text-gray-500"
+              className="p-3 text-center text-gray-400 text-xs"
               role="status"
               aria-live="polite"
             >

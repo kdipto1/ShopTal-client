@@ -20,7 +20,7 @@ const formSchema = z.object({
     message: "10 digit phone number required",
   }),
   password: z.string().min(6, {
-    message: "Password must be at least 2 characters.",
+    message: "Password must be at least 6 characters.",
   }),
   firstName: z.string().min(2, {
     message: "First name must be at least 2 characters",
@@ -85,104 +85,149 @@ export default function SignupForm() {
       toast.info(responseData.message + " " + "Now you can login!", {
         duration: 4000,
       });
-      // toast.info("Now you can login", { duration: 960 });
     } catch (error: any) {
       console.error("Error submitting form:", error);
       toast.error(error.message, { duration: 960 });
     }
   };
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className=" grid grid-cols-1 md:grid-cols-2 gap-8"
-      >
-        <FormField
-          control={form.control}
-          name="firstName"
-          render={({ field }) => (
-            <FormItem className="min-w-40 md:min-w-60">
-              <FormLabel>First Name</FormLabel>
-              <FormControl>
-                <Input type="text" placeholder="John" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="lastName"
-          render={({ field }) => (
-            <FormItem className="min-w-40 md:min-w-52">
-              <FormLabel>Last Name</FormLabel>
-              <FormControl>
-                <Input type="text" placeholder="Doe" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem className="min-w-40 md:min-w-52">
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input
-                  type="email"
-                  placeholder="johndoe@example.com"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="phone"
-          render={({ field }) => (
-            <FormItem className="min-w-40 md:min-w-52">
-              <FormLabel>Phone</FormLabel>
-              <FormControl>
-                <Input type="tel" placeholder="1234567890" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="address"
-          render={({ field }) => (
-            <FormItem className="min-w-40 md:min-w-52">
-              <FormLabel>Address</FormLabel>
-              <FormControl>
-                <Input type="text" placeholder="123 Main St" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem className="min-w-40 md:min-w-52">
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <Input type="password" placeholder="******" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button className="" type="submit">
-          Submit
-        </Button>
-      </form>
-    </Form>
+    <div className="animate-fadein">
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="grid grid-cols-1 md:grid-cols-2 gap-5"
+        >
+          <FormField
+            control={form.control}
+            name="firstName"
+            render={({ field }) => (
+              <FormItem className="min-w-40 md:min-w-52">
+                <FormLabel className="text-xs">First Name</FormLabel>
+                <FormControl>
+                  <Input
+                    type="text"
+                    placeholder="John"
+                    {...field}
+                    className="rounded-md border border-gray-200 dark:border-gray-800 text-sm"
+                  />
+                </FormControl>
+                <FormMessage className="text-xs" />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="lastName"
+            render={({ field }) => (
+              <FormItem className="min-w-40 md:min-w-52">
+                <FormLabel className="text-xs">Last Name</FormLabel>
+                <FormControl>
+                  <Input
+                    type="text"
+                    placeholder="Doe"
+                    {...field}
+                    className="rounded-md border border-gray-200 dark:border-gray-800 text-sm"
+                  />
+                </FormControl>
+                <FormMessage className="text-xs" />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem className="min-w-40 md:min-w-52">
+                <FormLabel className="text-xs">Email</FormLabel>
+                <FormControl>
+                  <Input
+                    type="email"
+                    placeholder="johndoe@example.com"
+                    {...field}
+                    className="rounded-md border border-gray-200 dark:border-gray-800 text-sm"
+                  />
+                </FormControl>
+                <FormMessage className="text-xs" />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="phone"
+            render={({ field }) => (
+              <FormItem className="min-w-40 md:min-w-52">
+                <FormLabel className="text-xs">Phone</FormLabel>
+                <FormControl>
+                  <Input
+                    type="tel"
+                    placeholder="1234567890"
+                    {...field}
+                    className="rounded-md border border-gray-200 dark:border-gray-800 text-sm"
+                  />
+                </FormControl>
+                <FormMessage className="text-xs" />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="address"
+            render={({ field }) => (
+              <FormItem className="min-w-40 md:min-w-52">
+                <FormLabel className="text-xs">Address</FormLabel>
+                <FormControl>
+                  <Input
+                    type="text"
+                    placeholder="123 Main St"
+                    {...field}
+                    className="rounded-md border border-gray-200 dark:border-gray-800 text-sm"
+                  />
+                </FormControl>
+                <FormMessage className="text-xs" />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem className="min-w-40 md:min-w-52">
+                <FormLabel className="text-xs">Password</FormLabel>
+                <FormControl>
+                  <Input
+                    type="password"
+                    placeholder="******"
+                    {...field}
+                    className="rounded-md border border-gray-200 dark:border-gray-800 text-sm"
+                  />
+                </FormControl>
+                <FormMessage className="text-xs" />
+              </FormItem>
+            )}
+          />
+          <Button
+            className="w-full bg-pink-50 hover:bg-pink-100 text-pink-600 font-semibold rounded-md shadow-none border border-pink-100 hover:border-pink-400 text-sm py-2 transition-colors duration-150 md:col-span-2"
+            type="submit"
+          >
+            Submit
+          </Button>
+        </form>
+      </Form>
+      <style jsx global>{`
+        .animate-fadein {
+          animation: fadein 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        @keyframes fadein {
+          from {
+            opacity: 0;
+            transform: translateY(16px);
+          }
+          to {
+            opacity: 1;
+            transform: none;
+          }
+        }
+      `}</style>
+    </div>
   );
 }

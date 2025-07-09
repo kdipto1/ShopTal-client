@@ -11,7 +11,8 @@ import {
 } from "@/components/shadcn-ui/form";
 import { Input } from "@/components/shadcn-ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -24,6 +25,7 @@ const FormSchema = z.object({
 
 export default function CategoryForm({ categoryId }: { categoryId?: string }) {
   const [loading, setLoading] = useState(!!categoryId);
+  const { data: session, status } = useSession();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -34,14 +36,14 @@ export default function CategoryForm({ categoryId }: { categoryId?: string }) {
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
-  const fetchCategory = async () => {
+  const fetchCategory = useCallback(async (accessToken: string) => {
     if (!categoryId) return;
 
     try {
       const response = await fetch(`${API_BASE_URL}/categories/${categoryId}`, {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       });
 
@@ -59,11 +61,13 @@ export default function CategoryForm({ categoryId }: { categoryId?: string }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [categoryId, API_BASE_URL, form]);
 
   useEffect(() => {
-    if (categoryId) fetchCategory();
-  }, [categoryId]);
+    if (categoryId && session?.user?.accessToken) {
+      fetchCategory(session.user.accessToken as string);
+    }
+  }, [categoryId, session, fetchCategory]);
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     try {
@@ -76,7 +80,7 @@ export default function CategoryForm({ categoryId }: { categoryId?: string }) {
         method,
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,
+          Authorization: `Bearer ${session?.user?.accessToken}`,
         },
         body: JSON.stringify(data),
       });

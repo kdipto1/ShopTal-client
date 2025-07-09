@@ -8,6 +8,7 @@ import Footer from "@/components/shared-components/Footer";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import MobileNavbar from "@/components/shared-components/navbar-components/MobileNavbar";
+import NextAuthProvider from "@/components/shared-components/NextAuthProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,15 +29,17 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="http://res.cloudinary.com" />
       </head>
       <body className={`bg-gray-100 ${inter.className}`}>
-        <Header>
-          <MobileNavbar />
-        </Header>
-        <Navbar />
-        <main>{children}</main>
-        <Footer />
-        <Toaster />
-        <Analytics />
-        <SpeedInsights />
+        <NextAuthProvider>
+          <Header>
+            <MobileNavbar />
+          </Header>
+          <Navbar />
+          <main>{children}</main>
+          <Footer />
+          <Toaster />
+          <Analytics />
+          <SpeedInsights />
+        </NextAuthProvider>
       </body>
     </html>
   );
