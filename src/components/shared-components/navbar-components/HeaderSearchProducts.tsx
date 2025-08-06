@@ -191,7 +191,7 @@ export default function SearchProducts() {
           onChange={handleSearchChange}
           onFocus={handleFocus}
           onKeyDown={handleKeyDown}
-          className="w-full pl-8 pr-2 py-2 rounded border border-pink-200 placeholder:text-primary focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-transparent text-sm bg-white"
+          className="w-full pl-8 pr-2 py-2 rounded border border-pink-200 placeholder:text-primary focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-transparent text-sm bg-white placeholder:opacity-50"
           aria-label="Search products"
           aria-expanded={showDropdown}
           aria-controls="search-results"

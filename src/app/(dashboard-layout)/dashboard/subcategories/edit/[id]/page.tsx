@@ -42,8 +42,7 @@ export default async function EditSubcategoryPage({
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      {/* <PlaceholderContent /> */}
-      {/* <CreateSubcategoryForm /> */}
+
       <SubcategoryForm subcategoryId={params.id} />
     </ContentLayout>
   );

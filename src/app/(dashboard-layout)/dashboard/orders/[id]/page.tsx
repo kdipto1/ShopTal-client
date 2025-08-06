@@ -1,5 +1,7 @@
-import CategoryForm from "@/components/dashboard-page-components/categories-page-components/CategoryForm";
+"use client";
+
 import ContentLayout from "@/components/dashboard-page-components/ContentLayout";
+import { OrderDetails } from "@/components/dashboard-page-components/orders-page-components/OrderDetails";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,9 +12,13 @@ import {
 } from "@/components/shadcn-ui/breadcrumb";
 import Link from "next/link";
 
-export default function CreateCategoryPage() {
+export default function OrderDetailsPage({
+  params,
+}: {
+  params: { id: string };
+}) {
   return (
-    <ContentLayout title="New">
+    <ContentLayout title="Order Details">
       <Breadcrumb className="mb-4">
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -29,17 +35,16 @@ export default function CreateCategoryPage() {
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link href="/dashboard/categories">Categories</Link>
+              <Link href="/dashboard/orders">Orders</Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage>New</BreadcrumbPage>
+            <BreadcrumbPage>Order Details</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-
-      <CategoryForm />
+      <OrderDetails orderId={params.id} />
     </ContentLayout>
   );
 }

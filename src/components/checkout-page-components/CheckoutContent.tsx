@@ -1,13 +1,11 @@
 "use client";
-
 import { useCallback, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { Minus, Plus, Trash2, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import {
   Card,
   CardContent,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/shadcn-ui/card";
@@ -17,7 +15,24 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/shadcn-ui/input";
-import { applyCouponAPI } from "@/lib/api";
+import {
+  applyCouponAPI,
+  createOrderAPI,
+  createPaymentIntentAPI,
+} from "@/lib/api";
+import { useForm } from "react-hook-form";
+import { Textarea } from "@/components/shadcn-ui/textarea";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/shadcn-ui/form";
+import StripePaymentForm from "./StripePaymentForm";
 
 interface CartItem {
   id: string;
@@ -41,17 +56,34 @@ interface ApiResponse {
   data: CartItem[];
 }
 
-export default function CartPage() {
+const checkoutFormSchema = z.object({
+  shippingAddress: z.string().min(1, "Shipping address is required"),
+});
+
+type CheckoutFormData = z.infer<typeof checkoutFormSchema>;
+
+export default function CheckoutContent() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [updatingItems, setUpdatingItems] = useState<Set<string>>(new Set());
   const [couponCode, setCouponCode] = useState("");
   const [discount, setDiscount] = useState(0);
+  const [isCreatingOrder, setIsCreatingOrder] = useState(false);
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [showPaymentForm, setShowPaymentForm] = useState(false);
+  const [shippingAddress, setShippingAddress] = useState("");
   const router = useRouter();
   const { data: session, status } = useSession();
 
+  const form = useForm<CheckoutFormData>({
+    resolver: zodResolver(checkoutFormSchema),
+    defaultValues: {
+      shippingAddress: "",
+    },
+  });
+
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
   const fetchCartItems = useCallback(
     async (accessToken: string) => {
       try {
@@ -75,73 +107,6 @@ export default function CartPage() {
     },
     [API_BASE_URL]
   );
-
-  const updateQuantity = async (itemId: string, newQuantity: number) => {
-    if (!session?.user?.accessToken) return;
-    setUpdatingItems((prev) => new Set(prev).add(itemId));
-    try {
-      const response = await fetch(`${API_BASE_URL}/cart-items/${itemId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session.user.accessToken}`,
-        },
-        body: JSON.stringify({ quantity: newQuantity }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to update quantity");
-      }
-
-      setCartItems((prevItems) =>
-        prevItems.map((item) =>
-          item.id === itemId ? { ...item, quantity: newQuantity } : item
-        )
-      );
-
-      toast.success("Cart quantity updated successfully");
-    } catch (error) {
-      toast.error("Failed to update quantity. Please try again.");
-      console.error("Error updating quantity:", error);
-    } finally {
-      setUpdatingItems((prev) => {
-        const next = new Set(prev);
-        next.delete(itemId);
-        return next;
-      });
-    }
-  };
-
-  const removeItem = async (itemId: string) => {
-    if (!session?.user?.accessToken) return;
-    setUpdatingItems((prev) => new Set(prev).add(itemId));
-    try {
-      const response = await fetch(`${API_BASE_URL}/cart-items/${itemId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${session.user.accessToken}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to remove item");
-      }
-
-      setCartItems((prevItems) =>
-        prevItems.filter((item) => item.id !== itemId)
-      );
-      toast.success("Item removed from cart");
-    } catch (error) {
-      toast.error("Failed to remove item. Please try again.");
-      console.error("Error removing item:", error);
-    } finally {
-      setUpdatingItems((prev) => {
-        const next = new Set(prev);
-        next.delete(itemId);
-        return next;
-      });
-    }
-  };
 
   useEffect(() => {
     if (status === "loading") return;
@@ -184,13 +149,64 @@ export default function CartPage() {
     }
   };
 
+  // New: handle payment intent and show payment form
+  const handleProceedToPayment = async (data: CheckoutFormData) => {
+    if (!session?.user?.accessToken) {
+      toast.error("You must be logged in to pay.");
+      return;
+    }
+    if (cartItems.length === 0) {
+      toast.error("Your cart is empty. Please add items before checking out.");
+      return;
+    }
+    setShippingAddress(data.shippingAddress);
+    try {
+      const paymentIntent = await createPaymentIntentAPI(
+        total,
+        session?.user.accessToken
+      );
+      console.log(paymentIntent.data.clientSecret);
+      setClientSecret(paymentIntent?.data.clientSecret);
+      setShowPaymentForm(true);
+    } catch (error: any) {
+      toast.error(error.message || "Failed to start payment.");
+    }
+  };
+
+  // New: after payment success, place order
+  const handlePaymentSuccess = async () => {
+    setIsCreatingOrder(true);
+    try {
+      const orderPayload = {
+        shippingAddress: shippingAddress,
+        items: cartItems.map((item) => ({
+          productId: item.productId,
+          quantity: item.quantity,
+        })),
+        couponCode: couponCode ? couponCode : undefined,
+      };
+      await createOrderAPI("/orders", orderPayload, session?.user.accessToken);
+      toast.success("Order placed successfully!");
+      setCartItems([]);
+      setDiscount(0);
+      setCouponCode("");
+      setShowPaymentForm(false);
+      setClientSecret(null);
+      router.push(`/profile/orders`);
+    } catch (error: any) {
+      toast.error(error.message || "Failed to place order. Please try again.");
+    } finally {
+      setIsCreatingOrder(false);
+    }
+  };
+
   const subtotal = calculateSubtotal();
   const total = subtotal - discount;
 
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold mb-8">Shopping Cart</h1>
+        <h1 className="text-2xl font-bold mb-8">Checkout</h1>
         <div className="grid lg:grid-cols-12 gap-8">
           <div className="lg:col-span-8 space-y-4">
             {[1, 2, 3].map((i) => (
@@ -237,7 +253,7 @@ export default function CartPage() {
                 setError(null);
                 setIsLoading(true);
                 if (session?.user?.accessToken) {
-                  fetchCartItems(session.user.accessToken);
+                  fetchCartItems(session?.user.accessToken);
                 }
               }}
               className="mt-4"
@@ -253,16 +269,57 @@ export default function CartPage() {
   return (
     <div className="container mx-auto px-2 py-8 min-h-[70vh]">
       <h1 className="text-xl font-bold mb-6 tracking-tight text-primary">
-        Shopping Cart
+        Checkout
       </h1>
       <div className="grid lg:grid-cols-12 gap-6">
-        {/* Cart Items */}
+        {/* Shipping Address Form */}
         <div className="lg:col-span-8 space-y-3">
+          <Card className="border border-pink-100 shadow-none rounded-xl p-4">
+            <CardTitle className="text-base font-semibold text-primary mb-4">
+              Shipping Information
+            </CardTitle>
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(handleProceedToPayment)}
+                className="space-y-4"
+              >
+                <FormField
+                  control={form.control}
+                  name="shippingAddress"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Shipping Address</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Enter your shipping address"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button
+                  className="w-full text-sm bg-pink-600 hover:bg-pink-700 text-white font-semibold rounded-md shadow-none transition-colors duration-150"
+                  size="lg"
+                  type="submit"
+                  disabled={cartItems.length === 0 || isCreatingOrder}
+                >
+                  {isCreatingOrder ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : null}
+                  Proceed to Payment
+                </Button>
+              </form>
+            </Form>
+          </Card>
+
+          {/* Cart Items */}
           {cartItems.length === 0 ? (
             <Card className="border border-pink-100 shadow-none">
               <CardContent className="p-8 text-center">
                 <p className="text-muted-foreground text-sm">
-                  Your cart is empty
+                  Your cart is empty. Please add items before checking out.
                 </p>
                 <Link href={"/search"}>
                   <Button className="mt-4 text-sm" variant="outline">
@@ -300,51 +357,11 @@ export default function CartPage() {
                             {item.product.name}
                           </h3>
                         </Link>
-                        <Button
-                          onClick={() => removeItem(item.id)}
-                          variant="ghost"
-                          size="icon"
-                          className="text-red-400 hover:text-red-600 hover:bg-red-50"
-                          disabled={updatingItems.has(item.id)}
-                        >
-                          {updatingItems.has(item.id) ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                          ) : (
-                            <Trash2 className="h-4 w-4" />
-                          )}
-                        </Button>
                       </div>
                       <div className="flex items-center justify-between mt-2">
-                        <div className="flex items-center gap-1">
-                          <Button
-                            onClick={() =>
-                              item.quantity > 1 &&
-                              updateQuantity(item.id, item.quantity - 1)
-                            }
-                            variant="outline"
-                            size="icon"
-                            className="h-7 w-7 text-xs"
-                            disabled={
-                              item.quantity <= 1 || updatingItems.has(item.id)
-                            }
-                          >
-                            <Minus className="h-3 w-3" />
-                          </Button>
-                          <span className="w-6 text-center text-xs">
-                            {item.quantity}
-                          </span>
-                          <Button
-                            onClick={() =>
-                              updateQuantity(item.id, item.quantity + 1)
-                            }
-                            variant="outline"
-                            size="icon"
-                            className="h-7 w-7 text-xs"
-                            disabled={updatingItems.has(item.id)}
-                          >
-                            <Plus className="h-3 w-3" />
-                          </Button>
-                        </div>
+                        <span className="w-6 text-center text-xs">
+                          Qty: {item.quantity}
+                        </span>
                         <p className="font-semibold text-xs text-pink-600">
                           ${(item.product.price * item.quantity).toFixed(2)}
                         </p>
@@ -356,7 +373,7 @@ export default function CartPage() {
             ))
           )}
         </div>
-        {/* Cart Summary */}
+        {/* Order Summary */}
         <div className="lg:col-span-4">
           <Card className="border border-pink-100 shadow-none rounded-xl">
             <CardHeader>
@@ -385,9 +402,7 @@ export default function CartPage() {
               )}
               <div className="flex justify-between text-xs">
                 <span className="text-muted-foreground">Shipping</span>
-                <span className="text-muted-foreground">
-                  Calculated at checkout
-                </span>
+                <span className="text-muted-foreground">Free</span>
               </div>
               <div className="border-t pt-2 mt-2">
                 <div className="flex justify-between font-bold text-sm">
@@ -396,20 +411,28 @@ export default function CartPage() {
                 </div>
               </div>
             </CardContent>
-            <CardFooter>
-              <Link href="/checkout">
-                <Button
-                  className="w-full text-sm bg-pink-600 hover:bg-pink-700 text-white font-semibold rounded-md shadow-none transition-colors duration-150"
-                  size="lg"
-                  disabled={cartItems?.length === 0}
-                >
-                  Proceed to Checkout
-                </Button>
-              </Link>
-            </CardFooter>
           </Card>
         </div>
       </div>
+      {/* Stripe Payment Form Modal/Section */}
+      {showPaymentForm && clientSecret && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded shadow-xl max-w-md w-full">
+            <h2 className="text-lg font-bold mb-4">Payment</h2>
+            <StripePaymentForm
+              clientSecret={clientSecret}
+              onPaymentSuccess={handlePaymentSuccess}
+            />
+            <Button
+              className="mt-4 w-full"
+              variant="outline"
+              onClick={() => setShowPaymentForm(false)}
+            >
+              Cancel
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,9 +1,37 @@
+export interface Coupon {
+  id: string;
+  code: string;
+  discountType: "PERCENTAGE" | "FIXED_AMOUNT";
+  discountValue: number;
+  expirationDate: string;
+  usageLimit: number;
+  used: number;
+}
+
+export interface Review {
+  id: string;
+  rating: number;
+  comment: string;
+  userId: string;
+  user: {
+    firstName: string;
+    lastName: string;
+    image?: string;
+    id: string;
+  };
+  createdAt: string;
+}
+
 export interface Product {
   id: string;
   name: string;
   price: number;
   image?: string;
+  description: string;
+  features: { name: string; value: string }[];
   category: string;
+  reviews: Review[];
+  averageRating: number;
 }
 
 export interface Category {
@@ -11,17 +39,32 @@ export interface Category {
   name: string;
 }
 
+export interface OrderItem {
+  id: string;
+  productId: string;
+  quantity: number;
+  price: number;
+  product: Product;
+}
+
+export interface Order {
+  id: string;
+  userId: string;
+  totalAmount: number;
+  shippingAddress: string;
+  status: "PENDING" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELED";
+  orderItems: OrderItem[];
+  createdAt: string;
+}
+
 export interface PaginatedResponse<T> {
   data: {
-    data: T[];
     meta: {
       page: number;
       limit: number;
       total: number;
     };
-    total: number;
-    currentPage: number;
-    totalPages: number;
+    data: T[];
   };
 }
 

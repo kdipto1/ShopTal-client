@@ -1,11 +1,20 @@
 import { NavbarCategory } from "@/components/shared-components/navbar-components/MobileNavbar";
-import { Product, Category, PaginatedResponse, SearchParams } from "@/types";
+import {
+  Product,
+  Category,
+  PaginatedResponse,
+  SearchParams,
+  Coupon,
+  Review,
+  Order,
+} from "@/types";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export async function fetchAPI<T>(
   endpoint: string,
-  params?: Record<string, string>
+  params?: Record<string, string>,
+  accessToken?: string
 ): Promise<T> {
   const url = new URL(`${API_BASE_URL}${endpoint}`);
   if (params) {
@@ -14,17 +23,20 @@ export async function fetchAPI<T>(
     });
   }
 
+  const headers: HeadersInit = { "Content-Type": "application/json" };
+  if (accessToken) {
+    headers["Authorization"] = `Bearer ${accessToken}`;
+  }
+
   const res = await fetch(url.toString(), {
-    // next: { revalidate: 60 }
     method: "GET",
-    headers: { "Content-Type": "application/json" },
+    headers,
     cache: "no-store",
   });
 
   if (!res.ok) {
     throw new Error(`API Error: ${res?.statusText || ""}`);
   }
-  // console.log(res);
   return res.json();
 }
 
@@ -116,12 +128,25 @@ export async function applyCouponAPI<T>(
   return res.json();
 }
 
-export async function createPaymentIntentAPI<T>(
-  endpoint: string,
-  payload: { amount: number },
+export const getProductReviews = (
+  productId: string,
+  page: number = 1,
+  limit: number = 5
+) =>
+  fetchAPI<PaginatedResponse<Review>>(`/reviews/${productId}`, {
+    page: String(page),
+    limit: String(limit),
+  });
+
+export async function createReview(
+  payload: {
+    productId: string;
+    rating: number;
+    comment?: string;
+  },
   accessToken: string
-): Promise<T> {
-  const url = new URL(`${API_BASE_URL}${endpoint}`);
+): Promise<Review> {
+  const url = new URL(`${API_BASE_URL}/reviews`);
 
   const res = await fetch(url.toString(), {
     method: "POST",
@@ -137,5 +162,179 @@ export async function createPaymentIntentAPI<T>(
     throw new Error(errorData.message || `API Error: ${res?.statusText || ""}`);
   }
 
+  const responseData = await res.json();
+  return responseData.data;
+}
+
+export async function updateReview(
+  reviewId: string,
+  payload: {
+    rating?: number;
+    comment?: string;
+  },
+  accessToken: string
+): Promise<Review> {
+  const url = new URL(`${API_BASE_URL}/reviews/${reviewId}`);
+
+  const res = await fetch(url.toString(), {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData.message || `API Error: ${res?.statusText || ""}`);
+  }
+
+  const responseData = await res.json();
+  return responseData.data;
+}
+
+export async function createCoupon<T>(
+  payload: {
+    code: string;
+    discountType: "PERCENTAGE" | "FIXED_AMOUNT";
+    discountValue: number;
+    expirationDate: string;
+    usageLimit: number;
+  },
+  accessToken: string
+): Promise<T> {
+  const url = new URL(`${API_BASE_URL}/coupons`);
+
+  const res = await fetch(url.toString(), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData.message || `API Error: ${res?.statusText || ""}`);
+  }
+
+  return res.json();
+}
+
+export const getOrders = (accessToken: string) =>
+  fetchAPI("/orders/my", {}, accessToken);
+
+export const getMyOrders = async (accessToken: string): Promise<Order[]> => {
+  const response = await fetchAPI<{ data: Order[] }>(
+    "/orders/my",
+    {},
+    accessToken
+  );
+  return response.data;
+};
+
+export const getOrderById = (orderId: string, accessToken: string) =>
+  fetchAPI(`/orders/${orderId}`, {}, accessToken);
+
+export async function updateOrderStatus<T>(
+  orderId: string,
+  status: string,
+  accessToken: string
+): Promise<T> {
+  const url = new URL(`${API_BASE_URL}/orders/${orderId}`);
+
+  const res = await fetch(url.toString(), {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({ status }),
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData.message || `API Error: ${res?.statusText || ""}`);
+  }
+
+  return res.json();
+}
+
+export const getCouponsAPI = (accessToken: string) =>
+  fetchAPI<PaginatedResponse<Coupon>>("/coupons", {}, accessToken);
+
+export const getCouponByIdAPI = (id: string, accessToken: string) =>
+  fetchAPI<Coupon>(`/coupons/${id}`, {}, accessToken);
+
+export async function updateCouponAPI<T>(
+  id: string,
+  payload: Partial<Coupon>,
+  accessToken: string
+): Promise<T> {
+  const url = new URL(`${API_BASE_URL}/coupons/${id}`);
+
+  const res = await fetch(url.toString(), {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData.message || `API Error: ${res?.statusText || ""}`);
+  }
+
+  return res.json();
+}
+
+export async function deleteCouponAPI<T>(
+  id: string,
+  accessToken: string
+): Promise<T> {
+  const url = new URL(`${API_BASE_URL}/coupons/${id}`);
+
+  const res = await fetch(url.toString(), {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData.message || `API Error: ${res?.statusText || ""}`);
+  }
+
+  return res.json();
+}
+
+export const getProductPerformanceAPI = (accessToken: string) =>
+  fetchAPI<any>("/analytics/products/performance", {}, accessToken);
+
+export const getCartsAbandonmentRateAPI = (accessToken: string) =>
+  fetchAPI<any>("/analytics/carts/abandonment-rate", {}, accessToken);
+
+export async function createPaymentIntentAPI(
+  amount: number,
+  accessToken: string
+): Promise<{ data: { clientSecret: string } }> {
+  const url = new URL(`${API_BASE_URL}/payment/create-payment-intent`);
+  const res = await fetch(url.toString(), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({ amount }),
+  });
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData.message || `API Error: ${res?.statusText || ""}`);
+  }
   return res.json();
 }

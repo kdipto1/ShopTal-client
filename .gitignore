@@ -5,6 +5,7 @@
 /.pnp
 .pnp.js
 .yarn/install-state.gz
+repomix-server-code-output.xml
 
 # testing
 /coverage

@@ -17,6 +17,7 @@ import {
   Layers,
   Award,
   TrendingUp,
+  Percent,
 } from "lucide-react";
 import {
   ChartContainer,
@@ -31,6 +32,10 @@ import {
   YAxis,
   CartesianGrid,
 } from "recharts";
+import {
+  getCartsAbandonmentRateAPI,
+  getProductPerformanceAPI,
+} from "@/lib/api";
 
 interface AnalyticsData {
   userCounts: number;
@@ -40,8 +45,19 @@ interface AnalyticsData {
   brandCounts: number;
 }
 
+interface ProductPerformance {
+  id: string;
+  name: string;
+  quantity: number;
+  cartItemsCount: number;
+}
+
 export default function AnalyticsDashboard() {
   const [data, setData] = useState<AnalyticsData | null>(null);
+  const [productPerformance, setProductPerformance] = useState<
+    ProductPerformance[]
+  >([]);
+  const [abandonmentRate, setAbandonmentRate] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [screenWidth, setScreenWidth] = useState<number>(0);
@@ -49,27 +65,33 @@ export default function AnalyticsDashboard() {
   const { data: session, status } = useSession();
 
   useEffect(() => {
-    // Check screen size and update screenWidth state
     const checkScreenSize = () => {
       setScreenWidth(window.innerWidth);
     };
     checkScreenSize();
     window.addEventListener("resize", checkScreenSize);
+
     const fetchData = async (accessToken: string) => {
       try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/analytics/counts`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-        if (!res.ok) throw new Error("Failed to fetch data");
-        const json = await res.json();
-        setData(json.data);
+        const [countsRes, productPerfRes, abandonmentRateRes] =
+          await Promise.all([
+            fetch(`${process.env.NEXT_PUBLIC_API_URL}/analytics/counts`, {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${accessToken}`,
+              },
+            }),
+            getProductPerformanceAPI(accessToken),
+            getCartsAbandonmentRateAPI(accessToken),
+          ]);
+
+        if (!countsRes.ok) throw new Error("Failed to fetch counts data");
+        const countsJson = await countsRes.json();
+        setData(countsJson.data);
+
+        setProductPerformance(productPerfRes.data);
+        setAbandonmentRate(abandonmentRateRes.data);
       } catch (err) {
         setError("Failed to load analytics data");
         console.error("Error fetching analytics data:", err);
@@ -77,6 +99,7 @@ export default function AnalyticsDashboard() {
         setIsLoading(false);
       }
     };
+
     if (status === "authenticated" && session?.user?.accessToken) {
       fetchData(session.user.accessToken as string);
     } else if (status === "unauthenticated") {
@@ -127,6 +150,15 @@ export default function AnalyticsDashboard() {
       color:
         "bg-gradient-to-tr from-pink-50/80 to-white dark:from-pink-950/60 dark:to-gray-900/80",
     },
+    {
+      title: "Cart Abandonment Rate",
+      value:
+        abandonmentRate !== null ? `${abandonmentRate.toFixed(2)}%` : "N/A",
+      icon: Percent,
+      description: "Percentage of abandoned carts",
+      color:
+        "bg-gradient-to-tr from-red-50/80 to-white dark:from-red-950/60 dark:to-gray-900/80",
+    },
   ];
 
   const chartData = data
@@ -139,7 +171,12 @@ export default function AnalyticsDashboard() {
       ]
     : [];
 
-  // Determine chart configuration based on screen width
+  const productPerformanceChartData = productPerformance.map((p) => ({
+    name: p.name,
+    "Cart Items": p.cartItemsCount,
+    Quantity: p.quantity,
+  }));
+
   const getChartHeight = () => {
     if (screenWidth < 640) {
       return "h-[220px]";
@@ -203,7 +240,7 @@ export default function AnalyticsDashboard() {
           </div>
         ) : (
           <div className="space-y-6 animate-fadein">
-            <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-2 sm:gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-2 sm:gap-4">
               {cards.map((card, index) => (
                 <Card
                   key={index}
@@ -295,6 +332,87 @@ export default function AnalyticsDashboard() {
                 )}
               </CardContent>
             </Card>
+
+            {/* Product Performance Chart */}
+            {productPerformance.length > 0 && (
+              <Card className="w-full border border-gray-100 dark:border-gray-800 shadow-none bg-gradient-to-tr from-gray-50/80 to-white dark:from-gray-900/60 dark:to-gray-950/80 animate-fadein">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
+                    Product Performance
+                  </CardTitle>
+                  <CardDescription className="text-xs text-gray-400">
+                    Products by quantity and cart items count
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className={`pt-2 ${chartHeightClass}`}>
+                  {isLoading ? (
+                    <Skeleton
+                      className={`${chartHeightClass} w-full rounded-md`}
+                    />
+                  ) : (
+                    <ChartContainer
+                      config={{
+                        "Cart Items": {
+                          label: "Cart Items",
+                          color: "hsl(var(--chart-1))",
+                        },
+                        Quantity: {
+                          label: "Quantity",
+                          color: "hsl(var(--chart-2))",
+                        },
+                      }}
+                      className={`w-full h-full`}
+                    >
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart
+                          data={productPerformanceChartData}
+                          margin={chartConfig.margin}
+                        >
+                          <CartesianGrid
+                            vertical={false}
+                            stroke="#f3f4f6"
+                            strokeDasharray="2 2"
+                          />
+                          <XAxis
+                            dataKey="name"
+                            angle={chartConfig.xAxisAngle}
+                            textAnchor="end"
+                            height={chartConfig.xAxisHeight}
+                            interval={0}
+                            tick={{
+                              fontSize: chartConfig.xAxisFontSize,
+                              fill: "#888",
+                              opacity: 0.7,
+                            }}
+                            strokeOpacity={0.3}
+                          />
+                          <YAxis
+                            stroke="#888"
+                            strokeOpacity={0.3}
+                            tick={{
+                              fontSize: chartConfig.yAxisFontSize,
+                              fill: "#888",
+                              opacity: 0.7,
+                            }}
+                          />
+                          <ChartTooltip content={<ChartTooltipContent />} />
+                          <Bar
+                            dataKey="Cart Items"
+                            fill="var(--color-Cart-Items)"
+                            radius={[3, 3, 0, 0]}
+                          />
+                          <Bar
+                            dataKey="Quantity"
+                            fill="var(--color-Quantity)"
+                            radius={[3, 3, 0, 0]}
+                          />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </ChartContainer>
+                  )}
+                </CardContent>
+              </Card>
+            )}
           </div>
         )}
       </div>

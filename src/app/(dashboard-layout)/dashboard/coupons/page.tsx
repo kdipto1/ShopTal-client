@@ -2,7 +2,6 @@
 
 import ContentLayout from "@/components/dashboard-page-components/ContentLayout";
 import { DataTable } from "@/components/dashboard-page-components/data-table";
-
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -15,19 +14,18 @@ import { Button } from "@/components/shadcn-ui/button";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import { useCallback, useState } from "react";
-import { CategoryActions } from "@/components/dashboard-page-components/categories-page-components/CategoryActions";
+import { Coupon } from "@/types";
+import { CouponActions } from "@/components/dashboard-page-components/coupons-page-components/CouponActions";
+import { useSession } from "next-auth/react";
+import { toast } from "sonner";
 
-export type Category = {
-  id: string;
-  name: string;
-};
-
-export default function CategoriesPage() {
-  const [data, setData] = useState<Category[]>([]);
+export default function CouponsPage() {
+  const [data, setData] = useState<Coupon[]>([]);
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const { data: session, status } = useSession();
 
-  const columns: ColumnDef<Category>[] = [
+  const columns: ColumnDef<Coupon>[] = [
     {
       accessorKey: "id",
       header: "ID",
@@ -36,18 +34,48 @@ export default function CategoriesPage() {
       ),
     },
     {
-      accessorKey: "name",
-      header: "Name",
+      accessorKey: "code",
+      header: "Code",
       cell: ({ row }) => (
-        <div className="font-medium">{row.getValue("name")}</div>
+        <div className="font-medium">{row.getValue("code")}</div>
+      ),
+    },
+    {
+      accessorKey: "discountType",
+      header: "Discount Type",
+      cell: ({ row }) => (
+        <div className="font-medium">{row.getValue("discountType")}</div>
+      ),
+    },
+    {
+      accessorKey: "discountValue",
+      header: "Discount Value",
+      cell: ({ row }) => (
+        <div className="font-medium">{row.getValue("discountValue")}</div>
+      ),
+    },
+    {
+      accessorKey: "expirationDate",
+      header: "Expiration Date",
+      cell: ({ row }) => (
+        <div className="font-medium">
+          {new Date(row.getValue("expirationDate")).toLocaleDateString()}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "usageLimit",
+      header: "Usage Limit",
+      cell: ({ row }) => (
+        <div className="font-medium">{row.getValue("usageLimit")}</div>
       ),
     },
     {
       header: "Actions",
       id: "actions",
       cell: ({ row }) => {
-        const category = row.original;
-        return <CategoryActions category={category} fetchData={fetchData} />;
+        const coupon = row.original;
+        return <CouponActions coupon={coupon} fetchData={fetchData} />;
       },
     },
   ];
@@ -64,10 +92,16 @@ export default function CategoriesPage() {
       searchTerm: string;
       sorting: any;
     }) => {
+      if (status !== "authenticated" || !session?.user.accessToken) {
+        // Optionally show a toast or redirect to login
+        setData([]);
+        setIsLoading(false);
+        return;
+      }
       setIsLoading(true);
       try {
         const response = await fetch(
-          `${API_BASE_URL}/categories?page=${
+          `${API_BASE_URL}/coupons?page=${
             pageIndex + 1
           }&limit=${pageSize}&searchTerm=${searchTerm}&sort=${JSON.stringify(
             sorting
@@ -76,12 +110,17 @@ export default function CategoriesPage() {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
+              Authorization: `Bearer ${session.user.accessToken}`,
             },
           }
         );
 
         if (!response.ok) {
-          throw new Error("Failed to fetch categories");
+          if (response.status === 401 || response.status === 403) {
+            toast.error("Session expired. Please log in again.");
+            // Optionally redirect to login
+          }
+          throw new Error("Failed to fetch coupons");
         }
 
         const result = await response.json();
@@ -92,15 +131,15 @@ export default function CategoriesPage() {
         setData(result.data.data);
         setTotalPages(calculatedTotalPages);
       } catch (error) {
-        console.error("Error fetching categories:", error);
+        console.error("Error fetching coupons:", error);
       } finally {
         setIsLoading(false);
       }
     },
-    [API_BASE_URL]
+    [API_BASE_URL, session?.user.accessToken, status]
   );
   return (
-    <ContentLayout title="Categories">
+    <ContentLayout title="Coupons">
       <Breadcrumb className="mb-4">
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -116,13 +155,12 @@ export default function CategoriesPage() {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage>Categories</BreadcrumbPage>
+            <BreadcrumbPage>Coupons</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      {/* <PlaceholderContent /> */}
-      <Link href="/dashboard/categories/new">
-        <Button>Add New Category</Button>
+      <Link href="/dashboard/coupons/new">
+        <Button>Add New Coupon</Button>
       </Link>
       <div className="mt-2">
         <DataTable

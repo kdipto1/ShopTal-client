@@ -213,6 +213,12 @@ export default function ProfilePage() {
             </h2>
             <p className="text-xs text-muted-foreground mb-2">{user.email}</p>
 
+            <Link href="/profile/orders">
+              <Button size="sm" variant="outline" className="mt-2 w-full">
+                My Orders
+              </Button>
+            </Link>
+
             {session?.user?.role === "admin" && (
               <Link className="mt-2" href="/dashboard">
                 <Button size="sm" variant="outline">
