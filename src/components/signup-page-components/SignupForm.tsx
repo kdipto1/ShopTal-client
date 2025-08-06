@@ -108,7 +108,7 @@ export default function SignupForm() {
                     type="text"
                     placeholder="John"
                     {...field}
-                    className="rounded-md border border-gray-200 dark:border-gray-800 text-sm"
+                    className="rounded-md border border-gray-200 dark:border-gray-800 text-sm placeholder:opacity-50"
                   />
                 </FormControl>
                 <FormMessage className="text-xs" />
@@ -126,7 +126,7 @@ export default function SignupForm() {
                     type="text"
                     placeholder="Doe"
                     {...field}
-                    className="rounded-md border border-gray-200 dark:border-gray-800 text-sm"
+                    className="rounded-md border border-gray-200 dark:border-gray-800 text-sm placeholder:opacity-50"
                   />
                 </FormControl>
                 <FormMessage className="text-xs" />
@@ -144,7 +144,7 @@ export default function SignupForm() {
                     type="email"
                     placeholder="johndoe@example.com"
                     {...field}
-                    className="rounded-md border border-gray-200 dark:border-gray-800 text-sm"
+                    className="rounded-md border border-gray-200 dark:border-gray-800 text-sm placeholder:opacity-50"
                   />
                 </FormControl>
                 <FormMessage className="text-xs" />
@@ -162,7 +162,7 @@ export default function SignupForm() {
                     type="tel"
                     placeholder="1234567890"
                     {...field}
-                    className="rounded-md border border-gray-200 dark:border-gray-800 text-sm"
+                    className="rounded-md border border-gray-200 dark:border-gray-800 text-sm placeholder:opacity-50"
                   />
                 </FormControl>
                 <FormMessage className="text-xs" />
@@ -180,7 +180,7 @@ export default function SignupForm() {
                     type="text"
                     placeholder="123 Main St"
                     {...field}
-                    className="rounded-md border border-gray-200 dark:border-gray-800 text-sm"
+                    className="rounded-md border border-gray-200 dark:border-gray-800 text-sm placeholder:opacity-50"
                   />
                 </FormControl>
                 <FormMessage className="text-xs" />
@@ -198,7 +198,7 @@ export default function SignupForm() {
                     type="password"
                     placeholder="******"
                     {...field}
-                    className="rounded-md border border-gray-200 dark:border-gray-800 text-sm"
+                    className="rounded-md border border-gray-200 dark:border-gray-800 text-sm placeholder:opacity-50"
                   />
                 </FormControl>
                 <FormMessage className="text-xs" />
