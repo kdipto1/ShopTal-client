@@ -1,36 +1,95 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🛒 ShopTal — Modern E-commerce Client
 
-## Getting Started
+> A feature-rich, accessible, and beautifully designed e-commerce platform built with Next.js 14, Tailwind CSS v4, shadcn/radix UI, and more.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## ✨ Overview
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**ShopTal** is a modern e-commerce web application focused on accessibility, performance, and delightful user experience. It features a robust product search, seamless authentication, responsive layouts, and a consistent design system. Built with the latest Next.js App Router, it leverages server components, advanced SEO, and analytics for a production-grade shopping experience.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## 🚀 Features
 
-## Learn More
+- **Next.js 14 App Router** — Fast, scalable, and SEO-friendly architecture
+- **Tailwind CSS v4** — Custom design tokens, dark mode, and utility-first styling
+- **shadcn + Radix UI** — Accessible, composable UI components
+- **Authentication** — Secure login/signup with NextAuth
+- **State Management** — Lightweight global state with Zustand
+- **Stripe Integration** — Secure checkout and payment flows
+- **Advanced Search** — Keyboard-accessible, debounced, and ARIA-compliant product search
+- **Responsive & Accessible** — Mobile-first layouts, focus management, and WCAG-compliant
+- **Vercel Analytics** — Real user monitoring and performance insights
+- **Modern Dashboard** — Admin panel for managing products, orders, users, and more
+- **Reusable Components** — Modular, documented, and easy to extend
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🖥️ Tech Stack
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- **Framework:** Next.js 14 (TypeScript, App Router)
+- **Styling:** Tailwind CSS v4, shadcn/radix UI
+- **State:** Zustand
+- **Auth:** NextAuth.js
+- **Payments:** Stripe
+- **Testing:** Jest, React Testing Library
+- **Analytics:** Vercel Analytics, Speed Insights
+- **Other:** React Hook Form, Zod, Embla Carousel, Recharts
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📦 Getting Started
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+1. **Install dependencies:**
+   ```bash
+   pnpm install
+   ```
+2. **Run the development server:**
+   ```bash
+   pnpm dev
+   ```
+3. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+---
+
+## 📝 Development Highlights
+
+- **Accessible navigation** and keyboard support throughout
+- **Robust search** with instant results and ARIA roles
+- **Consistent theming** (light/dark) and design tokens
+- **SEO best practices**: dynamic metadata, OG tags, resource hints
+- **Performance**: lazy loading, optimized images, and fast initial load
+- **Admin dashboard** for managing products, categories, orders, users, and more
+
+---
+
+## 📂 Project Structure
+
+- `src/app/` — App Router pages, layouts, and API routes
+- `src/components/` — Modular UI components (dashboard, cart, checkout, etc.)
+- `src/hooks/` — Custom React hooks
+- `src/lib/` — API utilities and helpers
+- `src/types/` — TypeScript types and interfaces
+
+---
+
+## 🛠️ Scripts
+
+- `pnpm dev` — Start development server
+- `pnpm build` — Build for production
+- `pnpm start` — Start production server
+- `pnpm test` — Run tests
+- `pnpm lint` — Lint codebase
+
+---
+
+## 📢 Credits
+
+- Built by Dipto Karmaker
+
+---
+
+## 📄 License
+
+This project is for portfolio/demo purposes. For commercial use, please contact me.
