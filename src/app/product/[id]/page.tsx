@@ -24,9 +24,9 @@ import { auth } from "@/auth";
 import Link from "next/link";
 
 interface ProductPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 async function getProduct(id: string): Promise<Product> {
@@ -53,7 +53,8 @@ async function checkReviewEligibility(productId: string): Promise<boolean> {
   }
 }
 
-export default async function ProductPage({ params }: ProductPageProps) {
+export default async function ProductPage(props: ProductPageProps) {
+  const params = await props.params;
   const product = await getProduct(params.id);
   const canReview = await checkReviewEligibility(params.id);
 

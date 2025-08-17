@@ -10,11 +10,12 @@ import {
 } from "@/components/shadcn-ui/breadcrumb";
 import Link from "next/link";
 
-export default function EditCategoryPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default async function EditCategoryPage(
+  props: {
+    params: Promise<{ id: string }>;
+  }
+) {
+  const params = await props.params;
   return (
     <ContentLayout title="Edit Category">
       <Breadcrumb className="mb-4">

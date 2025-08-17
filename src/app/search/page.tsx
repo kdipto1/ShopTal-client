@@ -5,10 +5,11 @@ import { SearchFilters } from "@/components/search-page-components/SearchFilters
 import SearchResults from "@/components/search-page-components/SearchResults";
 
 interface SearchPageProps {
-  searchParams: { [key: string]: string | undefined };
+  searchParams: Promise<{ [key: string]: string | undefined }>;
 }
 
-export default async function SearchPage({ searchParams }: SearchPageProps) {
+export default async function SearchPage(props: SearchPageProps) {
+  const searchParams = await props.searchParams;
   const parsedParams: SearchParams = {
     searchTerm: searchParams.searchTerm,
     category: searchParams.category,
