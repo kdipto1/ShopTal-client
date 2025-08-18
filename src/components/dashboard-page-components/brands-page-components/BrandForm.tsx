@@ -36,7 +36,7 @@ export default function BrandForm({ brandId }: { brandId?: string }) {
   const [loading, setLoading] = useState(!!brandId);
   const { data: session, status } = useSession();
 
-  const form = useForm<z.infer<typeof FormSchema>>({
+  const form = useForm<z.infer<typeof FormSchema>, any, z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       name: "",

@@ -39,7 +39,7 @@ export function ReviewForm({
   isEditing = false,
   onCancelEdit,
 }: ReviewFormProps) {
-  const form = useForm<ReviewFormData>({
+  const form = useForm<ReviewFormData, any, ReviewFormData>({
     resolver: zodResolver(reviewSchema),
     defaultValues: initialData || { rating: 0, comment: "" },
   });

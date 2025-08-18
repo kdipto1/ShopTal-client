@@ -27,7 +27,7 @@ export default function CategoryForm({ categoryId }: { categoryId?: string }) {
   const [loading, setLoading] = useState(!!categoryId);
   const { data: session, status } = useSession();
 
-  const form = useForm<z.infer<typeof FormSchema>>({
+  const form = useForm<z.infer<typeof FormSchema>, any, z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       name: "",

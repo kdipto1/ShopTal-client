@@ -35,7 +35,7 @@ const FormSchema = z.object({
 export default function CreateSubcategoryForm() {
   const [categories, setCategories] = useState([]);
   const { data: session, status } = useSession();
-  const form = useForm<z.infer<typeof FormSchema>>({
+  const form = useForm<z.infer<typeof FormSchema>, any, z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       name: "",

@@ -48,7 +48,7 @@ export function CouponForm({
   onSubmit,
   isLoading,
 }: CouponFormProps) {
-  const form = useForm<CouponFormData>({
+  const form = useForm<CouponFormData, any, CouponFormData>({
     resolver: zodResolver(couponFormSchema),
     defaultValues: {
       code: initialData?.code || "",

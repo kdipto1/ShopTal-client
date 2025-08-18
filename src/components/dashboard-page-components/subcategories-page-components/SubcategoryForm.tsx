@@ -42,7 +42,7 @@ export default function SubcategoryForm({
   const [loading, setLoading] = useState(!!subcategoryId);
   const { data: session, status } = useSession();
 
-  const form = useForm<z.infer<typeof FormSchema>>({
+  const form = useForm<z.infer<typeof FormSchema>, any, z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       categoryId: "",

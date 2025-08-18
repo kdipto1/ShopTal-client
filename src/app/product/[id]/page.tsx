@@ -72,13 +72,13 @@ export default async function ProductPage(props: ProductPageProps) {
         <Breadcrumb className="mb-8">
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink>
+              <BreadcrumbLink asChild>
                 <Link href={"/"}>Home</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink>
+              <BreadcrumbLink asChild>
                 <Link href={"/search"}>Products</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>

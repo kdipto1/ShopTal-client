@@ -12,7 +12,8 @@
 
 ## 🚀 Features
 
-- **Next.js 14 App Router** — Fast, scalable, and SEO-friendly architecture
+- **Next.js 15 App Router** — Fast, scalable, and SEO-friendly architecture
+- **React 19** — Leveraging the latest React features for better performance and developer experience.
 - **Tailwind CSS v4** — Custom design tokens, dark mode, and utility-first styling
 - **shadcn + Radix UI** — Accessible, composable UI components
 - **Authentication** — Secure login/signup with NextAuth
@@ -28,16 +29,29 @@
 
 ## 🖥️ Tech Stack
 
-- **Framework:** Next.js 14 (TypeScript, App Router)
+- **Framework:** Next.js 15 (TypeScript, App Router)
+- **UI Library:** React 19
 - **Styling:** Tailwind CSS v4, shadcn/radix UI
 - **State:** Zustand
 - **Auth:** NextAuth.js
 - **Payments:** Stripe
 - **Testing:** Jest, React Testing Library
 - **Analytics:** Vercel Analytics, Speed Insights
-- **Other:** React Hook Form, Zod, Embla Carousel, Recharts
+- **Other:** React Hook Form (v7), Zod, Embla Carousel, Recharts
 
 ---
+
+<!-- ## 🚀 Live Demo
+
+[Link to live demo](https://your-live-demo-url.com) -->
+
+<!-- ---
+
+## 📸 Screenshots
+
+_Placeholder for screenshots_
+
+--- -->
 
 ## 📦 Getting Started
 
@@ -61,8 +75,6 @@
 - **SEO best practices**: dynamic metadata, OG tags, resource hints
 - **Performance**: lazy loading, optimized images, and fast initial load
 - **Admin dashboard** for managing products, categories, orders, users, and more
-
----
 
 ## 📂 Project Structure
 
