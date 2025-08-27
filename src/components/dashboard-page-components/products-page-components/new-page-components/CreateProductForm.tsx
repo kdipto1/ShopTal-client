@@ -59,7 +59,7 @@ export default function CreateProductForm() {
   const [subcategories, setSubcategories] = useState([]);
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
   const { data: session } = useSession();
-  const form = useForm<z.infer<typeof FormSchema>>({
+  const form = useForm<z.infer<typeof FormSchema>, any, z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       name: "",

@@ -75,7 +75,7 @@ export default function CheckoutContent() {
   const router = useRouter();
   const { data: session, status } = useSession();
 
-  const form = useForm<CheckoutFormData>({
+  const form = useForm<CheckoutFormData, any, CheckoutFormData>({
     resolver: zodResolver(checkoutFormSchema),
     defaultValues: {
       shippingAddress: "",

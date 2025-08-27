@@ -10,11 +10,12 @@ import {
 } from "@/components/shadcn-ui/breadcrumb";
 import Link from "next/link";
 
-export default async function EditProductPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default async function EditProductPage(
+  props: {
+    params: Promise<{ id: string }>;
+  }
+) {
+  const params = await props.params;
   const productId = await params.id;
   return (
     <ContentLayout title="Edit Product">

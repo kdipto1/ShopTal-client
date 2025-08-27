@@ -10,11 +10,12 @@ import {
 } from "@/components/shadcn-ui/breadcrumb";
 import Link from "next/link";
 
-export default async function EditBrandPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default async function EditBrandPage(
+  props: {
+    params: Promise<{ id: string }>;
+  }
+) {
+  const params = await props.params;
   const brandId = params.id;
 
   return (

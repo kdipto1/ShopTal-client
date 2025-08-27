@@ -117,7 +117,7 @@ export default function SearchProducts() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Handle clicks outside of the search container
-  useClickOutside(searchContainerRef, () => {
+  useClickOutside(searchContainerRef as React.RefObject<HTMLElement>, () => {
     setShowDropdown(false);
   });
 

@@ -1,4 +1,5 @@
-"use client";
+"use client";;
+import { use } from "react";
 
 import ContentLayout from "@/components/dashboard-page-components/ContentLayout";
 import { OrderDetails } from "@/components/dashboard-page-components/orders-page-components/OrderDetails";
@@ -12,11 +13,12 @@ import {
 } from "@/components/shadcn-ui/breadcrumb";
 import Link from "next/link";
 
-export default function OrderDetailsPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default function OrderDetailsPage(
+  props: {
+    params: Promise<{ id: string }>;
+  }
+) {
+  const params = use(props.params);
   return (
     <ContentLayout title="Order Details">
       <Breadcrumb className="mb-4">

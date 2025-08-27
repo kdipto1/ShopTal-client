@@ -5,7 +5,7 @@ import { getCouponByIdAPI, updateCouponAPI } from "@/lib/api";
 import { Coupon } from "@/types";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import ContentLayout from "@/components/dashboard-page-components/ContentLayout";
@@ -19,7 +19,8 @@ import {
 } from "@/components/shadcn-ui/breadcrumb";
 import Link from "next/link";
 
-export default function EditCouponPage({ params }: { params: { id: string } }) {
+export default function EditCouponPage(props: { params: Promise<{ id: string }> }) {
+  const params = use(props.params);
   const { data: session } = useSession();
   const router = useRouter();
   const [coupon, setCoupon] = useState<Coupon | null>(null);

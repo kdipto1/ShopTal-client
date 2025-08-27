@@ -1,3 +1,5 @@
+import withBundleAnalyzer from "@next/bundle-analyzer";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
@@ -7,20 +9,13 @@ const nextConfig = {
         hostname: "res.cloudinary.com",
         port: "",
         pathname: "/**",
-        search: "",
       },
     ],
   },
 };
 
-export default nextConfig;
+const bundleAnalyzerConfig = withBundleAnalyzer({
+  enabled: process.env.ANALYZE === "true",
+});
 
-// Config for bundle analyze
-
-// import withBundleAnalyzer from "@next/bundle-analyzer";
-
-// const nextConfig = withBundleAnalyzer({
-//   enabled: process.env.ANALYZE === "true",
-// });
-
-// export default nextConfig;
+export default bundleAnalyzerConfig(nextConfig);

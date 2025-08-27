@@ -41,7 +41,7 @@ export default function LoginForm() {
 
   const destination = callbackUrl || (isAdmin ? "/dashboard" : "/profile");
 
-  const form = useForm<LoginFormData>({
+  const form = useForm<LoginFormData, any, LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       phone: "",
