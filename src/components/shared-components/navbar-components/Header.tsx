@@ -8,7 +8,7 @@ import SignOutButton from "../SignOutButton";
 
 export default function Header({ children }: { children: any }) {
   const router = usePathname();
-  const { data: session, status } = useSession();
+  const { status } = useSession();
 
   // Check if the current route is in the hideOnRoutes array
   const shouldHide = router.includes("/dashboard");
@@ -35,27 +35,29 @@ export default function Header({ children }: { children: any }) {
           <div className="w-full flex-1 md:w-auto md:flex-none">
             <SearchProducts />
           </div>
-          <nav className="hidden md:flex items-center space-x-1 text-primary">
+          <nav className="hidden md:flex items-center space-x-2 text-primary">
             <Link
               href={"/cart"}
-              className="p-2 rounded hover:bg-pink-50 transition-colors flex text-sm"
+              className="p-3 rounded-lg hover:bg-pink-50 transition-colors duration-200 flex items-center justify-center min-w-[44px] min-h-[44px]"
               aria-label="Shopping Cart"
             >
               <ShoppingCart className="h-5 w-5" />
             </Link>
             <Link
               href="/profile"
-              className="p-2 rounded hover:bg-pink-50 transition-colors flex text-sm"
+              className="p-3 rounded-lg hover:bg-pink-50 transition-colors duration-200 flex items-center justify-center min-w-[44px] min-h-[44px]"
               aria-label="User Account"
             >
               <User className="h-5 w-5" />
             </Link>
             {status === "authenticated" ? (
-              <SignOutButton variant="ghost" size="icon" />
+              <div className="flex items-center justify-center min-w-[44px] min-h-[44px]">
+                <SignOutButton variant="ghost" size="icon" />
+              </div>
             ) : (
               <Link
                 href="/login"
-                className="p-2 rounded hover:bg-pink-50 transition-colors flex text-sm"
+                className="p-3 rounded-lg hover:bg-pink-50 transition-colors duration-200 flex items-center justify-center min-w-[44px] min-h-[44px]"
                 aria-label="Login"
               >
                 <LogIn className="h-5 w-5" />

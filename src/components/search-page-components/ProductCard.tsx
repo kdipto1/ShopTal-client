@@ -17,31 +17,33 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
   return (
-    <Card className="flex flex-col h-full border border-gray-100 dark:border-gray-800 shadow-none hover:shadow-md transition-all duration-200 rounded-lg bg-white dark:bg-gray-950 animate-fadein">
+    <Card className="flex flex-col h-full border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-lg transition-all duration-300 rounded-xl bg-white dark:bg-gray-950 animate-fadein overflow-hidden group">
       <CardHeader className="p-0">
         <Link href={`/product/${product.id}`} className="block w-full h-full">
           <Image
             src={product.image || "/placeholder.svg"}
             alt={product.name}
-            width={600}
-            height={600}
-            className="w-full h-36 object-contain rounded-t-lg bg-white"
+            width={400}
+            height={400}
+            className="w-full h-40 sm:h-44 md:h-36 object-contain rounded-t-xl bg-white group-hover:scale-105 transition-transform duration-300"
             priority={false}
           />
         </Link>
       </CardHeader>
-      <CardContent className="p-3 grow">
-        <CardTitle className="text-base font-semibold line-clamp-2 text-gray-900 dark:text-white">
-          {product.name}
-        </CardTitle>
-        <p className="text-pink-600 font-bold mt-1 text-lg">
-          ${product.price.toFixed(2)}
-        </p>
+      <CardContent className="p-4 grow flex flex-col justify-between">
+        <div>
+          <CardTitle className="text-sm sm:text-base font-semibold line-clamp-2 text-gray-900 dark:text-white mb-2 leading-tight">
+            {product.name}
+          </CardTitle>
+          <p className="text-pink-600 font-bold text-lg sm:text-xl">
+            ${product.price.toFixed(2)}
+          </p>
+        </div>
       </CardContent>
-      <CardFooter className="p-3 hidden md:block">
+      <CardFooter className="p-4 pt-0">
         <Button
           asChild
-          className="w-full bg-pink-50 hover:bg-pink-100 text-pink-600 font-semibold rounded-md shadow-none border border-pink-100 hover:border-pink-400 text-sm py-2 transition-colors duration-150"
+          className="w-full h-10 bg-pink-600 hover:bg-pink-700 text-white font-semibold rounded-lg shadow-sm hover:shadow-md text-sm transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
         >
           <Link href={`/product/${product.id}`}>View Details</Link>
         </Button>

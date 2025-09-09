@@ -5,10 +5,13 @@ import { Toaster } from "@/components/shadcn-ui/sonner";
 import Navbar from "@/components/shared-components/navbar-components/Navbar";
 import Header from "@/components/shared-components/navbar-components/Header";
 import Footer from "@/components/shared-components/Footer";
+import MobileCategoryBrowser from "@/components/shared-components/navbar-components/MobileCategoryBrowser";
+import BottomNavigation from "@/components/shared-components/navbar-components/BottomNavigation";
+import NextAuthProvider from "@/components/shared-components/NextAuthProvider";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import MobileNavbar from "@/components/shared-components/navbar-components/MobileNavbar";
-import NextAuthProvider from "@/components/shared-components/NextAuthProvider";
+import { fetchCategories } from "@/lib/api";
+import { NavbarCategory } from "@/components/shared-components/navbar-components/MobileNavbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,11 +20,13 @@ export const metadata: Metadata = {
   description: "",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const categories: NavbarCategory[] = await fetchCategories();
+
   return (
     <html lang="en">
       <head>
@@ -31,11 +36,12 @@ export default function RootLayout({
       <body className={`bg-gray-100 ${inter.className}`}>
         <NextAuthProvider>
           <Header>
-            <MobileNavbar />
+            <MobileCategoryBrowser categories={categories} />
           </Header>
           <Navbar />
-          <main>{children}</main>
+          <main className="pb-16 md:pb-0">{children}</main>
           <Footer />
+          <BottomNavigation categories={categories} />
           <Toaster />
           <Analytics />
           <SpeedInsights />
