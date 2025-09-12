@@ -29,9 +29,12 @@ export interface Product {
   image?: string;
   description: string;
   features: { name: string; value: string }[];
-  category: string;
-  reviews: Review[];
+  category?: { name: string };
+  reviews?: Review[];
   averageRating: number;
+  _count?: {
+    reviews?: number;
+  };
 }
 
 export interface Category {

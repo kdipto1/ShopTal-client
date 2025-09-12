@@ -6,6 +6,9 @@ import NewArrivals from "@/components/home-page-components/NewArrivals";
 import NewArrivalsSkeleton from "@/components/home-page-components/NewArrivalsSkeleton";
 import RandomProducts from "@/components/home-page-components/RandomProducts";
 import RandomProductsSkeleton from "@/components/home-page-components/RandomProductsSkeleton";
+import Features from "@/components/home-page-components/Features";
+import Testimonials from "@/components/home-page-components/Testimonials";
+import NewsletterSignup from "@/components/home-page-components/NewsletterSignup";
 
 export default function HomePage() {
   return (
@@ -20,6 +23,9 @@ export default function HomePage() {
       <Suspense fallback={<RandomProductsSkeleton />}>
         <RandomProducts />
       </Suspense>
+      <Features />
+      <Testimonials />
+      <NewsletterSignup />
     </section>
   );
 }

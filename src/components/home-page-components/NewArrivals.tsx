@@ -1,12 +1,6 @@
 import NewArrivalsCarousel from "./NewArrivalsCarousel";
 import { Sparkles } from "lucide-react";
-
-type Product = {
-  id: string;
-  name: string;
-  price: number;
-  image: string;
-};
+import { Product } from "@/types";
 
 async function fetchNewArrivals(): Promise<Product[]> {
   const res = await fetch(
@@ -20,7 +14,19 @@ async function fetchNewArrivals(): Promise<Product[]> {
   );
   if (!res.ok) throw new Error("Failed to fetch new arrivals");
   const data = await res.json();
-  return data.data.data;
+
+  // Transform the API response to match the Product type
+  return data.data.data.map((item: any) => ({
+    id: item.id,
+    name: item.name,
+    price: item.price,
+    image: item.image,
+    description: item.description || "",
+    features: item.features || [],
+    category: item.category || "",
+    reviews: item.reviews || [],
+    averageRating: item.averageRating || 0,
+  }));
 }
 
 export default async function NewArrivals() {

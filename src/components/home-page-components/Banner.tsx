@@ -10,7 +10,7 @@ export default function Banner() {
         {/* Desktop Banner */}
         <Image
           src="/images/blackfriday.webp"
-          alt="Banner image"
+          alt="ShopTal - Discover amazing products and exclusive deals on fashion, electronics, and home goods"
           width={1920}
           height={1097}
           priority
@@ -19,7 +19,7 @@ export default function Banner() {
         {/* Mobile Banner */}
         <Image
           src="/images/blackfridayM.webp"
-          alt="Banner image"
+          alt="ShopTal - Discover amazing products and exclusive deals on fashion, electronics, and home goods"
           width={960}
           height={548}
           priority
@@ -30,15 +30,15 @@ export default function Banner() {
         <div className="absolute inset-0 flex flex-col justify-center items-center p-6 md:p-8 z-20 text-white text-center">
           <div className="flex items-center gap-2 mb-2 animate-fade-in-down">
             <span className="inline-flex items-center bg-pink-600 text-white px-3 py-1 rounded-full text-xs md:text-sm font-semibold shadow-lg">
-              <Tag className="mr-1 w-4 h-4" /> Limited Time
+              <Tag className="mr-1 w-4 h-4" /> New Collection
             </span>
           </div>
           <h1 className="text-2xl md:text-5xl lg:text-6xl font-extrabold mb-3 animate-fade-in-down drop-shadow-lg">
-            Black Friday Sale
+            Discover Amazing Products
           </h1>
           <p className="text-base md:text-2xl mb-4 md:mb-6 animate-fade-in-up max-w-xl mx-auto opacity-90">
-            Up to <span className="font-bold text-pink-400">50% off</span> on
-            selected items. Don’t miss out on the best deals of the year!
+            Shop the latest trends and exclusive deals on fashion, electronics, home goods, and more.
+            <span className="font-bold text-pink-400"> Quality products</span> at great prices!
           </p>
           <Link href={"/search"}>
             <Button

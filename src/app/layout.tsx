@@ -16,8 +16,45 @@ import { NavbarCategory } from "@/components/shared-components/navbar-components
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "ShopTal",
-  description: "",
+  title: "ShopTal - Your Ultimate Shopping Destination",
+  description: "Discover amazing products at ShopTal. Shop the latest trends, new arrivals, and exclusive deals on fashion, electronics, home goods, and more. Fast shipping, secure payments, and exceptional customer service.",
+  keywords: "shopping, online store, fashion, electronics, home goods, deals, new arrivals, e-commerce",
+  authors: [{ name: "ShopTal Team" }],
+  creator: "ShopTal",
+  publisher: "ShopTal",
+  openGraph: {
+    title: "ShopTal - Your Ultimate Shopping Destination",
+    description: "Discover amazing products at ShopTal. Shop the latest trends, new arrivals, and exclusive deals.",
+    url: "https://shoptal.com",
+    siteName: "ShopTal",
+    images: [
+      {
+        url: "/images/blackfriday.webp",
+        width: 1200,
+        height: 630,
+        alt: "ShopTal - Amazing Products and Deals",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ShopTal - Your Ultimate Shopping Destination",
+    description: "Discover amazing products at ShopTal. Shop the latest trends, new arrivals, and exclusive deals.",
+    images: ["/images/blackfriday.webp"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 export default async function RootLayout({
