@@ -17,14 +17,17 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "ShopTal - Your Ultimate Shopping Destination",
-  description: "Discover amazing products at ShopTal. Shop the latest trends, new arrivals, and exclusive deals on fashion, electronics, home goods, and more. Fast shipping, secure payments, and exceptional customer service.",
-  keywords: "shopping, online store, fashion, electronics, home goods, deals, new arrivals, e-commerce",
+  description:
+    "Discover amazing products at ShopTal. Shop the latest trends, new arrivals, and exclusive deals on fashion, electronics, home goods, and more. Fast shipping, secure payments, and exceptional customer service.",
+  keywords:
+    "shopping, online store, fashion, electronics, home goods, deals, new arrivals, e-commerce",
   authors: [{ name: "ShopTal Team" }],
   creator: "ShopTal",
   publisher: "ShopTal",
   openGraph: {
     title: "ShopTal - Your Ultimate Shopping Destination",
-    description: "Discover amazing products at ShopTal. Shop the latest trends, new arrivals, and exclusive deals.",
+    description:
+      "Discover amazing products at ShopTal. Shop the latest trends, new arrivals, and exclusive deals.",
     url: "https://shoptal.com",
     siteName: "ShopTal",
     images: [
@@ -41,7 +44,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "ShopTal - Your Ultimate Shopping Destination",
-    description: "Discover amazing products at ShopTal. Shop the latest trends, new arrivals, and exclusive deals.",
+    description:
+      "Discover amazing products at ShopTal. Shop the latest trends, new arrivals, and exclusive deals.",
     images: ["/images/blackfriday.webp"],
   },
   robots: {
@@ -71,6 +75,36 @@ export default async function RootLayout({
         <link rel="dns-prefetch" href="http://res.cloudinary.com" />
       </head>
       <body className={`bg-gray-100 ${inter.className}`}>
+        <div className="overflow-hidden whitespace-nowrap bg-gray-100 py-0.5">
+          <p
+            className="inline-block font-light"
+            style={{
+              animation: "marquee 15s linear infinite",
+              display: "inline-block",
+            }}
+          >
+            🔧 Found something broken or not working as expected? I&apos;d love
+            to hear from you! Please share your feedback via{" "}
+            <a
+              href="https://linkedin.com/in/dipto-karmaker/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 underline hover:text-blue-800"
+            >
+              my LinkedIn.
+            </a>
+          </p>
+
+          <style>
+            {`
+          @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+          }
+        `}
+          </style>
+        </div>
+
         <NextAuthProvider>
           <Header>
             <MobileCategoryBrowser categories={categories} />

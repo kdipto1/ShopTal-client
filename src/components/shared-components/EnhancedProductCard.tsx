@@ -16,6 +16,7 @@ interface EnhancedProductCardProps {
   variant?: "default" | "compact" | "featured";
   showQuickActions?: boolean;
   priority?: boolean;
+  className?: string;
 }
 
 export function EnhancedProductCard({
@@ -23,6 +24,7 @@ export function EnhancedProductCard({
   variant = "default",
   showQuickActions = true,
   priority = false,
+  className = "",
 }: EnhancedProductCardProps) {
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [isInStock] = useState(true); // TODO: Get from API
@@ -62,7 +64,7 @@ export function EnhancedProductCard({
 
   return (
     <Card
-      className={`group relative overflow-hidden border border-pink-100 hover:border-pink-300 shadow-sm hover:shadow-lg transition-all duration-300 bg-white rounded-xl ${getVariantClasses()} flex flex-col`}
+      className={`group relative overflow-hidden border border-pink-100 hover:border-pink-300 shadow-sm hover:shadow-lg transition-all duration-300 bg-white rounded-xl ${getVariantClasses()} flex flex-col ${className}`}
     >
       {/* Quick Actions Overlay */}
       {showQuickActions && (

@@ -10,7 +10,7 @@ async function fetchNewArrivals(): Promise<Product[]> {
       headers: { "Content-Type": "application/json" },
       next: { revalidate: 120 },
       // cache: "no-store",
-    }
+    },
   );
   if (!res.ok) throw new Error("Failed to fetch new arrivals");
   const data = await res.json();
@@ -33,7 +33,7 @@ export default async function NewArrivals() {
   const newArrivals = await fetchNewArrivals();
 
   return (
-    <section className="pt-4 mb-14 bg-gradient-to-br from-pink-50/60 to-white rounded-2xl shadow-lg py-10 px-2 md:py-14 md:px-12 border border-pink-100 animate-fade-in-up">
+    <section className="pt-4 mb-14 bg-gradient-to-br from-pink-50/60 to-white rounded-2xl shadow-lg py-10 px-3 sm:px-6 md:py-14 md:px-12 border border-pink-100 animate-fade-in-up">
       <div className="flex flex-col items-center mb-6">
         <span className="inline-flex items-center gap-2 bg-pink-600 text-white px-3 py-1 rounded-full text-xs md:text-sm font-semibold shadow animate-fade-in-down mb-2">
           <Sparkles className="w-4 h-4" /> New

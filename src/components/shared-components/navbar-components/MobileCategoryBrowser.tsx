@@ -45,18 +45,20 @@ interface MobileCategoryBrowserProps {
 export default function MobileCategoryBrowser({
   categories,
   open: externalOpen,
-  onOpenChange: externalOnOpenChange
+  onOpenChange: externalOnOpenChange,
 }: MobileCategoryBrowserProps) {
   const [internalOpen, setInternalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+    null
+  );
 
   // Use external control if provided, otherwise use internal state
   const isOpen = externalOpen !== undefined ? externalOpen : internalOpen;
   const setIsOpen = externalOnOpenChange || setInternalOpen;
 
   // Filter categories based on search term
-  const filteredCategories = categories.filter(category =>
+  const filteredCategories = categories.filter((category) =>
     category.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -75,16 +77,23 @@ export default function MobileCategoryBrowser({
   };
 
   return (
-    <Sheet open={isOpen} onOpenChange={(open) => {
-      setIsOpen(open);
-      if (!open) {
-        // Reset state when closing
-        setSelectedCategory(null);
-        setSearchTerm("");
-      }
-    }}>
+    <Sheet
+      open={isOpen}
+      onOpenChange={(open) => {
+        setIsOpen(open);
+        if (!open) {
+          // Reset state when closing
+          setSelectedCategory(null);
+          setSearchTerm("");
+        }
+      }}
+    >
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="md:hidden min-w-[44px] min-h-[44px] p-3">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="md:hidden min-w-[44px] min-h-[44px] p-3"
+        >
           <Grid3X3 className="h-5 w-5 text-primary" />
           <span className="sr-only">Browse Categories</span>
         </Button>
@@ -109,7 +118,9 @@ export default function MobileCategoryBrowser({
                   </Button>
                 )}
                 <SheetTitle className="text-lg font-semibold text-gray-900">
-                  {selectedCategory ? selectedCategory.name : "Browse Categories"}
+                  {selectedCategory
+                    ? selectedCategory.name
+                    : "Browse Categories"}
                 </SheetTitle>
               </div>
               <Button
@@ -118,14 +129,13 @@ export default function MobileCategoryBrowser({
                 onClick={handleClose}
                 className="p-1 h-8 w-8"
               >
-                <X className="h-4 w-4" />
+                {/* <X className="h-4 w-4" /> */}
               </Button>
             </div>
             <SheetDescription className="text-sm text-gray-600 mt-1">
               {selectedCategory
                 ? "Choose a subcategory or brand"
-                : "Find products by category"
-              }
+                : "Find products by category"}
             </SheetDescription>
           </SheetHeader>
 
@@ -166,9 +176,13 @@ export default function MobileCategoryBrowser({
                         {category.name}
                       </h3>
                       <div className="flex items-center text-xs text-gray-500">
-                        <span>{category.productSubcategory.length} subcategories</span>
+                        <span>
+                          {category.productSubcategory.length} subcategories
+                        </span>
                         {category.brands.length > 0 && (
-                          <span className="ml-1">• {category.brands.length} brands</span>
+                          <span className="ml-1">
+                            • {category.brands.length} brands
+                          </span>
                         )}
                       </div>
                     </div>
@@ -188,8 +202,12 @@ export default function MobileCategoryBrowser({
                   <div className="rounded-xl bg-gradient-to-r from-pink-500 to-pink-600 p-4 text-white shadow-lg transition-all duration-200 hover:shadow-xl active:scale-95">
                     <div className="flex items-center justify-between">
                       <div>
-                        <h3 className="font-semibold text-lg">View All {selectedCategory.name}</h3>
-                        <p className="text-pink-100 text-sm">Browse all products in this category</p>
+                        <h3 className="font-semibold text-lg">
+                          View All {selectedCategory.name}
+                        </h3>
+                        <p className="text-pink-100 text-sm">
+                          Browse all products in this category
+                        </p>
                       </div>
                       <ChevronRight className="h-5 w-5" />
                     </div>
@@ -203,17 +221,21 @@ export default function MobileCategoryBrowser({
                       Subcategories
                     </h4>
                     <div className="grid grid-cols-1 gap-2">
-                      {selectedCategory.productSubcategory.map((subcategory) => (
-                        <Link
-                          key={subcategory.id}
-                          href={`/search?categoryId=${selectedCategory.id}&subcategoryId=${subcategory.id}`}
-                          onClick={handleClose}
-                          className="flex items-center justify-between rounded-lg border border-gray-200 bg-white p-3 transition-all duration-200 hover:border-pink-300 hover:bg-pink-50 active:scale-95"
-                        >
-                          <span className="text-sm font-medium text-gray-900">{subcategory.name}</span>
-                          <ChevronRight className="h-4 w-4 text-gray-400" />
-                        </Link>
-                      ))}
+                      {selectedCategory.productSubcategory.map(
+                        (subcategory) => (
+                          <Link
+                            key={subcategory.id}
+                            href={`/search?categoryId=${selectedCategory.id}&subcategoryId=${subcategory.id}`}
+                            onClick={handleClose}
+                            className="flex items-center justify-between rounded-lg border border-gray-200 bg-white p-3 transition-all duration-200 hover:border-pink-300 hover:bg-pink-50 active:scale-95"
+                          >
+                            <span className="text-sm font-medium text-gray-900">
+                              {subcategory.name}
+                            </span>
+                            <ChevronRight className="h-4 w-4 text-gray-400" />
+                          </Link>
+                        )
+                      )}
                     </div>
                   </div>
                 )}
@@ -232,7 +254,9 @@ export default function MobileCategoryBrowser({
                           onClick={handleClose}
                           className="flex items-center justify-center rounded-lg border border-gray-200 bg-white p-3 text-center transition-all duration-200 hover:border-pink-300 hover:bg-pink-50 active:scale-95"
                         >
-                          <span className="text-xs font-medium text-gray-900">{brandItem.brand.name}</span>
+                          <span className="text-xs font-medium text-gray-900">
+                            {brandItem.brand.name}
+                          </span>
                         </Link>
                       ))}
                     </div>

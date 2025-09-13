@@ -21,7 +21,7 @@ export default function Header({ children }: { children: any }) {
     <header className="sticky top-0 w-full bg-white/90 backdrop-blur-sm shadow-sm z-50 transition-all duration-200">
       <div className="max-w-7xl mx-auto px-4 flex h-14 items-center">
         <div className="mr-2 flex items-center">
-          {children}
+          {/* {children} */}
           <Link
             href="/"
             className="ml-2 md:ml-0 mr-4 flex items-center space-x-2 text-xl font-bold text-primary hover:text-pink-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-pink-400 rounded"
