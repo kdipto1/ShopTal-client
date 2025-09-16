@@ -1,12 +1,6 @@
 import NewArrivalsCarousel from "./NewArrivalsCarousel";
 import { Sparkles } from "lucide-react";
-
-type Product = {
-  id: string;
-  name: string;
-  price: number;
-  image: string;
-};
+import { Product } from "@/types";
 
 async function fetchNewArrivals(): Promise<Product[]> {
   const res = await fetch(
@@ -16,18 +10,30 @@ async function fetchNewArrivals(): Promise<Product[]> {
       headers: { "Content-Type": "application/json" },
       next: { revalidate: 120 },
       // cache: "no-store",
-    }
+    },
   );
   if (!res.ok) throw new Error("Failed to fetch new arrivals");
   const data = await res.json();
-  return data.data.data;
+
+  // Transform the API response to match the Product type
+  return data.data.data.map((item: any) => ({
+    id: item.id,
+    name: item.name,
+    price: item.price,
+    image: item.image,
+    description: item.description || "",
+    features: item.features || [],
+    category: item.category || "",
+    reviews: item.reviews || [],
+    averageRating: item.averageRating || 0,
+  }));
 }
 
 export default async function NewArrivals() {
   const newArrivals = await fetchNewArrivals();
 
   return (
-    <section className="pt-4 mb-14 bg-gradient-to-br from-pink-50/60 to-white rounded-2xl shadow-lg py-10 px-2 md:py-14 md:px-12 border border-pink-100 animate-fade-in-up">
+    <section className="pt-4 mb-14 bg-gradient-to-br from-pink-50/60 to-white rounded-2xl shadow-lg py-10 px-3 sm:px-6 md:py-14 md:px-12 border border-pink-100 animate-fade-in-up">
       <div className="flex flex-col items-center mb-6">
         <span className="inline-flex items-center gap-2 bg-pink-600 text-white px-3 py-1 rounded-full text-xs md:text-sm font-semibold shadow animate-fade-in-down mb-2">
           <Sparkles className="w-4 h-4" /> New
