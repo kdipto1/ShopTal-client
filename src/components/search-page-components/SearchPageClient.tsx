@@ -14,21 +14,30 @@ import { Product } from "@/types";
 interface SearchPageClientProps {
   initialSearchParams: SearchParams;
   categories: any[];
+  initialProducts: Product[];
+  initialTotalResults: number;
+  initialTotalPages: number;
 }
 
 export default function SearchPageClient({
   initialSearchParams,
-  categories
+  categories,
+  initialProducts,
+  initialTotalResults,
+  initialTotalPages,
 }: SearchPageClientProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [searchTerm, setSearchTerm] = useState(initialSearchParams.searchTerm || "");
-  const [products, setProducts] = useState<Product[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [currentFilters, setCurrentFilters] = useState<Partial<SearchParams>>(initialSearchParams);
-  const [totalResults, setTotalResults] = useState(0);
-  const [totalPages, setTotalPages] = useState(1);
+  const [searchTerm, setSearchTerm] = useState(
+    initialSearchParams.searchTerm || ""
+  );
+  const [products, setProducts] = useState<Product[]>(initialProducts);
+  const [isLoading, setIsLoading] = useState(false);
+  const [currentFilters, setCurrentFilters] =
+    useState<Partial<SearchParams>>(initialSearchParams);
+  const [totalResults, setTotalResults] = useState(initialTotalResults);
+  const [totalPages, setTotalPages] = useState(initialTotalPages);
 
   // Load products based on current filters
   const loadProducts = useCallback(async (filters: Partial<SearchParams>) => {
@@ -53,18 +62,21 @@ export default function SearchPageClient({
   }, []);
 
   // Update URL when filters change
-  const updateURL = useCallback((filters: Partial<SearchParams>) => {
-    const params = new URLSearchParams();
+  const updateURL = useCallback(
+    (filters: Partial<SearchParams>) => {
+      const params = new URLSearchParams();
 
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value !== undefined && value !== null && value !== "") {
-        params.set(key, value.toString());
-      }
-    });
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== "") {
+          params.set(key, value.toString());
+        }
+      });
 
-    const newURL = `/search${params.toString() ? `?${params.toString()}` : ""}`;
-    router.push(newURL, { scroll: false });
-  }, [router]);
+      const newURL = `/search${params.toString() ? `?${params.toString()}` : ""}`;
+      router.replace(newURL, { scroll: false });
+    },
+    [router]
+  );
 
   // Handle search submission
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -101,10 +113,7 @@ export default function SearchPageClient({
     loadProducts(updatedFilters);
   };
 
-  // Load initial products
-  useEffect(() => {
-    loadProducts(initialSearchParams);
-  }, [loadProducts, initialSearchParams]);
+  
 
   // Update filters when URL changes
   useEffect(() => {

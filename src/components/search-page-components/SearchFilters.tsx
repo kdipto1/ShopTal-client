@@ -11,6 +11,7 @@ import {
 import { Input } from "@/components/shadcn-ui/input";
 import { Checkbox } from "@/components/shadcn-ui/checkbox";
 import { Button } from "@/components/shadcn-ui/button";
+import { Slider } from "@/components/shadcn-ui/slider";
 import { Category, SearchParams } from "@/types";
 
 interface SearchFiltersProps {
@@ -19,64 +20,46 @@ interface SearchFiltersProps {
   onFiltersChange?: (filters: Partial<SearchParams>) => void;
 }
 
+const MAX_PRICE = 5000;
+
 export function SearchFilters({
   categories,
   currentFilters,
   onFiltersChange,
 }: SearchFiltersProps) {
   const router = useRouter();
-  const [filters, setFilters] = useState({
-    searchTerm: currentFilters.searchTerm || "",
-    categoryId: currentFilters.categoryId || "",
-    minPrice: currentFilters.minPrice || "",
-    maxPrice: currentFilters.maxPrice || "",
-  });
+  const [searchTerm, setSearchTerm] = useState(currentFilters.searchTerm || "");
+  const [categoryId, setCategoryId] = useState(currentFilters.categoryId || "");
+  const [priceRange, setPriceRange] = useState<[number, number]>([
+    currentFilters.minPrice || 0,
+    currentFilters.maxPrice || MAX_PRICE,
+  ]);
 
   useEffect(() => {
-    setFilters({
-      searchTerm: currentFilters.searchTerm || "",
-      categoryId: currentFilters.categoryId || "",
-      minPrice: currentFilters.minPrice || "",
-      maxPrice: currentFilters.maxPrice || "",
-    });
+    setSearchTerm(currentFilters.searchTerm || "");
+    setCategoryId(currentFilters.categoryId || "");
+    setPriceRange([
+      currentFilters.minPrice || 0,
+      currentFilters.maxPrice || MAX_PRICE,
+    ]);
   }, [currentFilters]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleCategoryChange = (categoryId: string) => {
-    setFilters((prev) => ({
-      ...prev,
-      categoryId: prev.categoryId === categoryId ? "" : categoryId,
-    }));
+  const handlePriceInputChange = (index: 0 | 1, value: string) => {
+    const newRange = [...priceRange] as [number, number];
+    newRange[index] = Number(value) || (index === 0 ? 0 : MAX_PRICE);
+    setPriceRange(newRange);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
     if (onFiltersChange) {
-      // Use the callback if provided (for client-side filtering)
       const newFilters: Partial<SearchParams> = {
-        searchTerm: filters.searchTerm || undefined,
-        categoryId: filters.categoryId || undefined,
-        minPrice: filters.minPrice ? Number(filters.minPrice) : undefined,
-        maxPrice: filters.maxPrice ? Number(filters.maxPrice) : undefined,
+        searchTerm: searchTerm || undefined,
+        categoryId: categoryId || undefined,
+        minPrice: priceRange[0],
+        maxPrice: priceRange[1],
       };
       onFiltersChange(newFilters);
-    } else {
-      // Fallback to URL navigation (for backward compatibility)
-      const queryParams = new URLSearchParams();
-      Object.entries(filters).forEach(([key, value]) => {
-        if (value !== "" && value !== undefined) {
-          queryParams.append(key, value.toString());
-        }
-      });
-      router.push(`/search?${queryParams.toString()}`);
     }
   };
 
@@ -94,8 +77,8 @@ export function SearchFilters({
               type="text"
               name="searchTerm"
               placeholder="Search products..."
-              value={filters.searchTerm}
-              onChange={handleInputChange}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full h-12 text-base rounded-lg border border-gray-200 dark:border-gray-800 focus:ring-2 focus:ring-pink-200 focus:border-pink-300 transition-colors duration-200"
             />
           </div>
@@ -105,11 +88,16 @@ export function SearchFilters({
             </h3>
             <div className="space-y-2">
               {categories?.map((cat) => (
-                <div key={cat.id} className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200">
+                <div
+                  key={cat.id}
+                  className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200"
+                >
                   <Checkbox
                     id={`category-${cat.id}`}
-                    checked={filters.categoryId === cat.id}
-                    onCheckedChange={() => handleCategoryChange(cat.id)}
+                    checked={categoryId === cat.id}
+                    onCheckedChange={() =>
+                      setCategoryId((prev) => (prev === cat.id ? "" : cat.id))
+                    }
                     className="h-5 w-5 border-gray-300 dark:border-gray-700 data-[state=checked]:bg-pink-600 data-[state=checked]:border-pink-600"
                   />
                   <label
@@ -122,26 +110,31 @@ export function SearchFilters({
               ))}
             </div>
           </div>
-          <div className="space-y-1">
+          <div className="space-y-4">
             <h3 className="font-medium text-xs text-gray-500 uppercase tracking-wide">
               Price Range
             </h3>
+            <Slider
+              value={priceRange}
+              onValueChange={setPriceRange}
+              max={MAX_PRICE}
+              step={10}
+              className="my-4"
+            />
             <div className="flex items-center space-x-3">
               <Input
                 type="number"
-                name="minPrice"
                 placeholder="Min"
-                value={filters.minPrice}
-                onChange={handleInputChange}
+                value={priceRange[0]}
+                onChange={(e) => handlePriceInputChange(0, e.target.value)}
                 className="flex-1 h-10 text-base rounded-lg border border-gray-200 dark:border-gray-800 focus:ring-2 focus:ring-pink-200 focus:border-pink-300 transition-colors duration-200"
               />
               <span className="text-sm text-gray-500 font-medium">to</span>
               <Input
                 type="number"
-                name="maxPrice"
                 placeholder="Max"
-                value={filters.maxPrice}
-                onChange={handleInputChange}
+                value={priceRange[1]}
+                onChange={(e) => handlePriceInputChange(1, e.target.value)}
                 className="flex-1 h-10 text-base rounded-lg border border-gray-200 dark:border-gray-800 focus:ring-2 focus:ring-pink-200 focus:border-pink-300 transition-colors duration-200"
               />
             </div>
