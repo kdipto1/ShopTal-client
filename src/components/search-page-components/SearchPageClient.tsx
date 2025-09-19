@@ -50,7 +50,9 @@ export default function SearchPageClient({
       });
       setProducts(result.data.data);
       setTotalResults(result.data.meta?.total || 0);
-      setTotalPages(Math.ceil((result.data.meta?.total || 0) / (filters.limit || 12)));
+      setTotalPages(
+        Math.ceil((result.data.meta?.total || 0) / (filters.limit || 12))
+      );
     } catch (error) {
       console.error("Error loading products:", error);
       setProducts([]);
@@ -72,7 +74,9 @@ export default function SearchPageClient({
         }
       });
 
-      const newURL = `/search${params.toString() ? `?${params.toString()}` : ""}`;
+      const newURL = `/search${
+        params.toString() ? `?${params.toString()}` : ""
+      }`;
       router.replace(newURL, { scroll: false });
     },
     [router]
@@ -102,7 +106,7 @@ export default function SearchPageClient({
     updateURL(updatedFilters);
     loadProducts(updatedFilters);
     // Scroll to top of results
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   // Handle limit changes
@@ -112,8 +116,6 @@ export default function SearchPageClient({
     updateURL(updatedFilters);
     loadProducts(updatedFilters);
   };
-
-  
 
   // Update filters when URL changes
   useEffect(() => {
@@ -164,10 +166,7 @@ export default function SearchPageClient({
 
           {/* Results */}
           <div className="flex-1">
-            <SearchResultsGrid
-              products={products}
-              isLoading={isLoading}
-            />
+            <SearchResultsGrid products={products} isLoading={isLoading} />
 
             {/* Pagination */}
             <SearchPagination
