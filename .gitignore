@@ -14,7 +14,7 @@ DEVELOPMENT-plan.md
 # next.js
 /.next/
 /out/
-
+.swc
 # production
 /build
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   Card,
   CardContent,
@@ -19,7 +19,9 @@ import {
 } from "@/components/shadcn-ui/accordion";
 import { ScrollArea } from "@/components/shadcn-ui/scroll-area";
 import { Category, SearchParams } from "@/types";
+import { useSearchFilters } from "@/hooks/useSearchFilters";
 
+// --- TYPES --- //
 interface Subcategory {
   id: string;
   name: string;
@@ -47,64 +49,51 @@ interface SearchFiltersProps {
   onFiltersChange?: (filters: Partial<SearchParams>) => void;
 }
 
-const MAX_PRICE = 5000;
+// --- SUB-COMPONENTS --- //
+const FilterCheckbox = ({
+  id,
+  label,
+  checked,
+  onCheckedChange,
+}: {
+  id: string;
+  label: string;
+  checked: boolean;
+  onCheckedChange: (checked: boolean) => void;
+}) => (
+  <div className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200">
+    <Checkbox
+      id={id}
+      checked={checked}
+      onCheckedChange={onCheckedChange}
+      className="h-5 w-5 border-gray-300 dark:border-gray-700 data-[state=checked]:bg-pink-600 data-[state=checked]:border-pink-600"
+    />
+    <label
+      htmlFor={id}
+      className="text-sm text-gray-700 dark:text-gray-200 font-medium cursor-pointer flex-1"
+    >
+      {label}
+    </label>
+  </div>
+);
 
+// --- MAIN COMPONENT --- //
 export function SearchFilters({
   categories,
   currentFilters,
   onFiltersChange,
 }: SearchFiltersProps) {
-  const [categoryId, setCategoryId] = useState(currentFilters.categoryId || "");
-  const [subcategoryId, setSubcategoryId] = useState(
-    currentFilters.subcategoryId || ""
-  );
-  const [brandId, setBrandId] = useState(currentFilters.brandId || "");
-  const [priceRange, setPriceRange] = useState<[number, number]>([
-    currentFilters.minPrice || 0,
-    currentFilters.maxPrice || MAX_PRICE,
-  ]);
+  const {
+    draftFilters,
+    handleFilterChange,
+    handlePriceRangeChange,
+    handlePriceInputChange,
+    handleSubmit,
+    handleClearFilters,
+    hasActiveFilters,
+    MAX_PRICE,
+  } = useSearchFilters(currentFilters, onFiltersChange);
 
-  useEffect(() => {
-    setCategoryId(currentFilters.categoryId || "");
-    setSubcategoryId(currentFilters.subcategoryId || "");
-    setBrandId(currentFilters.brandId || "");
-    setPriceRange([
-      currentFilters.minPrice || 0,
-      currentFilters.maxPrice || MAX_PRICE,
-    ]);
-  }, [currentFilters]);
-
-  const handlePriceInputChange = (index: 0 | 1, value: string) => {
-    const numValue = Number(value);
-    if (isNaN(numValue)) return;
-
-    const newRange = [...priceRange] as [number, number];
-    newRange[index] = Math.min(Math.max(numValue, 0), MAX_PRICE);
-
-    // Ensure min doesn't exceed max and max doesn't go below min
-    if (index === 0 && newRange[0] > newRange[1]) {
-      newRange[0] = newRange[1];
-    } else if (index === 1 && newRange[1] < newRange[0]) {
-      newRange[1] = newRange[0];
-    }
-
-    setPriceRange(newRange);
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (onFiltersChange) {
-      const newFilters: Partial<SearchParams> = {
-        categoryId: categoryId || undefined,
-        subcategoryId: subcategoryId || undefined,
-        brandId: brandId || undefined,
-        minPrice: priceRange[0] === 0 ? undefined : priceRange[0],
-        maxPrice: priceRange[1] === MAX_PRICE ? undefined : priceRange[1],
-      };
-      onFiltersChange(newFilters);
-    }
-  };
-  console.log(categories);
   return (
     <Card className="border border-gray-100 dark:border-gray-800 shadow-none rounded-xl p-4 md:p-4 bg-white dark:bg-gray-950">
       <CardHeader className="pb-2 px-0">
@@ -114,6 +103,7 @@ export function SearchFilters({
       </CardHeader>
       <CardContent className="px-0">
         <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Categories Section */}
           <div className="space-y-1">
             <h3 className="font-medium text-xs text-gray-500 uppercase tracking-wide">
               Categories
@@ -125,100 +115,57 @@ export function SearchFilters({
                     <AccordionTrigger>{cat.name}</AccordionTrigger>
                     <AccordionContent>
                       <div className="space-y-2">
-                        <div className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200">
-                          <Checkbox
-                            id={`category-${cat.id}`}
-                            checked={categoryId === cat.id}
-                            onCheckedChange={(checked) => {
-                              if (checked) {
-                                setCategoryId(cat.id);
-                                setSubcategoryId(""); // Clear subcategory when selecting parent category
-                              } else {
-                                setCategoryId("");
-                              }
-                            }}
-                            className="h-5 w-5 border-gray-300 dark:border-gray-700 data-[state=checked]:bg-pink-600 data-[state=checked]:border-pink-600"
-                          />
-                          <label
-                            htmlFor={`category-${cat.id}`}
-                            className="text-sm text-gray-700 dark:text-gray-200 font-medium cursor-pointer flex-1"
-                          >
-                            All in {cat.name}
-                          </label>
-                        </div>
+                        <FilterCheckbox
+                          id={`category-${cat.id}`}
+                          label={`All in ${cat.name}`}
+                          checked={draftFilters.categoryId === cat.id}
+                          onCheckedChange={() =>
+                            handleFilterChange("categoryId", cat.id)
+                          }
+                        />
+
                         {cat.productSubcategory?.length > 0 && (
-                          <div
-                            key={`subcategories-${cat.id}`}
-                            className="space-y-2"
-                          >
-                            <div className="mt-2 mb-1 ml-2">
-                              <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                                Subcategories
-                              </span>
-                            </div>
+                          <div className="ml-4 space-y-2 pt-2">
+                            <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                              Subcategories
+                            </h4>
                             {cat.productSubcategory.map((sub) => (
-                              <div
+                              <FilterCheckbox
                                 key={sub.id}
-                                className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200 ml-4"
-                              >
-                                <Checkbox
-                                  id={`subcategory-${sub.id}`}
-                                  checked={subcategoryId === sub.id}
-                                  onCheckedChange={(checked) => {
-                                    if (checked) {
-                                      setSubcategoryId(sub.id);
-                                      setCategoryId(cat.id);
-                                      setBrandId(""); // Clear brand when selecting subcategory
-                                    } else {
-                                      setSubcategoryId("");
-                                    }
-                                  }}
-                                  className="h-5 w-5 border-gray-300 dark:border-gray-700 data-[state=checked]:bg-pink-600 data-[state=checked]:border-pink-600"
-                                />
-                                <label
-                                  htmlFor={`subcategory-${sub.id}`}
-                                  className="text-sm text-gray-700 dark:text-gray-200 font-medium cursor-pointer flex-1"
-                                >
-                                  {sub.name}
-                                </label>
-                              </div>
+                                id={`subcategory-${sub.id}`}
+                                label={sub.name}
+                                checked={draftFilters.subcategoryId === sub.id}
+                                onCheckedChange={() =>
+                                  handleFilterChange(
+                                    "subcategoryId",
+                                    sub.id,
+                                    cat.id
+                                  )
+                                }
+                              />
                             ))}
                           </div>
                         )}
 
                         {cat.brands?.length > 0 && (
-                          <div key={`brands-${cat.id}`} className="space-y-2">
-                            <div className="mt-4 mb-1 ml-2">
-                              <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                                Brands
-                              </span>
-                            </div>
+                          <div className="ml-4 space-y-2 pt-2">
+                            <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                              Brands
+                            </h4>
                             {cat.brands.map((brand) => (
-                              <div
+                              <FilterCheckbox
                                 key={brand.brand.id}
-                                className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200 ml-4"
-                              >
-                                <Checkbox
-                                  id={`brand-${brand.brand.id}`}
-                                  checked={brandId === brand.brand.id}
-                                  onCheckedChange={(checked) => {
-                                    if (checked) {
-                                      setBrandId(brand.brand.id);
-                                      setCategoryId(cat.id);
-                                      setSubcategoryId(""); // Clear subcategory when selecting brand
-                                    } else {
-                                      setBrandId("");
-                                    }
-                                  }}
-                                  className="h-5 w-5 border-gray-300 dark:border-gray-700 data-[state=checked]:bg-pink-600 data-[state=checked]:border-pink-600"
-                                />
-                                <label
-                                  htmlFor={`brand-${brand.brand.id}`}
-                                  className="text-sm text-gray-700 dark:text-gray-200 font-medium cursor-pointer flex-1"
-                                >
-                                  {brand.brand.name}
-                                </label>
-                              </div>
+                                id={`brand-${brand.brand.id}`}
+                                label={brand.brand.name}
+                                checked={draftFilters.brandId === brand.brand.id}
+                                onCheckedChange={() =>
+                                  handleFilterChange(
+                                    "brandId",
+                                    brand.brand.id,
+                                    cat.id
+                                  )
+                                }
+                              />
                             ))}
                           </div>
                         )}
@@ -229,14 +176,19 @@ export function SearchFilters({
               </Accordion>
             </ScrollArea>
           </div>
+
+          {/* Price Range Section */}
           <div className="space-y-4">
             <h3 className="font-medium text-xs text-gray-500 uppercase tracking-wide">
               Price Range
             </h3>
             <Slider
-              value={priceRange}
+              value={[
+                draftFilters.minPrice || 0,
+                draftFilters.maxPrice || MAX_PRICE,
+              ]}
               onValueChange={(value) =>
-                setPriceRange(value as [number, number])
+                handlePriceRangeChange(value as [number, number])
               }
               max={MAX_PRICE}
               step={10}
@@ -246,42 +198,34 @@ export function SearchFilters({
               <Input
                 type="number"
                 placeholder="Min"
-                value={priceRange[0]}
+                value={draftFilters.minPrice || ""}
                 onChange={(e) => handlePriceInputChange(0, e.target.value)}
-                className="flex-1 h-10 text-base rounded-lg border border-gray-200 dark:border-gray-800 focus:ring-2 focus:ring-pink-200 focus:border-pink-300 transition-colors duration-200"
+                className="flex-1 h-10 text-base rounded-lg border"
               />
               <span className="text-sm text-gray-500 font-medium">to</span>
               <Input
                 type="number"
                 placeholder="Max"
-                value={priceRange[1]}
+                value={draftFilters.maxPrice || ""}
                 onChange={(e) => handlePriceInputChange(1, e.target.value)}
-                className="flex-1 h-10 text-base rounded-lg border border-gray-200 dark:border-gray-800 focus:ring-2 focus:ring-pink-200 focus:border-pink-300 transition-colors duration-200"
+                className="flex-1 h-10 text-base rounded-lg border"
               />
             </div>
           </div>
+
+          {/* Action Buttons */}
           <div className="space-y-3">
             <Button
               type="submit"
-              className="w-full h-12 bg-pink-600 hover:bg-pink-700 text-white font-semibold rounded-lg shadow-sm hover:shadow-md text-base py-3 transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full h-12 bg-pink-600 hover:bg-pink-700 text-white font-semibold"
             >
               Apply Filters
             </Button>
-            {(categoryId ||
-              subcategoryId ||
-              brandId ||
-              priceRange[0] > 0 ||
-              priceRange[1] < MAX_PRICE) && (
+            {hasActiveFilters && (
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => {
-                  setCategoryId("");
-                  setSubcategoryId("");
-                  setBrandId("");
-                  setPriceRange([0, MAX_PRICE]);
-                  onFiltersChange?.({});
-                }}
+                onClick={handleClearFilters}
                 className="w-full h-10 text-sm"
               >
                 Clear All Filters
