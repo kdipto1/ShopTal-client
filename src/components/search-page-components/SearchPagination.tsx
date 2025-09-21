@@ -2,7 +2,12 @@
 
 import React from "react";
 import { Button } from "@/components/shadcn-ui/button";
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from "lucide-react";
 
 interface SearchPaginationProps {
   currentPage: number;
@@ -24,9 +29,9 @@ export default function SearchPagination({
   isLoading = false,
 }: SearchPaginationProps) {
   // Don't show pagination if there's only one page or no results
-  if (totalPages <= 1 || totalResults === 0) {
-    return null;
-  }
+  // if (totalPages <= 1 || totalResults === 0) {
+  //   return null;
+  // }
 
   // Calculate the range of items being shown
   const startItem = (currentPage - 1) * pageLimit + 1;
@@ -68,12 +73,13 @@ export default function SearchPagination({
   const pageNumbers = getPageNumbers();
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-6 px-4 bg-white border-t border-gray-100">
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-6 px-4 bg-white border-t border-gray-100 mt-4">
       {/* Results info */}
       <div className="text-sm text-gray-600 order-2 sm:order-1">
-        Showing <span className="font-medium text-gray-900">{startItem}</span> to{" "}
-        <span className="font-medium text-gray-900">{endItem}</span> of{" "}
-        <span className="font-medium text-gray-900">{totalResults}</span> results
+        Showing <span className="font-medium text-gray-900">{startItem}</span>{" "}
+        to <span className="font-medium text-gray-900">{endItem}</span> of{" "}
+        <span className="font-medium text-gray-900">{totalResults}</span>{" "}
+        results
       </div>
 
       {/* Pagination controls */}

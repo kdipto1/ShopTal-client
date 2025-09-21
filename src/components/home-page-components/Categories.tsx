@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import { Button } from "../shadcn-ui/button";
 
 type Category = {
   id: string;
@@ -32,19 +34,36 @@ export default async function Categories() {
 
   return (
     <section className="mb-14">
-      <h2 className="text-2xl font-bold mb-6 text-center text-primary tracking-tight">
-        Shop by Category
-      </h2>
-      <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+        <div className="text-center sm:text-left">
+          <h2 className="text-2xl sm:text-3xl font-bold text-primary tracking-tight">
+            Shop by Category
+          </h2>
+          <p className="text-sm text-gray-600 mt-1">
+            Discover products in your favorite categories
+          </p>
+        </div>
+        <Button
+          asChild
+          variant="outline"
+          className="border-pink-200 hover:border-pink-400 hover:bg-pink-50 self-center sm:self-auto"
+        >
+          <Link href="/categories" className="flex items-center gap-2">
+            View All Categories
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        </Button>
+      </div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-5 md:gap-6">
         {categories.map((category) => (
           <Link
             key={category.id}
             href={`/search?categoryId=${category.id}`}
-            className="group flex flex-col items-center justify-center bg-white rounded-xl border border-pink-100 hover:border-pink-400 shadow-sm hover:shadow-md transition-all duration-200 w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-44 lg:h-44 xl:w-52 xl:h-52 mx-auto relative overflow-hidden"
+            className="group flex flex-col items-center justify-center bg-white rounded-xl border border-pink-100 hover:border-pink-400 shadow-sm hover:shadow-md transition-all duration-300 w-28 h-28 sm:w-36 sm:h-36 md:w-40 md:h-40 lg:w-44 lg:h-44 xl:w-48 xl:h-48 mx-auto relative overflow-hidden hover:scale-[1.02] hover:-translate-y-1"
           >
-            <div className="flex items-center justify-center w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 mt-3 mb-2 rounded-full border border-pink-100 bg-gray-50 group-hover:scale-105 transition-transform duration-200 shadow-sm">
+            <div className="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 md:w-18 md:h-18 lg:w-20 lg:h-20 xl:w-22 xl:h-22 mt-2 mb-3 rounded-full border border-pink-100 bg-gray-50 group-hover:scale-110 transition-transform duration-300 shadow-sm">
               <span
-                className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold select-none"
+                className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold select-none"
                 style={{
                   color: "#fff",
                   background: stringToColor(category.name),
@@ -59,10 +78,10 @@ export default async function Categories() {
                 {category.name.charAt(0).toUpperCase()}
               </span>
             </div>
-            <h3 className="text-xs sm:text-sm md:text-base font-semibold text-center z-10 relative text-primary group-hover:text-pink-600 transition-colors duration-200">
-              {category.name}
+            <h3 className="text-sm sm:text-base md:text-lg font-semibold text-center z-10 relative text-primary group-hover:text-pink-600 transition-colors duration-200 px-1 leading-tight">
+              {category.name.length > 12 ? category.name.slice(0, 12) + "..." : category.name}
             </h3>
-            <div className="absolute inset-0 bg-pink-50 opacity-0 group-hover:opacity-80 transition-opacity duration-200 z-0" />
+            <div className="absolute inset-0 bg-gradient-to-br from-pink-50/60 to-pink-100/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0 rounded-xl" />
           </Link>
         ))}
       </div>

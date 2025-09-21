@@ -1,33 +1,51 @@
-import { getCategories } from "@/lib/api";
+import { getCategories, searchProducts } from "@/lib/api";
 import { SearchParams } from "@/types";
 import SearchPageClient from "@/components/search-page-components/SearchPageClient";
 
 interface SearchPageProps {
-  searchParams: Promise<{ [key: string]: string | undefined }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export default async function SearchPage(props: SearchPageProps) {
-  const searchParams = await props.searchParams;
+export default async function SearchPage({ searchParams }: SearchPageProps) {
+  const resolvedParams = await searchParams;
+
   const parsedParams: SearchParams = {
-    searchTerm: searchParams.searchTerm,
-    category: searchParams.category,
-    minPrice: searchParams.minPrice ? Number(searchParams.minPrice) : undefined,
-    maxPrice: searchParams.maxPrice ? Number(searchParams.maxPrice) : undefined,
-    page: searchParams.page ? Number(searchParams.page) : 1,
-    limit: searchParams.limit ? Number(searchParams.limit) : 12,
-    categoryId: searchParams.categoryId,
-    subcategoryId: searchParams.subcategoryId,
-    brandId: searchParams.brandId,
+    searchTerm: resolvedParams.searchTerm?.toString(),
+    category: resolvedParams.category?.toString(),
+    minPrice: resolvedParams.minPrice
+      ? Number(resolvedParams.minPrice)
+      : undefined,
+    maxPrice: resolvedParams.maxPrice
+      ? Number(resolvedParams.maxPrice)
+      : undefined,
+    page: resolvedParams.page ? Number(resolvedParams.page) : 1,
+    limit: resolvedParams.limit ? Number(resolvedParams.limit) : 12,
+    categoryId: resolvedParams.categoryId?.toString(),
+    subcategoryId: resolvedParams.subcategoryId?.toString(),
+    brandId: resolvedParams.brandId?.toString(),
   };
 
-  const {
-    data: { data: categories },
-  } = await getCategories({ limit: 20 });
+  const [categoriesData, productsData] = await Promise.all([
+    getCategories({ limit: 20 }),
+    searchProducts(parsedParams),
+  ]);
+
+  const categories = categoriesData.data.data;
+  const initialProducts = productsData.data.data;
+  const meta = productsData.data.meta;
+
+  const initialTotalResults = meta?.total || 0;
+  const initialTotalPages = Math.ceil(
+    (meta?.total || 0) / (parsedParams.limit || 12)
+  );
 
   return (
     <SearchPageClient
       initialSearchParams={parsedParams}
       categories={categories}
+      initialProducts={initialProducts}
+      initialTotalResults={initialTotalResults}
+      initialTotalPages={initialTotalPages}
     />
   );
 }

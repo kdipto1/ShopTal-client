@@ -14,21 +14,30 @@ import { Product } from "@/types";
 interface SearchPageClientProps {
   initialSearchParams: SearchParams;
   categories: any[];
+  initialProducts: Product[];
+  initialTotalResults: number;
+  initialTotalPages: number;
 }
 
 export default function SearchPageClient({
   initialSearchParams,
-  categories
+  categories,
+  initialProducts,
+  initialTotalResults,
+  initialTotalPages,
 }: SearchPageClientProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [searchTerm, setSearchTerm] = useState(initialSearchParams.searchTerm || "");
-  const [products, setProducts] = useState<Product[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [currentFilters, setCurrentFilters] = useState<Partial<SearchParams>>(initialSearchParams);
-  const [totalResults, setTotalResults] = useState(0);
-  const [totalPages, setTotalPages] = useState(1);
+  const [searchTerm, setSearchTerm] = useState(
+    initialSearchParams.searchTerm || ""
+  );
+  const [products, setProducts] = useState<Product[]>(initialProducts);
+  const [isLoading, setIsLoading] = useState(false);
+  const [currentFilters, setCurrentFilters] =
+    useState<Partial<SearchParams>>(initialSearchParams);
+  const [totalResults, setTotalResults] = useState(initialTotalResults);
+  const [totalPages, setTotalPages] = useState(initialTotalPages);
 
   // Load products based on current filters
   const loadProducts = useCallback(async (filters: Partial<SearchParams>) => {
@@ -41,7 +50,9 @@ export default function SearchPageClient({
       });
       setProducts(result.data.data);
       setTotalResults(result.data.meta?.total || 0);
-      setTotalPages(Math.ceil((result.data.meta?.total || 0) / (filters.limit || 12)));
+      setTotalPages(
+        Math.ceil((result.data.meta?.total || 0) / (filters.limit || 12))
+      );
     } catch (error) {
       console.error("Error loading products:", error);
       setProducts([]);
@@ -53,18 +64,23 @@ export default function SearchPageClient({
   }, []);
 
   // Update URL when filters change
-  const updateURL = useCallback((filters: Partial<SearchParams>) => {
-    const params = new URLSearchParams();
+  const updateURL = useCallback(
+    (filters: Partial<SearchParams>) => {
+      const params = new URLSearchParams();
 
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value !== undefined && value !== null && value !== "") {
-        params.set(key, value.toString());
-      }
-    });
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== "") {
+          params.set(key, value.toString());
+        }
+      });
 
-    const newURL = `/search${params.toString() ? `?${params.toString()}` : ""}`;
-    router.push(newURL, { scroll: false });
-  }, [router]);
+      const newURL = `/search${
+        params.toString() ? `?${params.toString()}` : ""
+      }`;
+      router.replace(newURL, { scroll: false });
+    },
+    [router]
+  );
 
   // Handle search submission
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -90,7 +106,7 @@ export default function SearchPageClient({
     updateURL(updatedFilters);
     loadProducts(updatedFilters);
     // Scroll to top of results
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   // Handle limit changes
@@ -100,11 +116,6 @@ export default function SearchPageClient({
     updateURL(updatedFilters);
     loadProducts(updatedFilters);
   };
-
-  // Load initial products
-  useEffect(() => {
-    loadProducts(initialSearchParams);
-  }, [loadProducts, initialSearchParams]);
 
   // Update filters when URL changes
   useEffect(() => {
@@ -155,10 +166,7 @@ export default function SearchPageClient({
 
           {/* Results */}
           <div className="flex-1">
-            <SearchResultsGrid
-              products={products}
-              isLoading={isLoading}
-            />
+            <SearchResultsGrid products={products} isLoading={isLoading} />
 
             {/* Pagination */}
             <SearchPagination
