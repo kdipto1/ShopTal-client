@@ -6,9 +6,11 @@ import { Product } from "@/types";
 interface SearchResultsGridProps {
   products: Product[];
   isLoading?: boolean;
+  error?: string | null;
+  onRetry?: () => void;
 }
 
-export default function SearchResultsGrid({ products, isLoading }: SearchResultsGridProps) {
+export default function SearchResultsGrid({ products, isLoading, error, onRetry }: SearchResultsGridProps) {
   if (isLoading) {
     return (
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
@@ -20,6 +22,21 @@ export default function SearchResultsGrid({ products, isLoading }: SearchResults
             <div className="h-4 bg-pink-200 rounded w-1/2"></div>
           </div>
         ))}
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12" role="alert">
+        <h2 className="text-xl font-semibold text-gray-700 mb-2">Couldn&apos;t load products</h2>
+        <p className="text-gray-500 text-sm mb-6">{error}</p>
+        <button
+          onClick={onRetry}
+          className="px-6 py-3 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors duration-200 font-medium"
+        >
+          Try Again
+        </button>
       </div>
     );
   }

@@ -69,6 +69,7 @@ export default function CheckoutContent() {
   const [couponCode, setCouponCode] = useState("");
   const [discount, setDiscount] = useState(0);
   const [isCreatingOrder, setIsCreatingOrder] = useState(false);
+  const [isCreatingPayment, setIsCreatingPayment] = useState(false);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [shippingAddress, setShippingAddress] = useState("");
@@ -160,16 +161,18 @@ export default function CheckoutContent() {
       return;
     }
     setShippingAddress(data.shippingAddress);
+    setIsCreatingPayment(true);
     try {
       const paymentIntent = await createPaymentIntentAPI(
-        total,
+        couponCode || undefined,
         session?.user.accessToken
       );
-      console.log(paymentIntent.data.clientSecret);
-      setClientSecret(paymentIntent?.data.clientSecret);
+       setClientSecret(paymentIntent?.data.clientSecret);
       setShowPaymentForm(true);
     } catch (error: any) {
       toast.error(error.message || "Failed to start payment.");
+    } finally {
+      setIsCreatingPayment(false);
     }
   };
 
@@ -303,9 +306,9 @@ export default function CheckoutContent() {
                   className="w-full text-sm bg-pink-600 hover:bg-pink-700 text-white font-semibold rounded-md shadow-none transition-colors duration-150"
                   size="lg"
                   type="submit"
-                  disabled={cartItems.length === 0 || isCreatingOrder}
+                   disabled={cartItems.length === 0 || isCreatingOrder || isCreatingPayment}
                 >
-                  {isCreatingOrder ? (
+                  {isCreatingOrder || isCreatingPayment ? (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   ) : null}
                   Proceed to Payment

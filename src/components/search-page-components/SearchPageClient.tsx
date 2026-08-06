@@ -38,10 +38,12 @@ export default function SearchPageClient({
     useState<Partial<SearchParams>>(initialSearchParams);
   const [totalResults, setTotalResults] = useState(initialTotalResults);
   const [totalPages, setTotalPages] = useState(initialTotalPages);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   // Load products based on current filters
   const loadProducts = useCallback(async (filters: Partial<SearchParams>) => {
     setIsLoading(true);
+    setLoadError(null);
     try {
       const result = await searchProducts({
         ...filters,
@@ -55,9 +57,7 @@ export default function SearchPageClient({
       );
     } catch (error) {
       console.error("Error loading products:", error);
-      setProducts([]);
-      setTotalResults(0);
-      setTotalPages(1);
+      setLoadError("We couldn’t load products right now. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -131,7 +131,8 @@ export default function SearchPageClient({
     }
     setCurrentFilters(urlFilters);
     setSearchTerm(urlFilters.searchTerm || "");
-  }, [searchParams]);
+    loadProducts(urlFilters);
+  }, [searchParams, loadProducts]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -166,7 +167,12 @@ export default function SearchPageClient({
 
           {/* Results */}
           <div className="flex-1">
-            <SearchResultsGrid products={products} isLoading={isLoading} />
+        <SearchResultsGrid
+          products={products}
+          isLoading={isLoading}
+          error={loadError}
+          onRetry={() => loadProducts(currentFilters)}
+        />
 
             {/* Pagination */}
             <SearchPagination

@@ -397,15 +397,14 @@ export default function CartPage() {
               </div>
             </CardContent>
             <CardFooter>
-              <Link href="/checkout">
                 <Button
+                  onClick={() => router.push("/checkout")}
                   className="w-full text-sm bg-pink-600 hover:bg-pink-700 text-white font-semibold rounded-md shadow-none transition-colors duration-150"
                   size="lg"
                   disabled={cartItems?.length === 0}
                 >
                   Proceed to Checkout
                 </Button>
-              </Link>
             </CardFooter>
           </Card>
         </div>

@@ -41,6 +41,9 @@ export function ProductQuickView({
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black bg-opacity-50"
       onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="product-quick-view-title"
     >
       <div
         className="bg-white rounded-lg max-w-4xl w-full max-h-[95vh] overflow-y-auto relative"
@@ -48,12 +51,13 @@ export function ProductQuickView({
       >
         <div className="p-4 sm:p-6">
           <div className="flex justify-between items-start mb-4">
-            <h2 className="text-xl font-bold text-gray-900">{product.name}</h2>
+            <h2 id="product-quick-view-title" className="text-xl font-bold text-gray-900">{product.name}</h2>
             <Button
               variant="ghost"
               size="icon"
               onClick={onClose}
               className="text-gray-400 hover:text-gray-600"
+              aria-label="Close product quick view"
             >
               <X className="h-5 w-5" />
             </Button>

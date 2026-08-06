@@ -11,6 +11,15 @@ import {
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
+async function getErrorMessage(response: Response): Promise<string> {
+  try {
+    const body = await response.json();
+    return body.message || body.errorMessages?.[0]?.message || `API Error: ${response.statusText}`;
+  } catch {
+    return `API Error: ${response.statusText || response.status}`;
+  }
+}
+
 export async function fetchAPI<T>(
   endpoint: string,
   params?: Record<string, string>,
@@ -35,7 +44,7 @@ export async function fetchAPI<T>(
   });
 
   if (!res.ok) {
-    throw new Error(`API Error: ${res?.statusText || ""}`);
+    throw new Error(await getErrorMessage(res));
   }
   return res.json();
 }
@@ -97,8 +106,7 @@ export async function createOrderAPI<T>(
   });
 
   if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData.message || `API Error: ${res?.statusText || ""}`);
+    throw new Error(await getErrorMessage(res));
   }
 
   return res.json();
@@ -121,8 +129,7 @@ export async function applyCouponAPI<T>(
   });
 
   if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData.message || `API Error: ${res?.statusText || ""}`);
+    throw new Error(await getErrorMessage(res));
   }
 
   return res.json();
@@ -158,8 +165,7 @@ export async function createReview(
   });
 
   if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData.message || `API Error: ${res?.statusText || ""}`);
+    throw new Error(await getErrorMessage(res));
   }
 
   const responseData = await res.json();
@@ -186,8 +192,7 @@ export async function updateReview(
   });
 
   if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData.message || `API Error: ${res?.statusText || ""}`);
+    throw new Error(await getErrorMessage(res));
   }
 
   const responseData = await res.json();
@@ -216,8 +221,7 @@ export async function createCoupon<T>(
   });
 
   if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData.message || `API Error: ${res?.statusText || ""}`);
+    throw new Error(await getErrorMessage(res));
   }
 
   return res.json();
@@ -255,8 +259,7 @@ export async function updateOrderStatus<T>(
   });
 
   if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData.message || `API Error: ${res?.statusText || ""}`);
+    throw new Error(await getErrorMessage(res));
   }
 
   return res.json();
@@ -285,8 +288,7 @@ export async function updateCouponAPI<T>(
   });
 
   if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData.message || `API Error: ${res?.statusText || ""}`);
+    throw new Error(await getErrorMessage(res));
   }
 
   return res.json();
@@ -306,8 +308,7 @@ export async function deleteCouponAPI<T>(
   });
 
   if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData.message || `API Error: ${res?.statusText || ""}`);
+    throw new Error(await getErrorMessage(res));
   }
 
   return res.json();
@@ -320,7 +321,7 @@ export const getCartsAbandonmentRateAPI = (accessToken: string) =>
   fetchAPI<any>("/analytics/carts/abandonment-rate", {}, accessToken);
 
 export async function createPaymentIntentAPI(
-  amount: number,
+  couponCode: string | undefined,
   accessToken: string
 ): Promise<{ data: { clientSecret: string } }> {
   const url = new URL(`${API_BASE_URL}/payment/create-payment-intent`);
@@ -330,7 +331,7 @@ export async function createPaymentIntentAPI(
       "Content-Type": "application/json",
       Authorization: `Bearer ${accessToken}`,
     },
-    body: JSON.stringify({ amount }),
+    body: JSON.stringify({ couponCode }),
   });
   if (!res.ok) {
     const errorData = await res.json();

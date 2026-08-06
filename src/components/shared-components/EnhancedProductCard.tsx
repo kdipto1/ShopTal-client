@@ -78,6 +78,7 @@ export function EnhancedProductCard({
               e.stopPropagation();
               handleWishlistToggle();
             }}
+            aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
           >
             <Heart
               className={`h-4 w-4 ${
@@ -96,6 +97,7 @@ export function EnhancedProductCard({
               e.stopPropagation();
               handleQuickView();
             }}
+            aria-label={`Quick view ${product.name}`}
           >
             <Eye className="h-4 w-4 text-gray-600" />
           </Button>

@@ -1,23 +1,23 @@
 "use client";
 
-import { useState } from "react";
-import { useSearchParams } from "next/navigation";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { toast } from "sonner";
 import { signIn } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
 
+import { Button } from "../shadcn-ui/button";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
 } from "../shadcn-ui/form";
 import { Input } from "../shadcn-ui/input";
-import { Button } from "../shadcn-ui/button";
 import { Switch } from "../shadcn-ui/switch";
 
 // Form validation schema
@@ -63,6 +63,7 @@ export default function LoginForm() {
         phone: formatPhoneNumber(data.phone),
         password: data.password,
         callbackUrl: destination,
+        redirect: false,
       });
 
       if (result?.error) {
@@ -84,7 +85,7 @@ export default function LoginForm() {
 
   const handleSwitchChange = (checked: boolean) => {
     setIsAdmin(checked);
-    // Pre-fill form with test credentials for convenience
+    // Keep credentials blank so they are not exposed in the UI.
     form.reset({
       phone: checked ? "1234567890" : "9876543210",
       password: checked ? "test@123" : "123456",

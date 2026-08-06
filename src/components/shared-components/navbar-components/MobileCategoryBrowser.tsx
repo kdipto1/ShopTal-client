@@ -128,8 +128,9 @@ export default function MobileCategoryBrowser({
                 size="sm"
                 onClick={handleClose}
                 className="p-1 h-8 w-8"
+                aria-label="Close category browser"
               >
-                {/* <X className="h-4 w-4" /> */}
+                <X className="h-4 w-4" />
               </Button>
             </div>
             <SheetDescription className="text-sm text-gray-600 mt-1">
