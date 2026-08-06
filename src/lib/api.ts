@@ -314,11 +314,53 @@ export async function deleteCouponAPI<T>(
   return res.json();
 }
 
-export const getProductPerformanceAPI = (accessToken: string) =>
-  fetchAPI<any>("/analytics/products/performance", {}, accessToken);
+export type AnalyticsRange = "7d" | "30d" | "90d";
 
-export const getCartsAbandonmentRateAPI = (accessToken: string) =>
-  fetchAPI<any>("/analytics/carts/abandonment-rate", {}, accessToken);
+export interface DashboardAnalytics {
+  range: AnalyticsRange;
+  generatedAt: string;
+  kpis: {
+    totalRevenue: number;
+    totalOrders: number;
+    totalCustomers: number;
+    averageOrderValue: number;
+    lowStockCount: number;
+    cartAbandonmentRate: number;
+    revenueDelta: number;
+    ordersDelta: number;
+  };
+  revenueTimeseries: { date: string; revenue: number; orderCount: number }[];
+  orderStatusBreakdown: { status: string; count: number }[];
+  topSellingProducts: {
+    id: string;
+    name: string;
+    unitsSold: number;
+    revenue: number;
+  }[];
+  salesByCategory: {
+    categoryId: string;
+    categoryName: string;
+    units: number;
+    revenue: number;
+  }[];
+  recentOrders: {
+    id: string;
+    totalAmount: number;
+    status: string;
+    createdAt: string;
+    customer: { id: string; name: string; email: string };
+  }[];
+}
+
+export const getDashboardAnalyticsAPI = (
+  range: AnalyticsRange,
+  accessToken: string,
+) =>
+  fetchAPI<{ data: DashboardAnalytics }>(
+    "/analytics/dashboard",
+    { range },
+    accessToken,
+  );
 
 export async function createPaymentIntentAPI(
   couponCode: string | undefined,
