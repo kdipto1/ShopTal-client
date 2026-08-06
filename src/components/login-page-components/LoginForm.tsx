@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -33,6 +33,7 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginForm() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl");
   const [error, setError] = useState("");
@@ -72,6 +73,7 @@ export default function LoginForm() {
         toast.error(errorMessage);
       } else if (result?.ok) {
         toast.success("Login successful!");
+        router.push(result.url ?? destination);
       }
     } catch (err) {
       const errorMessage = "An unexpected error occurred during login.";
