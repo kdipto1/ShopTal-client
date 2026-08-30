@@ -56,6 +56,8 @@ export interface Order {
   totalAmount: number;
   shippingAddress: string;
   status: "PENDING" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELED";
+  paymentStatus: "UNPAID" | "PAID" | "FAILED";
+  paymentIntentId?: string;
   orderItems: OrderItem[];
   createdAt: string;
 }

@@ -30,6 +30,14 @@ export default function LoginPage() {
           <Suspense fallback={<></>}>
             <LoginForm />
           </Suspense>
+          <p className="mt-3 text-xs text-center">
+            <Link
+              className="text-pink-600 hover:underline"
+              href={"/forgot-password"}
+            >
+              Forgot password?
+            </Link>
+          </p>
           <p className="mt-4 text-xs text-center text-gray-500 dark:text-gray-400">
             Don&apos;t have an account?
             <Link

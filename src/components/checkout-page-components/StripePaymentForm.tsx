@@ -46,7 +46,11 @@ export default function StripePaymentForm({
       setLoading(false);
       return;
     }
-    if (paymentIntent && paymentIntent.status === "succeeded") {
+    if (
+      paymentIntent &&
+      (paymentIntent.status === "succeeded" ||
+        paymentIntent.status === "processing")
+    ) {
       onPaymentSuccess();
     } else {
       setError("Payment did not succeed");

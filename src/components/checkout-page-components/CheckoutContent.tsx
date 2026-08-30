@@ -19,6 +19,7 @@ import {
   applyCouponAPI,
   createOrderAPI,
   createPaymentIntentAPI,
+  getMyOrderById,
 } from "@/lib/api";
 import { useForm } from "react-hook-form";
 import { Textarea } from "@/components/shadcn-ui/textarea";
@@ -68,11 +69,11 @@ export default function CheckoutContent() {
   const [error, setError] = useState<string | null>(null);
   const [couponCode, setCouponCode] = useState("");
   const [discount, setDiscount] = useState(0);
-  const [isCreatingOrder, setIsCreatingOrder] = useState(false);
   const [isCreatingPayment, setIsCreatingPayment] = useState(false);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [showPaymentForm, setShowPaymentForm] = useState(false);
-  const [shippingAddress, setShippingAddress] = useState("");
+  const [orderId, setOrderId] = useState<string | null>(null);
+  const [isConfirmingPayment, setIsConfirmingPayment] = useState(false);
   const router = useRouter();
   const { data: session, status } = useSession();
 
@@ -150,7 +151,7 @@ export default function CheckoutContent() {
     }
   };
 
-  // New: handle payment intent and show payment form
+  // Order-first checkout: create the order, then start payment against it.
   const handleProceedToPayment = async (data: CheckoutFormData) => {
     if (!session?.user?.accessToken) {
       toast.error("You must be logged in to pay.");
@@ -160,14 +161,30 @@ export default function CheckoutContent() {
       toast.error("Your cart is empty. Please add items before checking out.");
       return;
     }
-    setShippingAddress(data.shippingAddress);
     setIsCreatingPayment(true);
     try {
-      const paymentIntent = await createPaymentIntentAPI(
-        couponCode || undefined,
-        session?.user.accessToken
+      const orderResponse = await createOrderAPI<{
+        data: { id: string };
+      }>(
+        "/orders",
+        {
+          shippingAddress: data.shippingAddress,
+          items: cartItems.map((item) => ({
+            productId: item.productId,
+            quantity: item.quantity,
+          })),
+          couponCode: couponCode ? couponCode : undefined,
+        },
+        session.user.accessToken
       );
-       setClientSecret(paymentIntent?.data.clientSecret);
+      const newOrderId = orderResponse.data.id;
+      setOrderId(newOrderId);
+
+      const paymentIntent = await createPaymentIntentAPI(
+        newOrderId,
+        session.user.accessToken
+      );
+      setClientSecret(paymentIntent?.data.clientSecret);
       setShowPaymentForm(true);
     } catch (error: any) {
       toast.error(error.message || "Failed to start payment.");
@@ -176,30 +193,36 @@ export default function CheckoutContent() {
     }
   };
 
-  // New: after payment success, place order
+  // Payment confirmation happens via the Stripe webhook on the server.
+  // Poll the order briefly so the UI reflects the paid state when possible.
   const handlePaymentSuccess = async () => {
-    setIsCreatingOrder(true);
+    setShowPaymentForm(false);
+    setIsConfirmingPayment(true);
     try {
-      const orderPayload = {
-        shippingAddress: shippingAddress,
-        items: cartItems.map((item) => ({
-          productId: item.productId,
-          quantity: item.quantity,
-        })),
-        couponCode: couponCode ? couponCode : undefined,
-      };
-      await createOrderAPI("/orders", orderPayload, session?.user.accessToken);
-      toast.success("Order placed successfully!");
+      if (orderId && session?.user?.accessToken) {
+        for (let attempt = 0; attempt < 5; attempt++) {
+          const res = await getMyOrderById(
+            orderId,
+            session.user.accessToken
+          ).catch(() => null);
+          const order = (res as { data?: { paymentStatus?: string } } | null)
+            ?.data;
+          if (order?.paymentStatus === "PAID") {
+            toast.success("Order placed successfully!");
+            break;
+          }
+          await new Promise((resolve) => setTimeout(resolve, 1500));
+        }
+      }
+      toast.success("Payment received. Your order is being processed.");
       setCartItems([]);
       setDiscount(0);
       setCouponCode("");
-      setShowPaymentForm(false);
       setClientSecret(null);
+      setOrderId(null);
       router.push(`/profile/orders`);
-    } catch (error: any) {
-      toast.error(error.message || "Failed to place order. Please try again.");
     } finally {
-      setIsCreatingOrder(false);
+      setIsConfirmingPayment(false);
     }
   };
 
@@ -306,9 +329,9 @@ export default function CheckoutContent() {
                   className="w-full text-sm bg-pink-600 hover:bg-pink-700 text-white font-semibold rounded-md shadow-none transition-colors duration-150"
                   size="lg"
                   type="submit"
-                   disabled={cartItems.length === 0 || isCreatingOrder || isCreatingPayment}
+                   disabled={cartItems.length === 0 || isConfirmingPayment || isCreatingPayment}
                 >
-                  {isCreatingOrder || isCreatingPayment ? (
+                  {isConfirmingPayment || isCreatingPayment ? (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   ) : null}
                   Proceed to Payment

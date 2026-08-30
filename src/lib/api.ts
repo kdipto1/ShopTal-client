@@ -20,6 +20,49 @@ async function getErrorMessage(response: Response): Promise<string> {
   }
 }
 
+let refreshPromise: Promise<string | null> | null = null;
+
+async function refreshAccessToken(): Promise<string | null> {
+  if (!refreshPromise) {
+    refreshPromise = (async () => {
+      try {
+        const res = await fetch("/api/auth/refresh", { method: "POST" });
+        if (!res.ok) return null;
+        const data = await res.json();
+        return data.success ? (data.accessToken as string) : null;
+      } catch {
+        return null;
+      } finally {
+        setTimeout(() => {
+          refreshPromise = null;
+        }, 0);
+      }
+    })();
+  }
+  return refreshPromise;
+}
+
+async function fetchWithAuth(
+  url: string,
+  options: RequestInit,
+  accessToken: string
+): Promise<Response> {
+  const headers = new Headers(options.headers);
+  headers.set("Authorization", `Bearer ${accessToken}`);
+
+  let res = await fetch(url, { ...options, headers });
+
+  if (res.status === 401) {
+    const newToken = await refreshAccessToken();
+    if (newToken) {
+      headers.set("Authorization", `Bearer ${newToken}`);
+      res = await fetch(url, { ...options, headers });
+    }
+  }
+
+  return res;
+}
+
 export async function fetchAPI<T>(
   endpoint: string,
   params?: Record<string, string>,
@@ -37,11 +80,23 @@ export async function fetchAPI<T>(
     headers["Authorization"] = `Bearer ${accessToken}`;
   }
 
-  const res = await fetch(url.toString(), {
+  let res = await fetch(url.toString(), {
     method: "GET",
     headers,
     cache: "no-store",
   });
+
+  if (res.status === 401 && accessToken) {
+    const newToken = await refreshAccessToken();
+    if (newToken) {
+      headers["Authorization"] = `Bearer ${newToken}`;
+      res = await fetch(url.toString(), {
+        method: "GET",
+        headers,
+        cache: "no-store",
+      });
+    }
+  }
 
   if (!res.ok) {
     throw new Error(await getErrorMessage(res));
@@ -96,14 +151,15 @@ export async function createOrderAPI<T>(
 ): Promise<T> {
   const url = new URL(`${API_BASE_URL}${endpoint}`);
 
-  const res = await fetch(url.toString(), {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
+  const res = await fetchWithAuth(
+    url.toString(),
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
     },
-    body: JSON.stringify(payload),
-  });
+    accessToken
+  );
 
   if (!res.ok) {
     throw new Error(await getErrorMessage(res));
@@ -119,14 +175,15 @@ export async function applyCouponAPI<T>(
 ): Promise<T> {
   const url = new URL(`${API_BASE_URL}${endpoint}`);
 
-  const res = await fetch(url.toString(), {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
+  const res = await fetchWithAuth(
+    url.toString(),
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
     },
-    body: JSON.stringify(payload),
-  });
+    accessToken
+  );
 
   if (!res.ok) {
     throw new Error(await getErrorMessage(res));
@@ -155,14 +212,15 @@ export async function createReview(
 ): Promise<Review> {
   const url = new URL(`${API_BASE_URL}/reviews`);
 
-  const res = await fetch(url.toString(), {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
+  const res = await fetchWithAuth(
+    url.toString(),
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
     },
-    body: JSON.stringify(payload),
-  });
+    accessToken
+  );
 
   if (!res.ok) {
     throw new Error(await getErrorMessage(res));
@@ -182,14 +240,15 @@ export async function updateReview(
 ): Promise<Review> {
   const url = new URL(`${API_BASE_URL}/reviews/${reviewId}`);
 
-  const res = await fetch(url.toString(), {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
+  const res = await fetchWithAuth(
+    url.toString(),
+    {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
     },
-    body: JSON.stringify(payload),
-  });
+    accessToken
+  );
 
   if (!res.ok) {
     throw new Error(await getErrorMessage(res));
@@ -211,14 +270,15 @@ export async function createCoupon<T>(
 ): Promise<T> {
   const url = new URL(`${API_BASE_URL}/coupons`);
 
-  const res = await fetch(url.toString(), {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
+  const res = await fetchWithAuth(
+    url.toString(),
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
     },
-    body: JSON.stringify(payload),
-  });
+    accessToken
+  );
 
   if (!res.ok) {
     throw new Error(await getErrorMessage(res));
@@ -242,6 +302,9 @@ export const getMyOrders = async (accessToken: string): Promise<Order[]> => {
 export const getOrderById = (orderId: string, accessToken: string) =>
   fetchAPI(`/orders/${orderId}`, {}, accessToken);
 
+export const getMyOrderById = (orderId: string, accessToken: string) =>
+  fetchAPI(`/orders/my/${orderId}`, {}, accessToken);
+
 export async function updateOrderStatus<T>(
   orderId: string,
   status: string,
@@ -249,14 +312,15 @@ export async function updateOrderStatus<T>(
 ): Promise<T> {
   const url = new URL(`${API_BASE_URL}/orders/${orderId}`);
 
-  const res = await fetch(url.toString(), {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
+  const res = await fetchWithAuth(
+    url.toString(),
+    {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status }),
     },
-    body: JSON.stringify({ status }),
-  });
+    accessToken
+  );
 
   if (!res.ok) {
     throw new Error(await getErrorMessage(res));
@@ -278,14 +342,15 @@ export async function updateCouponAPI<T>(
 ): Promise<T> {
   const url = new URL(`${API_BASE_URL}/coupons/${id}`);
 
-  const res = await fetch(url.toString(), {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
+  const res = await fetchWithAuth(
+    url.toString(),
+    {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
     },
-    body: JSON.stringify(payload),
-  });
+    accessToken
+  );
 
   if (!res.ok) {
     throw new Error(await getErrorMessage(res));
@@ -300,12 +365,13 @@ export async function deleteCouponAPI<T>(
 ): Promise<T> {
   const url = new URL(`${API_BASE_URL}/coupons/${id}`);
 
-  const res = await fetch(url.toString(), {
-    method: "DELETE",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
+  const res = await fetchWithAuth(
+    url.toString(),
+    {
+      method: "DELETE",
     },
-  });
+    accessToken
+  );
 
   if (!res.ok) {
     throw new Error(await getErrorMessage(res));
@@ -363,21 +429,59 @@ export const getDashboardAnalyticsAPI = (
   );
 
 export async function createPaymentIntentAPI(
-  couponCode: string | undefined,
+  orderId: string,
   accessToken: string
 ): Promise<{ data: { clientSecret: string } }> {
   const url = new URL(`${API_BASE_URL}/payment/create-payment-intent`);
-  const res = await fetch(url.toString(), {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
+  const res = await fetchWithAuth(
+    url.toString(),
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ orderId }),
     },
-    body: JSON.stringify({ couponCode }),
-  });
+    accessToken
+  );
   if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData.message || `API Error: ${res?.statusText || ""}`);
+    throw new Error(await getErrorMessage(res));
   }
   return res.json();
+}
+
+export async function forgotPasswordAPI(payload: {
+  email?: string;
+  phone?: string;
+}): Promise<{ success: boolean; message: string }> {
+  const url = new URL(`${API_BASE_URL}/auth/forgot-password`);
+  const res = await fetch(url.toString(), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  const data = await res.json().catch(() => null);
+  if (!res.ok) {
+    throw new Error(
+      data?.message || data?.errorMessages?.[0]?.message || "Request failed"
+    );
+  }
+  return data;
+}
+
+export async function resetPasswordAPI(payload: {
+  token: string;
+  newPassword: string;
+}): Promise<{ success: boolean; message: string }> {
+  const url = new URL(`${API_BASE_URL}/auth/reset-password`);
+  const res = await fetch(url.toString(), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  const data = await res.json().catch(() => null);
+  if (!res.ok) {
+    throw new Error(
+      data?.message || data?.errorMessages?.[0]?.message || "Request failed"
+    );
+  }
+  return data;
 }

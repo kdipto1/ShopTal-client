@@ -2,7 +2,13 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { z } from "zod";
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
+export const {
+  handlers,
+  signIn,
+  signOut,
+  auth,
+  unstable_update: update,
+} = NextAuth({
   trustHost: true,
   providers: [
     Credentials({
@@ -55,13 +61,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       // When the user signs in, the `user` object from the `authorize` callback is passed.
       if (user) {
         token.id = user.id;
         token.role = user.role;
         token.accessToken = user.accessToken;
+        token.refreshToken = user.refreshToken;
         token.userId = user.userId;
+      }
+      // Allow the session to be updated with fresh tokens (e.g. after a refresh)
+      if (trigger === "update" && session?.user?.accessToken) {
+        token.accessToken = session.user.accessToken;
+        if (session.user.refreshToken) {
+          token.refreshToken = session.user.refreshToken;
+        }
       }
       return token;
     },
@@ -71,6 +85,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.id = token.id as string;
         session.user.role = token.role as string;
         session.user.accessToken = token.accessToken as string;
+        session.user.refreshToken = token.refreshToken as string;
         session.user.userId = token.userId as string;
       }
       return session;

@@ -1,13 +1,12 @@
 import "next-auth";
 
-import "next-auth";
-
 declare module "next-auth" {
   interface Session {
     user: {
       id: string;
       role: string;
       accessToken: string;
+      refreshToken: string;
       userId: string;
     } & DefaultSession["user"];
   }
@@ -16,6 +15,7 @@ declare module "next-auth" {
     id: string;
     role: string;
     accessToken: string;
+    refreshToken: string;
     userId: string;
   }
 }
@@ -25,5 +25,6 @@ declare module "next-auth/jwt" {
     id: string;
     role: string;
     accessToken: string;
+    refreshToken: string;
   }
 }

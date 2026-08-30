@@ -1,6 +1,6 @@
 # 🛒 ShopTal — Modern E-commerce Client
 
-> A feature-rich, accessible, and beautifully designed e-commerce platform built with Next.js 14, Tailwind CSS v4, shadcn/radix UI, and more.
+> A feature-rich, accessible, and beautifully designed e-commerce platform built with Next.js 16, Tailwind CSS v4, shadcn/radix UI, and more.
 
 ---
 
@@ -12,7 +12,7 @@
 
 ## 🚀 Features
 
-- **Next.js 15 App Router** — Fast, scalable, and SEO-friendly architecture
+- **Next.js 16 App Router** — Fast, scalable, and SEO-friendly architecture
 - **React 19** — Leveraging the latest React features for better performance and developer experience.
 - **Tailwind CSS v4** — Custom design tokens, dark mode, and utility-first styling
 - **shadcn + Radix UI** — Accessible, composable UI components
@@ -29,7 +29,7 @@
 
 ## 🖥️ Tech Stack
 
-- **Framework:** Next.js 15 (TypeScript, App Router)
+- **Framework:** Next.js 16 (TypeScript, App Router)
 - **UI Library:** React 19
 - **Styling:** Tailwind CSS v4, shadcn/radix UI
 - **State:** Zustand
